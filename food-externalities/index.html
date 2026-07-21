@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food & Externalities Explorer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #f5f0e8;
+    --surface: #faf7f2;
+    --panel: #ffffff;
+    --green-dark: #2d5a27;
+    --green-mid: #4a8c3f;
+    --green-light: #7bc67e;
+    --amber: #d4822a;
+    --red: #c0392b;
+    --blue: #2980b9;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e2ddd4;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --pigou: #1a6b5a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--green-dark);
+    color: white;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  header .leaf { font-size: 28px; }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    font-size: 0.82rem;
+    opacity: 0.75;
+    font-weight: 300;
+    margin-top: 2px;
+  }
+
+  .badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 80px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 24px 20px;
+    overflow-y: auto;
+  }
+
+  .section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 20px 0 12px;
+  }
+
+  .section-label:first-child { margin-top: 0; }
+
+  .control-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: box-shadow 0.2s;
+  }
+
+  .control-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+  .control-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .control-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .icon-plant  { background: #e8f5e9; }
+  .icon-local  { background: #e3f2fd; }
+  .icon-income { background: #fff8e1; }
+  .icon-policy { background: #fce4ec; }
+  .icon-pigou  { background: #e0f2f1; }
+
+  .control-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .control-subtitle {
+    font-size: 0.73rem;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--green-dark);
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: transform 0.15s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  input[type=range]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .slider-plant::-webkit-slider-thumb   { background: var(--green-mid); }
+  .slider-local::-webkit-slider-thumb   { background: var(--blue); }
+  .slider-income::-webkit-slider-thumb  { background: var(--amber); }
+  .slider-policy::-webkit-slider-thumb  { background: #8e44ad; }
+  .slider-pigou::-webkit-slider-thumb   { background: var(--pigou); }
+
+  .slider-val {
+    font-size: 0.88rem;
+    font-weight: 600;
+    min-width: 44px;
+    text-align: right;
+    color: var(--green-dark);
+  }
+
+  .impact-bar {
+    margin-top: 8px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .impact-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  /* ── SEGMENTED BUTTONS ── */
+  .segment-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .seg-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.4;
+    transition: all 0.18s;
+  }
+
+  .seg-btn span {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 400;
+    opacity: 0.75;
+    margin-top: 1px;
+  }
+
+  .seg-btn:hover:not(.active) { border-color: var(--blue); color: var(--text); }
+  .seg-btn.active { background: var(--blue); border-color: var(--blue); color: white; font-weight: 600; }
+  .seg-btn.active span { opacity: 0.85; }
+
+  /* ── EXTERNALITY METER ── */
+  .ext-meter {
+    background: linear-gradient(135deg, var(--green-dark), #1a3d16);
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: white;
+    margin-top: 20px;
+  }
+
+  .ext-meter-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 10px;
+  }
+
+  .ext-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+
+  .ext-label {
+    font-size: 0.78rem;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  .ext-bar-track {
+    margin-top: 12px;
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .ext-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ── PIGOVIAN TAX METER ── */
+  .pigou-meter {
+    background: linear-gradient(135deg, #1a6b5a, #0d4a3d);
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: white;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .pigou-meter.visible { display: block; }
+
+  .pigou-meter-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 6px;
+  }
+
+  .pigou-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .pigou-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .pigou-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    white-space: nowrap;
+  }
+
+  .pigou-label {
+    font-size: 0.76rem;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  .pigou-bar-track {
+    margin-top: 10px;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .pigou-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #48c9b0, #1abc9c);
+    transition: width 0.35s ease;
+  }
+
+  .legend {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .legend-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+  }
+
+  .legend-line {
+    width: 24px; height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── CHART AREA ── */
+  .chart-area {
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .chart-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--green-dark);
+  }
+
+  .chart-subtitle {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .stats-row {
+    display: grid;
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+  .stat-card.highlight-pigou {
+    border-color: #1a6b5a;
+    background: linear-gradient(135deg, #e0f2f1, #f0faf9);
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .stat-change {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .up   { color: #e74c3c; }
+  .down { color: #27ae60; }
+
+  .chart-wrapper {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px 16px;
+    flex: 1;
+    position: relative;
+  }
+
+  canvas { display: block; }
+
+  .chart-fallback {
+    display: none;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .chart-fallback strong { color: var(--red); }
+
+  .info-box {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border: 1px solid #c8e6c9;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 0.82rem;
+    color: var(--green-dark);
+    line-height: 1.6;
+  }
+
+  .info-box.policy-mode {
+    background: linear-gradient(135deg, #e0f2f1, #f0faf9);
+    border-color: #80cbc4;
+    color: #1a6b5a;
+  }
+
+  .info-box strong { font-weight: 600; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 4px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 7px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab.active {
+    background: var(--panel);
+    color: var(--green-dark);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    font-weight: 600;
+  }
+
+  .tab.active.policy-tab { color: var(--pigou); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* ── TOGGLE SWITCH ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(26,107,90,0.2);
+  }
+
+  .toggle-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1a6b5a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: rgba(26,107,90,0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.25s;
+  }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.25s;
+  }
+
+  .toggle-switch input:checked + .toggle-track {
+    background: #1a6b5a;
+  }
+
+  .toggle-switch input:checked + .toggle-track::after {
+    transform: translateX(18px);
+  }
+
+  /* ── TAX REVENUE SIDEBAR CARD ── */
+  .tax-rev-card {
+    background: linear-gradient(135deg, #1a6b5a, #0d4a3d);
+    border-radius: 14px;
+    padding: 14px 18px;
+    color: white;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .tax-rev-card.visible { display: block; }
+
+  .tax-rev-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 6px;
+  }
+
+  .tax-rev-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .tax-rev-label {
+    font-size: 0.74rem;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+
+  /* embed mode (?embed=1): the hosting slide provides the header */
+  body.embed header { display: none; }
+</style>
+</head>
+<body>
+<script>if(new URLSearchParams(location.search).has('embed'))document.body.classList.add('embed');</script>
+
+<header>
+  <div class="leaf">🌿</div>
+  <div>
+    <h1>Food & Externalities Explorer</h1>
+    <p>Visualizing how food choices shift supply, demand, and social costs</p>
+  </div>
+  <div class="badge">SOS 110 — Module 2 — Ryan Cornell</div>
+</header>
+
+<div class="main">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar">
+
+    <div class="section-label">🌱 Food Characteristics</div>
+
+    <div class="control-card">
+      <div class="control-header">
+        <div class="control-icon icon-plant">💨</div>
+        <div>
+          <div class="control-title">CO₂e Emissions per kg of Food</div>
+          <div class="control-subtitle">↑ Increases externality significantly</div>
+        </div>
+      </div>
+      <div class="slider-row">
+        <input type="range" class="slider-plant" id="co2" min="0" max="100" value="30" aria-label="CO2e emissions per kg of food">
+        <span class="slider-val" id="co2-val">30 kg</span>
+      </div>
+      <div class="impact-bar">
+        <div class="impact-fill" id="co2-fill" style="background: var(--green-mid); width: 30%"></div>
+      </div>
+    </div>
+
+    <div class="control-card">
+      <div class="control-header">
+        <div class="control-icon icon-local">🗺️</div>
+        <div>
+          <div class="control-title">Food Miles</div>
+          <div class="control-subtitle">↑ Distance increases externality slightly</div>
+        </div>
+      </div>
+      <div class="segment-row" id="foodmiles-group">
+        <button class="seg-btn active" data-value="0" onclick="setFoodMiles(0)">🏡 Local<br><span>under 100 mi</span></button>
+        <button class="seg-btn" data-value="1" onclick="setFoodMiles(1)">🚚 Moderate<br><span>100–1000 mi</span></button>
+        <button class="seg-btn" data-value="2" onclick="setFoodMiles(2)">✈️ Long Distance<br><span>1000+ mi</span></button>
+      </div>
+    </div>
+
+    <div class="section-label">📊 Market Factors</div>
+
+    <div class="control-card">
+      <div class="control-header">
+        <div class="control-icon icon-income">💰</div>
+        <div>
+          <div class="control-title">Consumer Income Level</div>
+          <div class="control-subtitle">↑ Shifts demand curve right</div>
+        </div>
+      </div>
+      <div class="slider-row">
+        <input type="range" class="slider-income" id="income" min="0" max="100" value="50" aria-label="Consumer income level">
+        <span class="slider-val" id="income-val">50</span>
+      </div>
+      <div class="impact-bar">
+        <div class="impact-fill" id="income-fill" style="background: var(--amber); width: 50%"></div>
+      </div>
+    </div>
+
+    <div class="control-card">
+      <div class="control-header">
+        <div class="control-icon icon-policy">⚙️</div>
+        <div>
+          <div class="control-title">Food Production Efficiency</div>
+          <div class="control-subtitle">↑ Shifts supply curve right (lower cost)</div>
+        </div>
+      </div>
+      <div class="slider-row">
+        <input type="range" class="slider-policy" id="efficiency" min="0" max="100" value="50" aria-label="Food production efficiency">
+        <span class="slider-val" id="efficiency-val">50</span>
+      </div>
+      <div class="impact-bar">
+        <div class="impact-fill" id="efficiency-fill" style="background: #8e44ad; width: 50%"></div>
+      </div>
+    </div>
+
+    <!-- Externality Meter -->
+    <div class="ext-meter">
+      <div class="ext-meter-title">Total Negative Externality</div>
+      <div class="ext-value" id="ext-value">$2.00</div>
+      <div class="ext-label">per unit of food consumed</div>
+      <div class="ext-bar-track">
+        <div class="ext-bar-fill" id="ext-bar" style="width:33%; background: linear-gradient(90deg, #f39c12, #e67e22)"></div>
+      </div>
+    </div>
+
+    <!-- Pigovian Tax Meter (shown only in Policy tab) -->
+    <div class="pigou-meter" id="pigou-meter">
+      <div class="pigou-meter-title">Pigovian Tax Applied</div>
+      <div class="pigou-row">
+        <div>
+          <div class="pigou-value" id="pigou-value">$0.00</div>
+          <div class="pigou-label">per unit of food</div>
+        </div>
+        <div class="pigou-status" id="pigou-status">No Tax</div>
+      </div>
+      <div class="pigou-bar-track">
+        <div class="pigou-bar-fill" id="pigou-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Tax Revenue Card (shown only when toggle is on in Policy tab) -->
+    <div class="tax-rev-card" id="tax-rev-card">
+      <div class="tax-rev-title">Tax Revenue Generated</div>
+      <div class="tax-rev-value" id="tax-rev-value">$0.00</div>
+      <div class="tax-rev-label">total per period (tax rate × quantity)</div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-title">Graph Legend</div>
+      <div class="legend-item"><div class="legend-line" style="background:#2980b9"></div> Demand (PMB)</div>
+      <div class="legend-item"><div class="legend-line" style="background:#c0392b"></div> Supply (PMC)</div>
+      <div class="legend-item" id="legend-smc" style="display:none"><div class="legend-line" style="background:#e67e22;height:2px;border-top:2px dashed #e67e22"></div> Social Cost (SMC)</div>
+      <div class="legend-item" id="legend-tax" style="display:none"><div class="legend-line" style="background:#1a6b5a"></div> Supply + Tax (PMC+T)</div>
+      <div class="legend-item"><div style="width:12px;height:12px;border-radius:50%;background:#27ae60;border:2px solid white;box-shadow:0 0 0 1.5px #27ae60;flex-shrink:0"></div> Market Equilibrium</div>
+      <div class="legend-item" id="legend-taxeq" style="display:none"><div style="width:12px;height:12px;border-radius:50%;background:#1a6b5a;border:2px solid white;box-shadow:0 0 0 1.5px #1a6b5a;flex-shrink:0"></div> Tax Equilibrium</div>
+      <div class="legend-item" id="legend-taxrev" style="display:none"><span style="display:inline-block;width:14px;height:14px;background:rgba(26,107,90,0.25);border:1px solid rgba(26,107,90,0.5);border-radius:2px;flex-shrink:0"></span> Tax Revenue</div>
+    </div>
+  </div>
+
+  <!-- ── CHART AREA ── -->
+  <div class="chart-area">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title" id="chart-title">Supply, Demand & Externality Graph</div>
+        <div class="chart-subtitle" id="chart-subtitle">Adjust the sliders to see real-time changes in market outcomes and social costs</div>
+      </div>
+      <div style="text-align:right">
+        <div class="tabs">
+          <button class="tab active" onclick="setTab('market')">Market View</button>
+          <button class="tab" onclick="setTab('social')">Social View</button>
+          <button class="tab policy-tab" onclick="setTab('policy')">🏛️ Policy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy Panel (shown only in Policy tab) -->
+    <div id="policy-panel" style="display:none">
+      <div class="control-card" style="border-color:#80cbc4; background: linear-gradient(135deg,#e0f2f1,#f0faf9);">
+        <div class="control-header">
+          <div class="control-icon icon-pigou">🏛️</div>
+          <div>
+            <div class="control-title" style="color:#1a6b5a">Pigovian Tax Rate</div>
+            <div class="control-subtitle">Set a per-unit tax equal to the marginal external cost to correct the market failure</div>
+          </div>
+        </div>
+        <div class="slider-row">
+          <input type="range" class="slider-pigou" id="pigou" min="0" max="8" step="0.1" value="0" aria-label="Pigovian tax rate">
+          <span class="slider-val" id="pigou-val" style="color:#1a6b5a; min-width:52px">$0.00</span>
+        </div>
+        <div class="impact-bar" style="margin-top:10px">
+          <div class="impact-fill" id="pigou-fill" style="background:#1a6b5a; width:0%"></div>
+        </div>
+        <div style="margin-top:10px; font-size:0.78rem; color:#1a6b5a; line-height:1.5;" id="pigou-hint">
+          💡 <strong>The optimal Pigovian tax equals the size of the negative externality at the socially optimal quantity.</strong> Try setting the tax to match the <strong>Total Negative Externality</strong> shown in the sidebar.
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">📊 See Tax Revenue</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="taxrev-toggle" onchange="setTaxRevenue(this.checked)" aria-label="Show tax revenue">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Market Price</div>
+        <div class="stat-value" id="stat-price" style="color: var(--green-dark)">$5.87</div>
+        <div class="stat-change" id="stat-price-chg">Equilibrium price</div>
+      </div>
+      <div class="stat-card" id="dwl-card" style="display:none">
+        <div class="stat-label">Deadweight Loss</div>
+        <div class="stat-value" id="stat-dwl" style="color: #e67e22">$13.33</div>
+        <div class="stat-change" id="stat-dwl-chg">Social efficiency loss</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Optimal Price</div>
+        <div class="stat-value" id="stat-opt" style="color: #8e44ad">$6.93</div>
+        <div class="stat-change" id="stat-opt-chg">Includes social costs</div>
+      </div>
+      <div class="stat-card" id="tax-price-card" style="display:none">
+        <div class="stat-label">Price After Tax</div>
+        <div class="stat-value" id="stat-tax-price" style="color:#1a6b5a">$5.87</div>
+        <div class="stat-change" id="stat-tax-chg">With Pigovian tax applied</div>
+      </div>
+      <div class="stat-card" id="tax-efficiency-card" style="display:none">
+        <div class="stat-label">Efficiency Restored</div>
+        <div class="stat-value" id="stat-efficiency" style="color:#1a6b5a">0%</div>
+        <div class="stat-change" id="stat-efficiency-chg">DWL reduction from tax</div>
+      </div>
+    </div>
+
+    <div class="chart-wrapper">
+      <canvas id="myChart"></canvas>
+      <div class="chart-fallback" id="chart-fallback">
+        <strong>The chart library could not load.</strong><br>
+        This page needs an internet connection the first time it runs (it loads Chart.js from a CDN).
+        Reconnect and reload, or download <code>chart.umd.min.js</code> next to this file for offline use.
+      </div>
+    </div>
+
+    <div class="info-box" id="info-text">
+      <strong>How to read this graph:</strong> The market equilibrium (where Supply meets Demand) shows the private price. When negative externalities exist — such as carbon emissions and environmental damage from food production — the true Social Marginal Cost is <em>higher</em> than the market price. Switch to <strong>Social View</strong> to see the full externality picture, or <strong>Policy</strong> to explore how a Pigovian tax can correct this market failure.
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  // ── State ──
+  const state = {
+    co2: 30,
+    foodMiles: 0,
+    income: 50,
+    efficiency: 50,
+    pigou: 0,
+    showTaxRevenue: false,
+    tab: 'market'
+  };
+
+  // ── Compute model ──
+  function computeModel() {
+    const { co2, foodMiles, income, efficiency, pigou } = state;
+
+    // Externality (marginal external cost, $/unit)
+    const co2Contribution  = (co2 / 100) * 5.0;
+    const milesContribution = foodMiles === 0 ? 0 : foodMiles === 1 ? 0.25 : 0.5;
+    const externality = Math.max(0.2, 0.5 + co2Contribution + milesContribution);
+
+    // Demand:  P = demandIntercept + demandSlope * Q
+    const demandIntercept = 12 + (income - 50) * 0.06;
+    const demandSlope = -0.08;
+
+    // Supply (private marginal cost):  P = supplyIntercept + supplySlope * Q
+    const supplyIntercept = 0.5 + (50 - efficiency) * 0.05;
+    const supplySlope = 0.07;
+
+    // Market equilibrium (no tax): Demand = Supply
+    const eqQ = (demandIntercept - supplyIntercept) / (supplySlope - demandSlope);
+    const eqP = supplyIntercept + supplySlope * eqQ;
+
+    // Social optimum: Demand = SMC (= Supply + externality)
+    const socOptQ = (demandIntercept - supplyIntercept - externality) / (supplySlope - demandSlope);
+    const socOptP = supplyIntercept + supplySlope * socOptQ + externality;
+
+    // Deadweight loss from the externality (pre-tax).
+    // The welfare-loss triangle has height = externality (the vertical gap between
+    // Demand and SMC at the market quantity) and base = (Q_market − Q_optimal).
+    const dwl = 0.5 * externality * Math.abs(eqQ - socOptQ);
+
+    // Tax equilibrium: supply shifts up by the per-unit tax.
+    const taxSupplyIntercept = supplyIntercept + pigou;
+    const taxEqQ = (demandIntercept - taxSupplyIntercept) / (supplySlope - demandSlope);
+    const taxEqP = taxSupplyIntercept + supplySlope * taxEqQ; // consumer price
+    const taxEqPProducer = taxEqP - pigou;                   // producer receives
+
+    // Residual DWL after tax. The remaining gap between Demand and SMC at the
+    // taxed quantity is |externality − tax|, so the loss shrinks to zero when the
+    // tax equals the externality and re-grows if the market is OVER-taxed
+    // (under-production on the other side of the optimum).
+    const residualDwl = 0.5 * Math.abs(externality - pigou) * Math.abs(taxEqQ - socOptQ);
+
+    // Efficiency restored (% of original DWL eliminated). Falls back below 100%
+    // when over-taxed, matching the "over-corrected" message.
+    const efficiencyRestored = dwl > 0 ? Math.min(100, Math.max(0, (1 - residualDwl / dwl) * 100)) : 100;
+
+    // Tax revenue = tax rate × quantity at tax equilibrium
+    const taxRevenue = pigou * Math.max(0, taxEqQ);
+
+    return {
+      externality,
+      demandIntercept, demandSlope,
+      supplyIntercept, supplySlope,
+      eqQ: Math.max(10, eqQ), eqP,
+      socOptQ: Math.max(8, socOptQ), socOptP,
+      dwl,
+      pigou,
+      taxSupplyIntercept,
+      taxEqQ: Math.max(5, taxEqQ), taxEqP, taxEqPProducer,
+      residualDwl, efficiencyRestored, taxRevenue
+    };
+  }
+
+  // ── Build chart data ──
+  function buildChartData(m) {
+    const maxQ = 120;
+    const points = 60;
+    const qArr = Array.from({ length: points }, (_, i) => (i / (points - 1)) * maxQ);
+
+    const demandPts = qArr.map(q => ({ x: q, y: m.demandIntercept + m.demandSlope * q }));
+    const supplyPts = qArr.map(q => ({ x: q, y: m.supplyIntercept + m.supplySlope * q }));
+    const smcPts    = qArr.map(q => ({ x: q, y: m.supplyIntercept + m.supplySlope * q + m.externality }));
+
+    // Tax-shifted supply curve
+    const taxSupplyPts = qArr.map(q => ({ x: q, y: m.taxSupplyIntercept + m.supplySlope * q }));
+
+    // DWL polygon (pre-tax, shown in social view):
+    //   social optimum (SMC∩Demand) → SMC at market Q → market equilibrium
+    const dwlPts = [
+      { x: m.socOptQ, y: m.socOptP },
+      { x: m.eqQ,     y: m.eqP + m.externality },
+      { x: m.eqQ,     y: m.eqP }
+    ];
+
+    // Residual DWL polygon after tax (shown in policy view): triangle between
+    // the social optimum, the taxed equilibrium (on Demand), and SMC at the
+    // taxed quantity (= taxEqP + externality − tax). Always computed: at tax = 0
+    // taxEq coincides with the market equilibrium, so this equals the full
+    // (uncorrected) DWL triangle — which lets the Policy tab show it shaded on
+    // arrival, then shrink it as the tax is raised.
+    const residualDwlPts = [
+      { x: m.socOptQ,  y: m.socOptP },
+      { x: m.taxEqQ,   y: m.taxEqP },
+      { x: m.taxEqQ,   y: m.taxEqP + m.externality - m.pigou }
+    ];
+
+    // Tax revenue parallelogram: between old supply and tax supply, from 0 to taxEqQ
+    const taxRevPts = m.pigou > 0 ? [
+      { x: 0,          y: m.supplyIntercept },
+      { x: m.taxEqQ,   y: m.supplyIntercept + m.supplySlope * m.taxEqQ },
+      { x: m.taxEqQ,   y: m.taxSupplyIntercept + m.supplySlope * m.taxEqQ },
+      { x: 0,          y: m.taxSupplyIntercept }
+    ] : [];
+
+    return { demandPts, supplyPts, smcPts, taxSupplyPts, dwlPts, residualDwlPts, taxRevPts, qArr };
+  }
+
+  // ── Dataset index map ──
+  // 0: Demand, 1: Supply, 2: Eq point
+  // 3: SMC, 4: Soc Optimum, 5: DWL, 6: Ext gap line
+  // 7: Tax supply, 8: Tax eq point, 9: Residual DWL, 10: Tax revenue shading
+  function initDatasets(m, d) {
+    return [
+      // Base
+      { label:'Demand (PMB)',        data:d.demandPts, showLine:true, pointRadius:0, borderColor:'#2980b9', borderWidth:2.5, tension:0 },
+      { label:'Supply (PMC)',        data:d.supplyPts, showLine:true, pointRadius:0, borderColor:'#c0392b', borderWidth:2.5, tension:0 },
+      { label:'Market Equilibrium',  data:[{x:m.eqQ,y:m.eqP}], pointRadius:8, pointHoverRadius:10, backgroundColor:'#27ae60', borderColor:'white', borderWidth:2 },
+      // Social
+      { label:'SMC', data:d.smcPts, showLine:true, pointRadius:0, borderColor:'#e67e22', borderWidth:2.5, borderDash:[6,3], tension:0, hidden:true },
+      { label:'Social Optimum',      data:[{x:m.socOptQ,y:m.socOptP}], pointRadius:8, pointHoverRadius:10, backgroundColor:'#8e44ad', borderColor:'white', borderWidth:2, hidden:true },
+      { label:'DWL',                 data:d.dwlPts, _polygon:true, showLine:false, pointRadius:0, fill:false, backgroundColor:'rgba(231,76,60,0.28)', borderColor:'rgba(231,76,60,0.6)', borderWidth:1.5, borderDash:[5,3], tension:0, hidden:true },
+      { label:'Ext Gap',             data:[{x:m.eqQ,y:m.eqP},{x:m.eqQ,y:m.eqP+m.externality}], showLine:true, pointRadius:0, borderColor:'#e74c3c', borderWidth:1.5, borderDash:[4,3], tension:0, hidden:true },
+      // Policy
+      { label:'Supply + Tax (PMC+T)', data:d.taxSupplyPts, showLine:true, pointRadius:0, borderColor:'#1a6b5a', borderWidth:2.5, tension:0, hidden:true },
+      { label:'Tax Equilibrium',      data:[{x:m.taxEqQ,y:m.taxEqP}], pointRadius:8, pointHoverRadius:10, backgroundColor:'#1a6b5a', borderColor:'white', borderWidth:2, hidden:true },
+      { label:'Residual DWL',         data:d.residualDwlPts, _polygon:true, showLine:false, pointRadius:0, fill:false, backgroundColor:'rgba(231,76,60,0.22)', borderColor:'rgba(231,76,60,0.5)', borderWidth:1.5, borderDash:[5,3], tension:0, hidden:true },
+      { label:'Tax Revenue',          data:d.taxRevPts, _polygon:true, showLine:false, pointRadius:0, fill:false, backgroundColor:'rgba(26,107,90,0.18)', borderColor:'rgba(26,107,90,0.45)', borderWidth:1, tension:0, hidden:true },
+    ];
+  }
+
+  function applyVisibility(m, d) {
+    const isSocial = state.tab === 'social';
+    const isPolicy = state.tab === 'policy';
+    const ds = chart.data.datasets;
+
+    // Base always visible
+    ds[0].hidden = false; ds[1].hidden = false; ds[2].hidden = false;
+
+    // SMC — visible in Social and Policy tabs
+    ds[3].hidden = !(isSocial || isPolicy);
+    // Social Optimum point — visible in Social and Policy tabs
+    ds[4].hidden = !(isSocial || isPolicy);
+    // DWL shading — Social View only
+    ds[5].hidden = !isSocial;
+    // Ext gap line — Social and Policy tabs
+    ds[6].hidden = !(isSocial || isPolicy);
+
+    // Taxed supply curve & tax equilibrium point — only meaningful once a tax is applied
+    ds[7].hidden  = !isPolicy || m.pigou === 0;
+    ds[8].hidden  = !isPolicy || m.pigou === 0;
+    // (Residual) DWL shading — shown across the whole Policy tab; at tax = 0 it
+    // is the full uncorrected DWL triangle, shrinking as the tax is raised.
+    ds[9].hidden  = !isPolicy;
+    // Tax revenue shading — Policy tab only AND showTaxRevenue toggle on
+    ds[10].hidden = !isPolicy || m.pigou === 0 || !state.showTaxRevenue;
+  }
+
+  // ── Chart init ──
+  let chart;
+
+  // Plugin: fill datasets flagged with `_polygon` as proper closed shapes.
+  // Chart.js line-fill drops to the axis, which can't cleanly shade an
+  // arbitrary triangle (DWL) or parallelogram (tax revenue); drawing the
+  // closed path ourselves guarantees a crisp filled region under the curves.
+  const polygonFill = {
+    id: 'polygonFill',
+    beforeDatasetsDraw(chart) {
+      const { ctx, scales: { x, y } } = chart;
+      chart.data.datasets.forEach((ds, i) => {
+        if (!ds._polygon || !chart.isDatasetVisible(i)) return;
+        const pts = ds.data;
+        if (!pts || pts.length < 3) return;
+        ctx.save();
+        ctx.beginPath();
+        pts.forEach((p, j) => {
+          const px = x.getPixelForValue(p.x);
+          const py = y.getPixelForValue(p.y);
+          j === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        });
+        ctx.closePath();
+        ctx.fillStyle = ds.backgroundColor;
+        ctx.fill();
+        if (ds.borderColor && ds.borderWidth) {
+          ctx.lineWidth = ds.borderWidth;
+          ctx.strokeStyle = ds.borderColor;
+          if (ds.borderDash) ctx.setLineDash(ds.borderDash);
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+    }
+  };
+
+  function initChart() {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const m = computeModel();
+    const d = buildChartData(m);
+
+    chart = new Chart(ctx, {
+      type: 'scatter',
+      plugins: [polygonFill],
+      data: { datasets: initDatasets(m, d) },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 400, easing: 'easeInOutQuart' },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => `Q: ${ctx.parsed.x.toFixed(1)}, P: $${ctx.parsed.y.toFixed(2)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display:true, text:'Quantity (units of food)', font:{family:'DM Sans',size:12}, color:'#6b6b6b' },
+            min:0, max:120,
+            grid: { color:'rgba(0,0,0,0.04)' },
+            ticks: { font:{family:'DM Sans'} }
+          },
+          y: {
+            title: { display:true, text:'Price / Cost ($)', font:{family:'DM Sans',size:12}, color:'#6b6b6b' },
+            min:0, max:14,
+            grid: { color:'rgba(0,0,0,0.04)' },
+            ticks: { callback: v=>`$${v}`, font:{family:'DM Sans'} }
+          }
+        }
+      }
+    });
+
+    ctx.canvas.parentNode.style.height = '380px';
+  }
+
+  // ── Update chart (mutate in place) ──
+  function updateChart() {
+    const m = computeModel();
+    const d = buildChartData(m);
+    const ds = chart.data.datasets;
+
+    ds[0].data  = d.demandPts;
+    ds[1].data  = d.supplyPts;
+    ds[2].data  = [{x:m.eqQ,y:m.eqP}];
+    ds[3].data  = d.smcPts;
+    ds[4].data  = [{x:m.socOptQ,y:m.socOptP}];
+    ds[5].data  = d.dwlPts;
+    ds[6].data  = [{x:m.eqQ,y:m.eqP},{x:m.eqQ,y:m.eqP+m.externality}];
+    ds[7].data  = d.taxSupplyPts;
+    ds[8].data  = [{x:m.taxEqQ,y:m.taxEqP}];
+    ds[9].data  = d.residualDwlPts;
+    ds[10].data = d.taxRevPts;
+
+    applyVisibility(m, d);
+    chart.update('none');
+    updateStats(m);
+    updateExtMeter(m);
+    updatePigouMeter(m);
+    updateInfoText(m);
+  }
+
+  // ── Stats ──
+  function updateStats(m) {
+    const isPolicy = state.tab === 'policy';
+    const isSocial = state.tab === 'social';
+
+    document.getElementById('stat-price').textContent = `$${m.eqP.toFixed(2)}`;
+    document.getElementById('stat-dwl').textContent   = `$${m.dwl.toFixed(2)}`;
+    document.getElementById('stat-opt').textContent   = `$${m.socOptP.toFixed(2)}`;
+    document.getElementById('stat-tax-price').textContent = `$${m.taxEqP.toFixed(2)}`;
+    document.getElementById('stat-efficiency').textContent = `${m.efficiencyRestored.toFixed(0)}%`;
+
+    const dwlCard       = document.getElementById('dwl-card');
+    const taxPriceCard  = document.getElementById('tax-price-card');
+    const taxEffCard    = document.getElementById('tax-efficiency-card');
+    const statsRow      = document.getElementById('stats-row');
+
+    // Visibility
+    dwlCard.style.display      = isSocial ? '' : 'none';
+    taxPriceCard.style.display = isPolicy ? '' : 'none';
+    taxEffCard.style.display   = isPolicy ? '' : 'none';
+
+    // Highlight policy cards
+    taxPriceCard.className = isPolicy ? 'stat-card highlight-pigou' : 'stat-card';
+    taxEffCard.className   = isPolicy ? 'stat-card highlight-pigou' : 'stat-card';
+
+    // Grid columns
+    const visibleCount = 2 + (isSocial ? 1 : 0) + (isPolicy ? 2 : 0);
+    statsRow.style.gridTemplateColumns = `repeat(${visibleCount}, 1fr)`;
+
+    const gap = m.socOptP - m.eqP;
+    document.getElementById('stat-price-chg').textContent = 'Market equilibrium price';
+    const dChg = document.getElementById('stat-dwl-chg');
+    dChg.className = `stat-change ${m.dwl > 4 ? 'up' : 'down'}`;
+    dChg.textContent = m.dwl > 4 ? '▲ High social loss' : '▼ Lower social loss';
+    document.getElementById('stat-opt-chg').textContent = `$${gap.toFixed(2)} above market price`;
+
+    const effChg = document.getElementById('stat-efficiency-chg');
+    if (m.efficiencyRestored >= 99) {
+      effChg.textContent = '✓ Market failure corrected!';
+      effChg.style.color = '#27ae60';
+    } else if (m.pigou === 0) {
+      effChg.textContent = 'No tax applied yet';
+      effChg.style.color = '';
+    } else if (m.pigou > m.externality) {
+      effChg.textContent = `$${m.residualDwl.toFixed(2)} new DWL (over-taxed)`;
+      effChg.style.color = '#8e44ad';
+    } else {
+      effChg.textContent = `$${m.residualDwl.toFixed(2)} DWL remaining`;
+      effChg.style.color = m.efficiencyRestored > 70 ? '#27ae60' : '#e67e22';
+    }
+
+    const taxChg = document.getElementById('stat-tax-chg');
+    if (m.pigou === 0) taxChg.textContent = 'No tax applied';
+    else if (m.taxEqP > m.eqP) taxChg.textContent = `↑ $${(m.taxEqP - m.eqP).toFixed(2)} above market price`;
+    else taxChg.textContent = 'Same as market price';
+  }
+
+  function updateExtMeter(m) {
+    document.getElementById('ext-value').textContent = `$${m.externality.toFixed(2)}`;
+    const pct = (m.externality / 6) * 100;
+    const bar = document.getElementById('ext-bar');
+    bar.style.width = `${pct}%`;
+    if (pct < 30) bar.style.background = 'linear-gradient(90deg,#27ae60,#2ecc71)';
+    else if (pct < 60) bar.style.background = 'linear-gradient(90deg,#f39c12,#e67e22)';
+    else bar.style.background = 'linear-gradient(90deg,#e67e22,#e74c3c)';
+  }
+
+  function setTaxRevenue(checked) {
+    state.showTaxRevenue = checked;
+    updateChart();
+    // Legend
+    document.getElementById('legend-taxrev').style.display = (checked && state.tab === 'policy') ? '' : 'none';
+  }
+
+  function updatePigouMeter(m) {
+    const meter = document.getElementById('pigou-meter');
+    if (state.tab !== 'policy') {
+      meter.classList.remove('visible');
+      document.getElementById('tax-rev-card').classList.remove('visible');
+      return;
+    }
+    meter.classList.add('visible');
+
+    document.getElementById('pigou-value').textContent = `$${m.pigou.toFixed(2)}`;
+    const pct = (m.pigou / 8) * 100;
+    document.getElementById('pigou-bar').style.width = `${pct}%`;
+
+    const status = document.getElementById('pigou-status');
+    const ratio  = m.pigou / m.externality;
+    if (m.pigou === 0)       { status.textContent = 'No Tax';          status.style.background = 'rgba(255,255,255,0.15)'; }
+    else if (ratio < 0.6)   { status.textContent = 'Inefficient';     status.style.background = 'rgba(231,76,60,0.3)'; }
+    else if (ratio < 0.95)  { status.textContent = 'Getting closer…'; status.style.background = 'rgba(243,156,18,0.3)'; }
+    else if (ratio <= 1.05) { status.textContent = '✓ Optimal!';      status.style.background = 'rgba(39,174,96,0.3)'; }
+    else                    { status.textContent = 'Over-taxed';       status.style.background = 'rgba(142,68,173,0.3)'; }
+
+    // Tax Revenue Card
+    const revCard = document.getElementById('tax-rev-card');
+    if (state.showTaxRevenue && m.pigou > 0) {
+      revCard.classList.add('visible');
+      document.getElementById('tax-rev-value').textContent = `$${m.taxRevenue.toFixed(2)}`;
+    } else {
+      revCard.classList.remove('visible');
+    }
+  }
+
+  function updateInfoText(m) {
+    const box = document.getElementById('info-text');
+    const co2 = state.co2;
+    const milesLabel = ['local','moderate distance','long distance'][state.foodMiles];
+
+    if (state.tab === 'policy') {
+      box.className = 'info-box policy-mode';
+      const ratio = m.pigou / m.externality;
+      if (m.pigou === 0) {
+        box.innerHTML = `<strong>No tax applied.</strong> The market is producing at the private equilibrium, ignoring the $${m.externality.toFixed(2)}/unit social cost. Use the Pigovian Tax slider above to add a corrective tax. The goal: set the tax equal to the size of the negative externality to shift the supply curve up and reduce overproduction.`;
+      } else if (ratio < 0.95) {
+        box.innerHTML = `<strong>Tax of $${m.pigou.toFixed(2)}/unit applied.</strong> The taxed supply curve has shifted up, moving the equilibrium left toward the social optimum. The tax has restored <strong>${m.efficiencyRestored.toFixed(0)}%</strong> of lost efficiency. Increase the tax further — the externality is $${m.externality.toFixed(2)}/unit — to eliminate more deadweight loss.`;
+      } else if (ratio <= 1.05) {
+        box.innerHTML = `<strong>✓ Optimal Pigovian tax!</strong> At $${m.pigou.toFixed(2)}/unit, the tax closely matches the $${m.externality.toFixed(2)}/unit externality. The new equilibrium aligns with the social optimum — the market failure is corrected, and <strong>${m.efficiencyRestored.toFixed(0)}%</strong> of deadweight loss has been eliminated. This is the textbook Pigovian result.`;
+      } else {
+        box.innerHTML = `<strong>Tax exceeds the externality.</strong> At $${m.pigou.toFixed(2)}/unit, the tax is higher than the $${m.externality.toFixed(2)}/unit externality. This over-corrects the market, reducing output below the social optimum and creating a <strong>new</strong> deadweight loss of $${m.residualDwl.toFixed(2)} on the other side. The optimal tax equals the externality — no more, no less.`;
+      }
+    } else {
+      box.className = 'info-box';
+      if (co2 <= 20) box.innerHTML = `<strong>Low emissions scenario:</strong> At ${co2} kg CO₂e/kg of food with ${milesLabel} sourcing, the externality is small ($${m.externality.toFixed(2)}/unit). The market price is close to the socially optimal price — a well-functioning market outcome.`;
+      else if (co2 <= 55) box.innerHTML = `<strong>Moderate externality:</strong> At ${co2} kg CO₂e/kg, the social cost ($${m.externality.toFixed(2)}/unit) is meaningfully above the market price. Switch to <strong>Policy</strong> view to explore how a Pigovian tax could correct this market failure.`;
+      else box.innerHTML = `<strong>High externality scenario:</strong> At ${co2} kg CO₂e/kg of food, the negative externality ($${m.externality.toFixed(2)}/unit) is large. The market significantly overproduces relative to the social optimum. Switch to <strong>Policy</strong> view to see how a corrective tax can restore efficiency.`;
+    }
+  }
+
+  // ── Tab switching ──
+  function setTab(tab) {
+    state.tab = tab;
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', (i === 0 && tab === 'market') || (i === 1 && tab === 'social') || (i === 2 && tab === 'policy'));
+    });
+
+    document.getElementById('policy-panel').style.display = tab === 'policy' ? '' : 'none';
+
+    // Legend items
+    document.getElementById('legend-smc').style.display    = (tab === 'social' || tab === 'policy') ? '' : 'none';
+    document.getElementById('legend-tax').style.display    = tab === 'policy' ? '' : 'none';
+    document.getElementById('legend-taxeq').style.display  = tab === 'policy' ? '' : 'none';
+    document.getElementById('legend-taxrev').style.display = (tab === 'policy' && state.showTaxRevenue) ? '' : 'none';
+
+    // Chart/subtitle
+    const titles = {
+      market: ['Supply, Demand & Externality Graph',   'Adjust the sliders to see real-time changes in market outcomes'],
+      social: ['Social Cost & Deadweight Loss',        'The shaded triangle shows the welfare loss from the negative externality'],
+      policy: ['Pigovian Tax Correction',              'Set the tax rate to internalize the externality and restore market efficiency']
+    };
+    document.getElementById('chart-title').textContent    = titles[tab][0];
+    document.getElementById('chart-subtitle').textContent = titles[tab][1];
+
+    updateChart();
+  }
+
+  // ── Slider wiring ──
+  function wireSlider(id, stateKey, fillId, displayFn) {
+    const el   = document.getElementById(id);
+    const val  = document.getElementById(id + '-val');
+    const fill = document.getElementById(fillId);
+    el.addEventListener('input', () => {
+      state[stateKey] = +el.value;
+      val.textContent = displayFn(+el.value);
+      const pct = ((+el.value - +el.min) / (+el.max - +el.min)) * 100;
+      fill.style.width = pct + '%';
+      updateChart();
+    });
+  }
+
+  function setFoodMiles(value) {
+    state.foodMiles = value;
+    document.querySelectorAll('#foodmiles-group .seg-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === value);
+    });
+    updateChart();
+  }
+
+  wireSlider('co2',        'co2',        'co2-fill',        v => `${v} kg`);
+  wireSlider('income',     'income',     'income-fill',     v => `${v}`);
+  wireSlider('efficiency', 'efficiency', 'efficiency-fill', v => `${v}`);
+  wireSlider('pigou',      'pigou',      'pigou-fill',      v => `$${(+v).toFixed(2)}`);
+
+  // ── Init ──
+  window.addEventListener('DOMContentLoaded', () => {
+    // If Chart.js failed to load (e.g. offline), show a friendly fallback.
+    if (typeof Chart === 'undefined') {
+      document.getElementById('myChart').style.display = 'none';
+      document.getElementById('chart-fallback').style.display = 'block';
+      return;
+    }
+    // Start in market view — hide social/policy stat cards
+    document.getElementById('dwl-card').style.display       = 'none';
+    document.getElementById('tax-price-card').style.display = 'none';
+    document.getElementById('tax-efficiency-card').style.display = 'none';
+    document.getElementById('stats-row').style.gridTemplateColumns = 'repeat(2, 1fr)';
+    initChart();
+    const m = computeModel();
+    updateStats(m);
+    updateExtMeter(m);
+    updatePigouMeter(m);
+    updateInfoText(m);
+  });
+</script>
+</body>
+</html>

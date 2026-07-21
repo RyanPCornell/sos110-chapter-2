@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>True Cost Calculator v1.2 — Externalities of Daily Life</title>
+<style>
+:root {
+  --forest:#1a3028; --forest-mid:#254538; --sage:#4a7c59; --sage-lt:#7aab8a;
+  --sage-pale:#c8e0cf; --gold:#c8963e; --gold-lt:#e8b86d; --gold-pale:#f5e6cc;
+  --cream:#f5f0e8; --cream-dk:#ede6d6; --ink:#0f1e17; --mist:#8ca89a;
+  --white:#fdfaf5; --red:#c94040; --blue:#5b9bd5; --purple:#a07cc5;
+  --r:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Georgia,'Times New Roman',serif;background:var(--cream);color:var(--ink);min-height:100vh}
+.sans{font-family:system-ui,-apple-system,sans-serif}
+.mono{font-family:'Courier New',monospace}
+
+/* HEADER */
+header{background:var(--forest);position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06)}
+.hdr{max-width:1440px;margin:0 auto;padding:0 2rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.hdr-title{font-size:1.15rem;color:var(--white);letter-spacing:.01em}
+.hdr-sub{font-family:'Courier New',monospace;font-size:.6rem;color:var(--sage-lt);letter-spacing:.12em;text-transform:uppercase;margin-left:.75rem}
+.hdr-right{display:flex;align-items:center;gap:1rem}
+.hdr-reset{font-family:system-ui,sans-serif;font-size:.75rem;font-weight:500;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(253,250,245,.7);padding:.28rem .75rem;border-radius:3px;cursor:pointer;transition:all .15s}
+.hdr-reset:hover{background:rgba(255,255,255,.16);color:var(--white)}
+
+/* LAYOUT */
+.wrap{max-width:1440px;margin:0 auto;padding:1.75rem 2rem 4rem;display:grid;grid-template-columns:420px 1fr;gap:1.75rem;align-items:start}
+
+/* PANEL */
+.panel{background:var(--white);border-radius:var(--r);border:1px solid var(--cream-dk);overflow:hidden}
+.ph{padding:.9rem 1.2rem;border-bottom:1px solid var(--cream-dk);display:flex;align-items:center;gap:.6rem;cursor:pointer;user-select:none}
+.ph-icon{font-size:1rem}
+.ph-title{font-family:Georgia,serif;font-size:1rem;color:var(--forest);flex:1}
+.ph-chevron{font-size:.8rem;color:var(--mist);transition:transform .25s;margin-left:auto;line-height:1}
+.ph.collapsed .ph-chevron{transform:rotate(-90deg)}
+.panel-body-wrap{overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.panel-body-wrap.collapsed{max-height:0!important}
+.pb{padding:1rem 1.2rem}
+
+/* CONTROLS */
+.ctrl-col{display:flex;flex-direction:column;gap:1rem}
+
+/* CAT LABEL */
+.cat{font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:.5rem;margin:.9rem 0 .7rem}
+.cat:first-child{margin-top:0}
+.cat::after{content:'';flex:1;height:1px;background:var(--cream-dk)}
+
+/* CONTROL ROW */
+.cr{margin-bottom:.9rem}
+.cr:last-child{margin-bottom:0}
+.cl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.45rem}
+.cn{font-family:system-ui,sans-serif;font-size:.85rem;font-weight:500;color:var(--forest)}
+.cv{font-family:'Courier New',monospace;font-size:.78rem;color:var(--sage);font-weight:500}
+.tick-row{display:flex;justify-content:space-between;margin-top:.3rem}
+.tick{font-family:system-ui,sans-serif;font-size:.62rem;color:var(--mist)}
+
+/* SLIDERS */
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;background:var(--cream-dk);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--forest);cursor:pointer;border:2px solid var(--white);box-shadow:0 1px 4px rgba(15,30,23,.3);transition:background .15s}
+input[type=range]:hover::-webkit-slider-thumb{background:var(--sage)}
+input[type=range]:disabled{cursor:not-allowed}
+
+/* SEGMENT - large tap targets */
+.seg{display:flex;background:var(--cream);border-radius:5px;padding:3px;gap:2px}
+.seg-btn{flex:1;padding:.4rem .3rem;font-family:system-ui,sans-serif;font-size:.78rem;font-weight:500;text-align:center;background:transparent;border:none;border-radius:4px;color:var(--mist);cursor:pointer;transition:all .15s;white-space:nowrap;line-height:1.2}
+.seg-btn.on{background:var(--forest);color:var(--white);box-shadow:0 1px 4px rgba(15,30,23,.2)}
+.seg-btn:active:not(.on){background:var(--cream-dk)}
+
+/* SELECT */
+select{width:100%;padding:.45rem 2rem .45rem .75rem;font-family:system-ui,sans-serif;font-size:.85rem;background:var(--cream);border:1px solid var(--cream-dk);border-radius:5px;color:var(--forest);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a7c59' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center}
+
+/* OUTPUT COL */
+.out-col{display:flex;flex-direction:column;gap:1rem}
+
+/* DISCLAIMER */
+.disclaimer{grid-column:1/-1;background:var(--gold-pale);border:1px solid rgba(200,150,62,.3);border-left:3px solid var(--gold);border-radius:var(--r);padding:.65rem 1rem;font-size:.78rem;line-height:1.6;color:var(--forest)}
+
+/* TOTAL BANNER */
+.total{background:var(--forest);border-radius:var(--r);padding:1.4rem;display:flex;flex-direction:column;gap:.5rem}
+.t-eye{font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sage-lt)}
+.t-num{font-family:Georgia,serif;font-size:2.4rem;color:var(--white);line-height:1}
+.t-sub{font-family:system-ui,sans-serif;font-size:.74rem;color:rgba(253,250,245,.45);font-weight:300}
+.t-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.25rem}
+.pill{font-family:'Courier New',monospace;font-size:.66rem;padding:.3rem .65rem;border-radius:20px;background:rgba(255,255,255,.07);color:rgba(253,250,245,.65);white-space:nowrap}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+.card{background:var(--white);border:1px solid var(--cream-dk);border-radius:var(--r);padding:.9rem 1rem;position:relative;overflow:hidden}
+.card-bar{position:absolute;bottom:0;left:0;right:0;height:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.card-ico{font-size:1.1rem;margin-bottom:.3rem;display:block}
+.card-lbl{font-family:'Courier New',monospace;font-size:.58rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--mist);margin-bottom:.2rem}
+.card-val{font-family:Georgia,serif;font-size:1.25rem;color:var(--forest);line-height:1}
+.card-unit{font-family:'Courier New',monospace;font-size:.6rem;color:var(--mist);margin-top:.1rem}
+.card-pct{font-family:'Courier New',monospace;font-size:.6rem;margin-top:.1rem}
+
+/* CHART TABS - horizontally scrollable */
+.chart-tabs{display:flex;gap:0;margin-bottom:1rem;border-bottom:1px solid var(--cream-dk);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chart-tabs::-webkit-scrollbar{display:none}
+.ctab{font-family:system-ui,sans-serif;font-size:.76rem;font-weight:500;padding:.5rem .9rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--mist);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.ctab.on{color:var(--forest);border-bottom-color:var(--gold)}
+.cview{display:none}
+.cview.on{display:block}
+.chart-wrap{position:relative;height:320px}
+canvas{display:block}
+
+/* BREAKDOWN TABLE - horizontally scrollable */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.bk-table{width:100%;border-collapse:collapse;min-width:460px}
+.bk-table th{font-family:'Courier New',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mist);padding:.55rem 1rem;text-align:left;border-bottom:1px solid var(--cream-dk);background:var(--cream);white-space:nowrap}
+.bk-table th:last-child,.bk-table td:last-child{text-align:right}
+.bk-table td{font-family:system-ui,sans-serif;padding:.65rem 1rem;font-size:.8rem;border-bottom:1px solid rgba(237,230,214,.5)}
+.bk-table tr:last-child td{border-bottom:none}
+.td-cat{font-weight:500;color:var(--forest);display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.td-desc{color:var(--mist);font-size:.73rem}
+.td-cost{font-family:'Courier New',monospace;font-weight:700}
+.td-cost.hi{color:var(--red)}
+.td-cost.lo{color:var(--sage)}
+.mini-bar-wrap{width:70px;height:5px;background:var(--cream-dk);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:.35rem}
+.mini-bar{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* INSIGHT */
+.insight{background:var(--gold-pale);border:1px solid rgba(200,150,62,.25);border-left:3px solid var(--gold);border-radius:var(--r);padding:.9rem 1.1rem;font-family:system-ui,sans-serif;font-size:.8rem;line-height:1.65;color:var(--forest);display:none}
+.insight.show{display:block}
+.insight strong{font-weight:600}
+
+/* METHOD NOTE */
+.meth{font-family:system-ui,sans-serif;font-size:.69rem;color:var(--mist);font-style:italic;padding:.65rem 1.2rem;background:var(--cream);border-top:1px solid var(--cream-dk);line-height:1.6}
+
+/* HARM */
+.harm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem}
+.harm-card{background:var(--cream);border-radius:5px;padding:.9rem 1rem;border:1px solid var(--cream-dk);position:relative;overflow:hidden}
+.harm-card-accent{position:absolute;top:0;left:0;right:0;height:3px}
+.harm-icon{font-size:1.3rem;margin-bottom:.4rem;display:block}
+.harm-name{font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mist);margin-bottom:.28rem}
+.harm-val{font-family:Georgia,serif;font-size:1.1rem;color:var(--forest);line-height:1;margin-bottom:.15rem}
+.harm-pct{font-family:'Courier New',monospace;font-size:.68rem;font-weight:600;margin-bottom:.4rem}
+.harm-desc{font-family:system-ui,sans-serif;font-size:.7rem;line-height:1.5;color:#5a7a6a;font-weight:300}
+.harm-bar-track{height:4px;background:rgba(0,0,0,.07);border-radius:2px;margin-top:.65rem;overflow:hidden}
+.harm-bar-fill{height:100%;border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.wf-wrap{position:relative;height:220px;margin-bottom:.5rem}
+.wf-legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;margin-top:.5rem}
+.wf-leg-item{display:flex;align-items:center;gap:.35rem;font-family:system-ui,sans-serif;font-size:.68rem;color:#5a7a6a}
+.wf-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.harm-tabs{display:flex;gap:0;margin-bottom:1rem;border-bottom:1px solid var(--cream-dk);overflow-x:auto;scrollbar-width:none}
+.harm-tabs::-webkit-scrollbar{display:none}
+.htab{font-family:system-ui,sans-serif;font-size:.74rem;font-weight:500;padding:.45rem .85rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--mist);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.htab.on{color:var(--forest);border-bottom-color:#c94040}
+.hview{display:none}
+.hview.on{display:block}
+.src-chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.9rem;padding-top:.65rem;border-top:1px solid var(--cream-dk)}
+.src-chip{font-family:'Courier New',monospace;font-size:.58rem;padding:.2rem .5rem;background:rgba(200,150,62,.1);border:1px solid rgba(200,150,62,.22);color:var(--gold);border-radius:3px}
+
+/* SOURCES */
+.src-item{display:flex;gap:.6rem;padding:.5rem 0;border-bottom:1px solid rgba(237,230,214,.5);align-items:baseline}
+.src-item:last-child{border-bottom:none}
+.src-n{font-family:'Courier New',monospace;font-size:.58rem;color:var(--gold);flex-shrink:0}
+.src-t{font-family:system-ui,sans-serif;font-size:.73rem;line-height:1.6;color:#4a6055;font-weight:300}
+.src-t em{font-style:italic;color:var(--forest-mid)}
+
+/* SENSITIVITY */
+.rng-card{background:var(--cream);border:1px solid var(--cream-dk);border-radius:5px;padding:.85rem 1rem;position:relative;overflow:hidden}
+.rng-card-accent{position:absolute;top:0;left:0;bottom:0;width:3px}
+.rng-card-title{font-family:'Courier New',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mist);margin-bottom:.3rem}
+.rng-card-vals{display:flex;align-items:baseline;gap:.4rem;flex-wrap:wrap;margin-bottom:.3rem}
+.rng-lo{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--sage)}
+.rng-mid{font-family:system-ui,sans-serif;font-size:1rem;font-weight:700;color:var(--forest)}
+.rng-hi{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--red)}
+.rng-arrow{font-size:.68rem;color:var(--mist)}
+.rng-src{font-family:system-ui,sans-serif;font-size:.65rem;color:var(--mist);font-style:italic;line-height:1.45}
+
+/* METHODOLOGY TABS */
+#meth-tabs{overflow-x:auto;scrollbar-width:none}
+#meth-tabs::-webkit-scrollbar{display:none}
+
+/* ANIMATIONS */
+@keyframes pop{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.pop{animation:pop .28s ease both}
+
+/* embed mode (?embed=1): the hosting slide provides the header */
+body.embed header{display:none}
+
+</style>
+</head>
+<body>
+<script>if(new URLSearchParams(location.search).has('embed'))document.body.classList.add('embed');</script>
+
+<header>
+  <div class="hdr">
+    <div style="display:flex;align-items:baseline">
+      <span class="hdr-title">True Cost Calculator</span>
+      <span class="hdr-sub">Externalities of Daily Life</span>
+    </div>
+    <div class="hdr-right">
+      <button class="hdr-reset" onclick="resetAll()">↺ Reset Defaults</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- ══ DISCLAIMER ══ -->
+  <div class="disclaimer sans">⚠️ <strong>This tool is for educational purposes only.</strong> The values shown — while based on the academic sources cited — are estimates, not precise measurements of any individual's actual impact.</div>
+
+  <!-- ══ CONTROLS ══ -->
+  <div class="ctrl-col">
+
+    <!-- TRANSPORT -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">🚗</span><span class="ph-title">Transportation</span><span class="ph-chevron">▾</span></div>
+      <div class="panel-body-wrap"><div class="pb">
+        <div class="cat">Vehicle</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Primary vehicle type</span></div>
+          <div class="seg" id="sg-vehicle">
+            <button class="seg-btn on" onclick="setSeg('vehicle','ev',this)">⚡ EV</button>
+            <button class="seg-btn" onclick="setSeg('vehicle','hybrid',this)">🔋 Hybrid</button>
+            <button class="seg-btn" onclick="setSeg('vehicle','gas',this)">⛽ Gas</button>
+            <button class="seg-btn" onclick="setSeg('vehicle','none',this)">🚶 No Car</button>
+          </div>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Miles driven per year</span><span class="cv" id="dv-miles">12,000 mi</span></div>
+          <input type="range" id="sl-miles" min="0" max="25000" step="500" value="12000" aria-label="Miles driven per year" oninput="slVal('miles',this.value);go()">
+          <div class="tick-row"><span class="tick">0</span><span class="tick">← US avg ~13k</span><span class="tick">25k</span></div>
+        </div>
+        <div class="cat">Air Travel</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Short-haul flights / year <small style="color:var(--mist);font-size:.72em">&lt;3 hrs</small></span><span class="cv" id="dv-fshort">2</span></div>
+          <input type="range" id="sl-fshort" min="0" max="12" step="1" value="2" aria-label="Short-haul flights per year" oninput="slVal('fshort',this.value);go()">
+          <div class="tick-row"><span class="tick">0</span><span class="tick">← US avg ~3</span><span class="tick">12</span></div>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Long-haul flights / year <small style="color:var(--mist);font-size:.72em">&gt;3 hrs</small></span><span class="cv" id="dv-flong">1</span></div>
+          <input type="range" id="sl-flong" min="0" max="8" step="1" value="1" aria-label="Long-haul flights per year" oninput="slVal('flong',this.value);go()">
+          <div class="tick-row"><span class="tick">0</span><span class="tick">← US avg &lt;1</span><span class="tick">8</span></div>
+        </div>
+        <div class="cat">Public Transit</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Bus / train miles per year</span><span class="cv" id="dv-transit">500 mi</span></div>
+          <input type="range" id="sl-transit" min="0" max="10000" step="100" value="500" aria-label="Bus and train miles per year" oninput="slVal('transit',this.value);go()">
+        </div>
+      </div></div>
+    </div>
+
+    <!-- FOOD -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">🌿</span><span class="ph-title">Food &amp; Diet</span><span class="ph-chevron">▾</span></div>
+      <div class="panel-body-wrap"><div class="pb">
+        <div class="cat">Diet Pattern</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Primary diet type</span></div>
+          <div class="seg" id="sg-diet">
+            <button class="seg-btn" onclick="setSeg('diet','vegan',this)">🌱 Vegan</button>
+            <button class="seg-btn" onclick="setSeg('diet','veggie',this)">🥦 Veggie</button>
+            <button class="seg-btn on" onclick="setSeg('diet','mixed',this)">🍽️ Mixed</button>
+            <button class="seg-btn" onclick="setSeg('diet','meat',this)">🥩 Meat-heavy</button>
+          </div>
+        </div>
+        <div class="cr" style="margin-top:.8rem">
+          <div class="cl"><span class="cn">Food waste level</span><span class="cv" id="dv-waste">Average</span></div>
+          <input type="range" id="sl-waste" min="0" max="2" step="1" value="1" aria-label="Food waste level" oninput="slVal('waste',this.value);go()">
+          <div class="tick-row"><span class="tick">Minimal</span><span class="tick">Average</span><span class="tick">High</span></div>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Local / seasonal sourcing</span><span class="cv" id="dv-local">Some local</span></div>
+          <input type="range" id="sl-local" min="0" max="2" step="1" value="1" aria-label="Local and seasonal sourcing level" oninput="slVal('local',this.value);go()">
+          <div class="tick-row"><span class="tick">Mostly imported</span><span class="tick">Some local</span><span class="tick">Mostly local</span></div>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Takeout / delivery meals per week</span><span class="cv" id="dv-takeout">2</span></div>
+          <input type="range" id="sl-takeout" min="0" max="10" step="1" value="2" aria-label="Takeout or delivery meals per week" oninput="slVal('takeout',this.value);go()">
+          <div class="tick-row"><span class="tick">0</span><span class="tick">← US avg ~1/wk</span><span class="tick">10</span></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ENERGY -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">⚡</span><span class="ph-title">Home Energy</span><span class="ph-chevron">▾</span></div>
+      <div class="panel-body-wrap"><div class="pb">
+        <div class="cat">Electricity</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Grid power source</span></div>
+          <select id="sel-grid" aria-label="Grid power source" onchange="s.grid=this.value;go()">
+            <option value="coal">Coal-heavy grid</option>
+            <option value="natgas" selected>Natural Gas (avg US)</option>
+            <option value="mixed">Average US mix</option>
+            <option value="nuclear">Nuclear-heavy grid</option>
+            <option value="wind">Wind-heavy grid</option>
+            <option value="solar">Solar-heavy grid</option>
+          </select>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Annual electricity use</span><span class="cv" id="dv-kwh">10,500 kWh</span></div>
+          <input type="range" id="sl-kwh" min="1000" max="35000" step="500" value="10500" aria-label="Annual electricity use in kilowatt-hours" oninput="slVal('kwh',this.value);go()">
+          <div class="tick-row"><span class="tick">1k kWh</span><span class="tick">US avg ~10.5k</span><span class="tick">35k kWh</span></div>
+        </div>
+        <div class="cat">Heating</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Home heating source</span></div>
+          <div class="seg" id="sg-heat">
+            <button class="seg-btn on" onclick="setSeg('heat','natgas',this)">🔥 Gas</button>
+            <button class="seg-btn" onclick="setSeg('heat','heatpump',this)">🌡️ Heat Pump</button>
+            <button class="seg-btn" onclick="setSeg('heat','electric',this)">⚡ Electric</button>
+            <button class="seg-btn" onclick="setSeg('heat','minimal',this)">☀️ Minimal</button>
+          </div>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">Home size (sq ft)</span><span class="cv" id="dv-sqft">1,800 sq ft</span></div>
+          <input type="range" id="sl-sqft" min="400" max="4000" step="100" value="1800" aria-label="Home size in square feet" oninput="slVal('sqft',this.value);go()">
+          <div class="tick-row"><span class="tick">Small apt</span><span class="tick">← US median ~2,200</span><span class="tick">4,000 sq ft</span></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- CONSUMER -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">🛍️</span><span class="ph-title">Consumer Choices</span><span class="ph-chevron">▾</span></div>
+      <div class="panel-body-wrap"><div class="pb">
+        <div class="cat">Clothing &amp; Electronics</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">New clothing items / month</span><span class="cv" id="dv-clothes">2</span></div>
+          <input type="range" id="sl-clothes" min="0" max="11" step="1" value="2" aria-label="New clothing items per month" oninput="slVal('clothes',this.value);go()">
+          <div class="tick-row"><span class="tick">0</span><span class="tick">← US avg ~4–6/mo</span><span class="tick">11</span></div>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">New electronic devices / year</span><span class="cv" id="dv-elec">1</span></div>
+          <input type="range" id="sl-elec" min="0" max="8" step="1" value="1" aria-label="New electronic devices per year" oninput="slVal('elec',this.value);go()">
+          <div class="tick-row"><span class="tick">0</span><span class="tick">← US avg ~2–3</span><span class="tick">8</span></div>
+        </div>
+        <div class="cat">Lifestyle</div>
+        <div class="cr">
+          <div class="cl"><span class="cn">General consumer spending level</span></div>
+          <div class="seg" id="sg-spend">
+            <button class="seg-btn" onclick="setSeg('spend','minimal',this)">Minimal</button>
+            <button class="seg-btn on" onclick="setSeg('spend','average',this)">Average</button>
+            <button class="seg-btn" onclick="setSeg('spend','high',this)">High</button>
+            <button class="seg-btn" onclick="setSeg('spend','very-high',this)">Very High</button>
+          </div>
+        </div>
+        <div class="cr" style="margin-top:.8rem">
+          <div class="cl"><span class="cn">Daily streaming / internet use <small style="color:var(--mist);font-size:.72em">data center + network only</small></span><span class="cv" id="dv-stream">4 hrs/day</span></div>
+          <input type="range" id="sl-stream" min="0" max="10" step="1" value="4" aria-label="Daily streaming and internet hours" oninput="slVal('stream',this.value);go()">
+          <div class="tick-row"><span class="tick">0 hrs</span><span class="tick">← US avg ~3 hrs</span><span class="tick">10 hrs</span></div>
+        </div>
+        <div class="cr">
+          <div class="cl"><span class="cn">AI chatbot prompts per day</span><span class="cv" id="dv-ai">10 prompts/day</span></div>
+          <input type="range" id="sl-ai" min="0" max="50" step="1" value="10" aria-label="AI chatbot prompts per day" oninput="slVal('ai',this.value);go()">
+          <div class="tick-row"><span class="tick">0</span><span class="tick">← typical user ~10</span><span class="tick">50</span></div>
+        </div>
+      </div></div>
+    </div>
+  </div><!-- /ctrl-col -->
+
+  <!-- ══ OUTPUT ══ -->
+  <div class="out-col">
+
+    <!-- TOTAL -->
+    <div id="results-top" class="total">
+      <div>
+        <div class="t-eye">Total Annual Externality Cost</div>
+        <div class="t-num" id="t-num">$—</div>
+        <div class="t-sub sans">Unpriced social &amp; environmental costs imposed on society per year</div>
+      </div>
+      <div class="t-pills">
+        <div class="pill" id="p-co2">CO₂e: — t/yr</div>
+      </div>
+    </div>
+
+
+    <div class="insight sans" id="insight-box">
+      <strong>💡 Insight:</strong> <span id="insight-text"></span>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+      <div class="card">
+        <div class="card-bar" id="cb-transport" style="background:var(--sage)"></div>
+        <span class="card-ico">🚗</span>
+        <div class="card-lbl">Transportation</div>
+        <div class="card-val" id="cv-transport">$—</div>
+        <div class="card-unit">per year</div>
+        <div class="card-pct" id="cp-transport" style="color:var(--sage)"></div>
+      </div>
+      <div class="card">
+        <div class="card-bar" id="cb-food" style="background:var(--gold)"></div>
+        <span class="card-ico">🌿</span>
+        <div class="card-lbl">Food</div>
+        <div class="card-val" id="cv-food">$—</div>
+        <div class="card-unit">per year</div>
+        <div class="card-pct" id="cp-food" style="color:var(--gold)"></div>
+      </div>
+      <div class="card">
+        <div class="card-bar" id="cb-energy" style="background:var(--blue)"></div>
+        <span class="card-ico">⚡</span>
+        <div class="card-lbl">Energy</div>
+        <div class="card-val" id="cv-energy">$—</div>
+        <div class="card-unit">per year</div>
+        <div class="card-pct" id="cp-energy" style="color:var(--blue)"></div>
+      </div>
+      <div class="card">
+        <div class="card-bar" id="cb-consumer" style="background:var(--purple)"></div>
+        <span class="card-ico">🛍️</span>
+        <div class="card-lbl">Consumer</div>
+        <div class="card-val" id="cv-consumer">$—</div>
+        <div class="card-unit">per year</div>
+        <div class="card-pct" id="cp-consumer" style="color:var(--purple)"></div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">📊</span><span class="ph-title">Externality Breakdown</span><span class="ph-chevron">▾</span></div>
+      <div class="pb">
+        <div class="chart-tabs">
+          <button class="ctab on" onclick="switchTab('bar',this)">By Category</button>
+          <button class="ctab" onclick="switchTab('donut',this)">Composition</button>
+          <button class="ctab" onclick="switchTab('range',this)">Sensitivity Analysis</button>
+        </div>
+        <div class="cview on" id="cv-bar"><div class="chart-wrap"><canvas id="ch-bar" role="img" aria-label="Bar chart of annual externality cost by activity; the same data appears in the line-item breakdown table below"></canvas></div></div>
+        <div class="cview" id="cv-donut"><div class="chart-wrap"><canvas id="ch-donut" role="img" aria-label="Donut chart showing the share of total externality cost from transportation, food, energy, and consumer categories"></canvas></div></div>
+        <div class="cview" id="cv-range">
+          <p style="font-family:system-ui,sans-serif;font-size:.78rem;color:#5a7a6a;margin-bottom:1rem;line-height:1.6;font-weight:300">
+            Each bar shows the <strong style="color:var(--forest)">low, central, and high</strong> externality estimates for your current inputs, drawn from different published sources and parameter assumptions (e.g. low/central/high Social Cost of Carbon, different MPG assumptions, alternative diet studies). The central bar is what the calculator uses.
+          </p>
+          <div style="position:relative;height:340px"><canvas id="ch-range" role="img" aria-label="Sensitivity analysis chart showing low, central, and high externality estimates for each category; exact values appear in the cards below"></canvas></div>
+          <div id="range-detail" style="margin-top:1.25rem;display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem"></div>
+          <div style="font-family:system-ui,sans-serif;font-size:.71rem;color:var(--mist);font-style:italic;margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--cream-dk);line-height:1.6">
+            <strong style="color:var(--gold);font-style:normal">Parameter ranges: </strong>
+            SCC: $51 (IWG 2021 interim) / $190 (EPA 2023 central, 2% discount) / $308 (Rennert et al. 2022 at 1.5%) &nbsp;·&nbsp;
+            MPG assumptions: best-in-class / average / older fleet &nbsp;·&nbsp;
+            Diet: True Price low / FAO central / Pirog & Benjamin high &nbsp;·&nbsp;
+            Grid: NREL low / NAS central / Epstein high &nbsp;·&nbsp;
+            Consumer: BEA low / True Price central / Trucost high &nbsp;·&nbsp;
+            AI: Google 0.24 Wh low / Epoch AI 0.3 Wh central / de Vries 3.0 Wh high &nbsp;·&nbsp;
+            Streaming (upstream only): 10 / 18 / 27 g CO₂/hr
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HARM TYPE SECTION -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">⚠️</span><span class="ph-title">What Type of Harm Do These Externalities Cause?</span><span class="ph-chevron">▾</span></div>
+      <div class="pb">
+        <div class="harm-tabs">
+          <button class="htab on" onclick="switchHarm('cards',this)">Harm Categories</button>
+          <button class="htab" onclick="switchHarm('waterfall',this)">Cost Waterfall</button>
+          <button class="htab" onclick="switchHarm('compare',this)">Harm vs. Sector</button>
+        </div>
+
+        <!-- CARDS VIEW -->
+        <div class="hview on" id="hv-cards">
+          <div class="harm-grid" id="harm-grid">
+            <!-- populated by JS -->
+          </div>
+          <div class="src-chips">
+            <span style="font-family:system-ui,sans-serif;font-size:.71rem;color:var(--mist);margin-right:.25rem">Sources:</span>
+            <span class="src-chip">[1] EPA SCC 2023</span>
+            <span class="src-chip">[2] NAS Hidden Costs 2010</span>
+            <span class="src-chip">[3] Epstein et al. 2011</span>
+            <span class="src-chip">[4] FAO True Cost 2021</span>
+            <span class="src-chip">[6] IPCC AR6 2022</span>
+            <span class="src-chip">[8] Ellen MacArthur 2017</span>
+          </div>
+        </div>
+
+        <!-- WATERFALL VIEW -->
+        <div class="hview" id="hv-waterfall">
+          <div class="wf-wrap"><canvas id="ch-waterfall" role="img" aria-label="Bar chart of externality costs by harm type; exact values appear in the legend below"></canvas></div>
+          <div class="wf-legend" id="wf-legend"></div>
+          <div class="src-chips">
+            <span style="font-family:system-ui,sans-serif;font-size:.71rem;color:var(--mist);margin-right:.25rem">Sources:</span>
+            <span class="src-chip">[1] EPA SCC 2023</span>
+            <span class="src-chip">[2] NAS 2010</span>
+            <span class="src-chip">[3] Epstein 2011</span>
+            <span class="src-chip">[4] FAO 2021</span>
+          </div>
+        </div>
+
+        <!-- SECTOR COMPARE VIEW -->
+        <div class="hview" id="hv-compare">
+          <p style="font-family:system-ui,sans-serif;font-size:.78rem;color:#5a7a6a;margin-bottom:1rem;font-weight:300;line-height:1.6">
+            How your personal externalities compare to the <strong>harm-type breakdown</strong> reported in the academic literature for each sector. Bars show your cost vs. the sector-wide proportion from published studies.
+          </p>
+          <div class="wf-wrap" style="height:280px"><canvas id="ch-harm-compare" role="img" aria-label="Stacked bar chart comparing your sector costs against harm-type proportions reported in the academic literature"></canvas></div>
+          <div class="src-chips">
+            <span style="font-family:system-ui,sans-serif;font-size:.71rem;color:var(--mist);margin-right:.25rem">Sector proportions from:</span>
+            <span class="src-chip">[2] NAS 2010</span>
+            <span class="src-chip">[3] Epstein 2011</span>
+            <span class="src-chip">[4] FAO 2021</span>
+            <span class="src-chip">[5] True Price 2022</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BREAKDOWN TABLE -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">📋</span><span class="ph-title">Line-Item Breakdown</span><span class="ph-chevron">▾</span></div>
+      <div class="table-scroll"><table class="bk-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Your Inputs</th>
+            <th style="width:100px">Impact</th>
+            <th>Annual Cost</th>
+          </tr>
+        </thead>
+        <tbody id="bk-body"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mist)">Loading…</td></tr></tbody>
+      </table></div>
+      <div class="meth">All figures in 2024 USD. Social Cost of Carbon: $190/tCO₂e (EPA, 2023, 2.0% near-term discount rate). Diet externalities from FAO True Cost of Food (2021) &amp; True Price Foundation (2022). Vehicle rates from NAS Hidden Costs of Energy (2010) + EPA SCC. Flight RF multiplier: 1.9× (IPCC AR6, 2022). Grid externalities: Epstein et al. (2011) for coal; NREL lifecycle assessments for renewables/nuclear. AI use: 0.24–3.0 Wh/prompt (Google 2025; Epoch AI 2025; de Vries 2023) at US-average grid rates. Streaming: upstream (data centre + network) share only, 28% of full-chain per IEA (2020) — device electricity is already in the Home Energy total.</div>
+    </div>
+
+
+    <!-- SOURCES -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">📚</span><span class="ph-title">Academic Sources &amp; Methodology</span><span class="ph-chevron">▾</span></div>
+      <div class="pb">
+        <div class="src-item"><div class="src-n">[1]</div><div class="src-t">U.S. EPA. (2023). <em>Report on the social cost of greenhouse gases: Estimates incorporating recent scientific advances.</em> Central estimate: $190/tCO₂e at a 2.0% near-term Ramsey discount rate (range: $120 at 2.5% to $340 at 1.5%). Applied to all carbon emissions throughout this calculator.</div></div>
+        <div class="src-item"><div class="src-n">[2]</div><div class="src-t">National Academies of Sciences. (2010). <em>Hidden Costs of Energy: Unpriced Consequences of Energy Production and Use.</em> National Academies Press. Source for vehicle air-quality externalities ($0.007–$0.014/mile) and natural gas health costs.</div></div>
+        <div class="src-item"><div class="src-n">[3]</div><div class="src-t">Epstein, P.R., et al. (2011). Full cost accounting for the life cycle of coal. <em>Annals of the New York Academy of Sciences, 1219</em>, 73–98. Coal: ~$0.17/kWh climate + $0.08/kWh health &amp; ecosystem externalities.</div></div>
+        <div class="src-item"><div class="src-n">[4]</div><div class="src-t">FAO / UN Food Systems Summit. (2021). <em>True Cost of Food: Measuring what matters to transform our food systems.</em> Basis for the climate/water/land/health decomposition of diet costs. The per-diet US values used here (vegan ~$700/yr, vegetarian ~$1,090/yr, mixed ~$2,100/yr, meat-heavy ~$3,810/yr) are derived by calibrating FAO and True Price [5] decompositions to US consumption patterns.</div></div>
+        <div class="src-item"><div class="src-n">[5]</div><div class="src-t">True Price Foundation. (2022). <em>True Price methodology for food and consumer products.</em> trueprice.org. Per-product environmental and social cost benchmarks used for diet and consumer goods categories.</div></div>
+        <div class="src-item"><div class="src-n">[6]</div><div class="src-t">IPCC. (2022). <em>Climate Change 2022: Mitigation of Climate Change.</em> Working Group III Contribution to AR6. Aviation radiative forcing multiplier of 1.9× applied to CO₂ for non-CO₂ warming effects (contrails, NOx, etc.).</div></div>
+        <div class="src-item"><div class="src-n">[7]</div><div class="src-t">NREL. (2021). <em>Life cycle greenhouse gas emissions from electricity generation: Update.</em> National Renewable Energy Laboratory. Lifecycle CO₂e (g/kWh): solar ~48, wind ~11, nuclear ~12, natural gas ~490, coal ~820.</div></div>
+        <div class="src-item"><div class="src-n">[8]</div><div class="src-t">Ellen MacArthur Foundation. (2017). <em>A new textiles economy: Redesigning fashion's future.</em> The per-garment externality used here ($0.70–$1.20/item, central $0.90) is derived from the report's aggregate estimates of water, chemical pollution, and labor externalities across the textile supply chain.</div></div>
+        <div class="src-item"><div class="src-n">[9]</div><div class="src-t">Xu, M., et al. (2020). Electronic waste: A review of its impacts on human health. <em>Journal of Hazardous Materials, 383</em>, 121199. The per-device externality used here ($60–$180, central $120) is derived from this and related e-waste health-impact literature covering production and end-of-life harms.</div></div>
+        <div class="src-item"><div class="src-n">[10]</div><div class="src-t">Andrae, A.S., &amp; Edler, T. (2015). On global electricity usage of communication technology. <em>Challenges, 6</em>(1), 117–157. Full-chain streaming footprint: ~36–97g CO₂/hr (central 65g). This calculator charges only the upstream 28% share (~18g/hr) — see [24] — because device electricity is already counted in the Home Energy section.</div></div>
+        <div class="src-item"><div class="src-n">[11]</div><div class="src-t">Trucost / TEEB for Business Coalition. (2013). <em>Natural capital at risk: The top 100 externalities of business.</em> (Trucost is now part of S&amp;P Global.) Used for aggregate US per-capita externality benchmark ($18,400/yr) across all sectors. Includes infrastructure, noise, and systemic costs not captured in sector-specific studies.</div></div>
+        <div class="src-item"><div class="src-n">[12]</div><div class="src-t">Rennert, K., et al. (2022). Comprehensive evidence implies a higher social cost of CO₂. <em>Nature, 610</em>, 687–692. https://doi.org/10.1038/s41586-022-05224-9. Central estimate: $185/tCO₂e at 2% discount; $308/tCO₂e at 1.5% discount, used as the upper bound in this calculator's sensitivity analysis.</div></div>
+        <div class="src-item"><div class="src-n">[13]</div><div class="src-t">Lee, D.S., et al. (2021). The contribution of global aviation to anthropogenic climate forcing for 2000 to 2018. <em>Atmospheric Environment, 244</em>, 117834. Aviation radiative forcing range: 1.3× (low) to 2.7× (high), central 1.9×. Used in flight externality sensitivity analysis.</div></div>
+        <div class="src-item"><div class="src-n">[14]</div><div class="src-t">U.S. Census Bureau. (2024). <em>Characteristics of new housing: 2024.</em> Median new single-family home size: 2,210 sq ft. Used to set the home size slider midpoint and tick label.</div></div>
+        <div class="src-item"><div class="src-n">[15]</div><div class="src-t">Federal Highway Administration. (2023). <em>Highway statistics 2023, Table HM-44.</em> U.S. DOT. Average annual miles per licensed driver: ~13,700 in 2023. Used to calibrate the miles-driven slider range and tick label.</div></div>
+        <div class="src-item"><div class="src-n">[16]</div><div class="src-t">PIRG Education Fund. (2023). <em>Fast fashion by the numbers.</em> pirg.org. Average American purchases ~53 new clothing items per year — four times the rate in 2000. Used to set clothing slider midpoint (~4–6 items/month).</div></div>
+        <div class="src-item"><div class="src-n">[17]</div><div class="src-t">US Foods. (2023). <em>2023 diner dispatch: American dining out habits survey.</em> usfoods.com. Americans order takeout or delivery an average of 4.5 times per month (~1 per week). Used to calibrate the takeout/delivery slider midpoint.</div></div>
+        <div class="src-item"><div class="src-n">[18]</div><div class="src-t">DataReportal / SlickText. (2023). <em>Digital 2023: Global overview report; Streaming time statistics.</em> Average American spends ~3 hours and 9 minutes per day on streaming content specifically (distinct from total screen time of ~7 hrs). Used to calibrate the streaming slider midpoint.</div></div>
+        <div class="src-item"><div class="src-n">[19]</div><div class="src-t">Bureau of Transportation Statistics. (2023). <em>Airline traffic data: Domestic and international enplanements.</em> U.S. DOT. Domestic enplanements ~819M in 2023; international ~100M. Per-capita rates (~2.4 domestic, ~0.3 international flights/person/yr) used to calibrate flight slider ranges and midpoints.</div></div>
+        <div class="src-item"><div class="src-n">[20]</div><div class="src-t">U.S. Energy Information Administration. (2023). <em>Residential energy consumption: Average US household electricity use.</em> eia.gov. US average household electricity consumption: ~10,500 kWh/yr. Used as the default value for the annual electricity slider.</div></div>
+        <div class="src-item"><div class="src-n">[21]</div><div class="src-t">Google. (2025). <em>Measuring the environmental impact of delivering AI at Google scale.</em> arXiv:2508.15734. Measured median Gemini text prompt: 0.24 Wh energy, 0.03 gCO₂e, 0.26 mL water. Used as the lower-bound AI energy estimate.</div></div>
+        <div class="src-item"><div class="src-n">[22]</div><div class="src-t">de Vries, A. (2023). The growing energy footprint of artificial intelligence. <em>Joule, 7</em>(10), 2191–2194. Model-based estimate of ~3 Wh per LLM query (GPT-3.5-era hardware). Used as the upper-bound AI energy estimate; Epoch AI (2025) places modern deployments near 0.3 Wh, used as the central value.</div></div>
+        <div class="src-item"><div class="src-n">[23]</div><div class="src-t">Li, P., Yang, J., Islam, M.A., &amp; Ren, S. (2023). Making AI less "thirsty": Uncovering and addressing the secret water footprint of AI models. arXiv:2304.03271. Data-center cooling water: ~500 mL per 10–50 medium-length responses (GPT-3 era). Basis for the water share of the AI harm decomposition.</div></div>
+        <div class="src-item"><div class="src-n">[24]</div><div class="src-t">Kamiya, G. / International Energy Agency. (2020). <em>The carbon footprint of streaming video: Fact-checking the headlines.</em> iea.org. Streaming energy split: devices 72%, data transmission 23%, data centres 5%. Basis for the 28% upstream share applied to the streaming externality to avoid double-counting device electricity already in Home Energy.</div></div>
+        <div class="src-item"><div class="src-n">[25]</div><div class="src-t">Federal Transit Administration. (2010). <em>Public Transportation's Role in Responding to Climate Change.</em> U.S. DOT. National average transit emissions: 0.45 lb (~204 g) CO₂ per passenger-mile, vs. 0.96 lb for a single-occupancy private vehicle. Basis for the public transit externality rate.</div></div>
+      </div>
+    </div>
+
+    <!-- METHODOLOGY TABS -->
+    <div class="panel">
+      <div class="ph"><span class="ph-icon">🔬</span><span class="ph-title">Methodology — How This Calculator Works</span><span class="ph-chevron">▾</span></div>
+      <div class="pb">
+        <div class="chart-tabs" id="meth-tabs">
+          <button class="ctab on" onclick="switchMeth('notincluded',this)">What's Not Included</button>
+          <button class="ctab" onclick="switchMeth('scc',this)">Social Cost of Carbon</button>
+          <button class="ctab" onclick="switchMeth('transport',this)">Transportation</button>
+          <button class="ctab" onclick="switchMeth('food',this)">Food</button>
+          <button class="ctab" onclick="switchMeth('energy',this)">Energy</button>
+          <button class="ctab" onclick="switchMeth('consumer',this)">Consumer Goods</button>
+        </div>
+
+        <!-- BENCHMARK TAB -->
+        <div class="hview on" id="mv-notincluded">
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">
+            This calculator focuses on externalities that are <strong>directly responsive to individual lifestyle choices</strong>. Several significant externality categories from the aggregate literature are intentionally excluded because they are systemic, location-dependent, or not calculable from the inputs available here. The key sources for the excluded categories are listed below.
+          </p>
+          <table class="bk-table">
+            <thead><tr><th>Excluded Category</th><th>Est. $/person/yr</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td><div class="td-cat">🛣️ Road infrastructure</div></td><td class="td-desc">~$1,200</td><td class="td-desc">NAS (2010) Ch. 5 [2]</td></tr>
+              <tr><td><div class="td-cat">🔊 Noise pollution</div></td><td class="td-desc">~$800</td><td class="td-desc">NAS (2010) [2]; WHO Environmental Noise Guidelines (2018)</td></tr>
+              <tr><td><div class="td-cat">💧 Water &amp; sewer infrastructure</div></td><td class="td-desc">~$600</td><td class="td-desc">Trucost / TEEB (2013) [11]</td></tr>
+              <tr><td><div class="td-cat">🏥 Healthcare system burden</div></td><td class="td-desc">~$1,500</td><td class="td-desc">NAS (2010) [2]; Epstein et al. (2011) [3]</td></tr>
+              <tr><td><div class="td-cat">🛡️ Military fuel-security</div></td><td class="td-desc">~$2,000+</td><td class="td-desc">Stern, R.J. (2010). United States cost of military force projection in the Persian Gulf. <em>Energy Policy, 38</em>(6), 2816–2825</td></tr>
+              <tr><td><div class="td-cat"><strong>Total excluded</strong></div></td><td class="td-desc"><strong>~$6,100–$8,100</strong></td><td class="td-desc">NAS (2010) [2]; Trucost / TEEB (2013) [11]</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SCC TAB -->
+        <div class="hview" id="mv-scc">
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">The <strong>Social Cost of Carbon (SCC)</strong> is the single most important parameter in this calculator. It converts every tonne of CO₂ equivalent emitted into a dollar cost representing the present value of all future damages that emission causes — sea-level rise, extreme weather, agricultural disruption, ecosystem loss, and human mortality from heat stress.</p>
+          <table class="bk-table" style="margin-bottom:1rem">
+            <thead><tr><th>Scenario</th><th>SCC Value</th><th>Discount Rate</th><th>Source &amp; Context</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">Low estimate</td><td class="td-desc">$51/tCO₂e</td><td class="td-desc">3%</td><td class="td-desc">Interagency Working Group interim estimate (2021), restoring the pre-2017 methodology. Now widely considered too low.</td></tr>
+              <tr><td class="td-cat"><strong>Central (used here)</strong></td><td class="td-desc"><strong>$190/tCO₂e</strong></td><td class="td-desc">2.0%</td><td class="td-desc">EPA (2023) revised estimate. Uses updated damage functions, lower near-term Ramsey discount rate, and comprehensive global impact accounting. (EPA's full range: $120 at 2.5% to $340 at 1.5%.)</td></tr>
+              <tr><td class="td-cat">High estimate</td><td class="td-desc">$308/tCO₂e</td><td class="td-desc">1.5%</td><td class="td-desc">Rennert et al. (2022), <em>Nature</em> — central estimate $185 at 2%; $308 at a 1.5% discount rate. Comprehensive evidence including mortality, agriculture, energy, and coastal damages.</td></tr>
+            </tbody>
+          </table>
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:.5rem"><strong>How the SCC is applied:</strong> For every activity that produces CO₂ equivalent emissions, the calculator multiplies kg of CO₂e by (SCC ÷ 1,000) to get dollars. For example: driving a gas car 12,000 miles at 0.355 kg CO₂/mile produces 4,260 kg = 4.26 tonnes CO₂. At $190/tonne: <strong>4.26 × $190 = $809</strong> in climate damages. Air quality and other externalities are added separately using NAS (2010) rates.</p>
+        </div>
+
+        <!-- TRANSPORT TAB -->
+        <div class="hview" id="mv-transport">
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">Transportation externalities come from three independent sources combined:</p>
+          <table class="bk-table" style="margin-bottom:1rem">
+            <thead><tr><th>Input</th><th>How Calculated</th><th>Key Values</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">Gas car carbon</td><td class="td-desc">Miles × (8.887 kg CO₂/gal ÷ MPG) ÷ 1000 × SCC</td><td class="td-desc">25 MPG avg → 0.355 kg/mi → $0.0675/mi climate cost</td><td class="td-desc">EPA combustion chemistry; EPA 2023 fleet MPG</td></tr>
+              <tr><td class="td-cat">EV carbon</td><td class="td-desc">Miles ÷ 3.5 mi/kWh × grid climate rate ($/kWh)</td><td class="td-desc">3.5 mi/kWh efficiency; zero tailpipe, upstream grid-dependent</td><td class="td-desc">EPA 2023 EV efficiency data</td></tr>
+              <tr><td class="td-cat">Air quality (all vehicles)</td><td class="td-desc">Miles × fixed $/mi rate by vehicle type</td><td class="td-desc">Gas: $0.014/mi; Hybrid: $0.007/mi; EV: $0.001/mi</td><td class="td-desc">NAS (2010) Table ES-1, APEEP damage model</td></tr>
+              <tr><td class="td-cat">Short-haul flights</td><td class="td-desc">Flights × 0.255 kg/pax-mi × 500 mi × RF 1.9 ÷ 1000 × SCC</td><td class="td-desc">RF×1.9 accounts for contrail warming, NOx-ozone, water vapor</td><td class="td-desc">ICAO (2023); IPCC AR6 (2022); Lee et al. (2021)</td></tr>
+              <tr><td class="td-cat">Long-haul flights</td><td class="td-desc">Flights × 0.195 kg/pax-mi × 3,500 mi × RF 1.9 ÷ 1000 × SCC</td><td class="td-desc">Lower per-mile rate reflects cruise efficiency</td><td class="td-desc">ICAO (2023); IPCC AR6 (2022)</td></tr>
+              <tr><td class="td-cat">Public transit</td><td class="td-desc">Miles × (0.204 kg CO₂/pax-mi × SCC ÷ 1000 + $0.001/mi air quality)</td><td class="td-desc">FTA national average across bus and rail at real-world occupancy (~0.45 lb/pax-mi vs ~0.96 lb for a solo car — about half the footprint of driving, not zero). Uses average rather than marginal emissions, consistent with the rest of the calculator.</td><td class="td-desc">FTA (2010) [25]</td></tr>
+              <tr><td class="td-cat">Average miles default</td><td class="td-desc">Slider default: 12,000 mi. Max: 25,000 mi</td><td class="td-desc">US avg: ~13,700/yr per licensed driver (FHWA 2023)</td><td class="td-desc">FHWA Highway Statistics 2023 [15]</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FOOD TAB -->
+        <div class="hview" id="mv-food">
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">Food externalities are structured as four independent cost streams (climate, water, land, health) drawn directly from FAO (2021) decomposition tables, then adjusted by waste and sourcing multipliers:</p>
+          <table class="bk-table" style="margin-bottom:1rem">
+            <thead><tr><th>Diet Type</th><th>Climate $/yr</th><th>Water $/yr</th><th>Land $/yr</th><th>Health $/yr</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">Vegan</td><td class="td-desc">$420</td><td class="td-desc">$90</td><td class="td-desc">$130</td><td class="td-desc">$60</td><td class="td-desc"><strong>$700</strong></td></tr>
+              <tr><td class="td-cat">Vegetarian</td><td class="td-desc">$580</td><td class="td-desc">$140</td><td class="td-desc">$190</td><td class="td-desc">$180</td><td class="td-desc"><strong>$1,090</strong></td></tr>
+              <tr><td class="td-cat">Mixed (omnivore)</td><td class="td-desc">$1,050</td><td class="td-desc">$320</td><td class="td-desc">$490</td><td class="td-desc">$240</td><td class="td-desc"><strong>$2,100</strong></td></tr>
+              <tr><td class="td-cat">Meat-heavy</td><td class="td-desc">$2,100</td><td class="td-desc">$680</td><td class="td-desc">$750</td><td class="td-desc">$280</td><td class="td-desc"><strong>$3,810</strong></td></tr>
+            </tbody>
+          </table>
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:.5rem">These base values are then multiplied by a <strong>waste factor</strong> (0.75 minimal / 1.0 average / 1.35 high, based on the US average food waste rate of ~30%; ReFED 2021) and a <strong>local sourcing discount</strong> (1.0 → 0.74, based on Weber &amp; Matthews 2008 food-miles research). An additional waste externality of up to $220/yr (EPA landfill methane) is added separately.</p>
+        </div>
+
+        <!-- ENERGY TAB -->
+        <div class="hview" id="mv-energy">
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">Grid electricity externalities are computed per-kWh using lifecycle rates from three independent literature sources. The default electricity use of 10,500 kWh/yr matches the EIA national residential average (EIA 2023) [20].</p>
+          <table class="bk-table" style="margin-bottom:1rem">
+            <thead><tr><th>Grid Source</th><th>Climate $/kWh</th><th>Air Quality $/kWh</th><th>Ecosystem $/kWh</th><th>Total $/kWh</th><th>CO₂e g/kWh</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">Coal</td><td class="td-desc">$0.156</td><td class="td-desc">$0.082</td><td class="td-desc">$0.019</td><td class="td-desc"><strong>$0.257</strong></td><td class="td-desc">820 g/kWh</td></tr>
+              <tr><td class="td-cat">Natural Gas (default)</td><td class="td-desc">$0.093</td><td class="td-desc">$0.018</td><td class="td-desc">$0.003</td><td class="td-desc"><strong>$0.114</strong></td><td class="td-desc">490 g/kWh</td></tr>
+              <tr><td class="td-cat">Average US Mix</td><td class="td-desc">$0.076</td><td class="td-desc">$0.028</td><td class="td-desc">$0.007</td><td class="td-desc"><strong>$0.111</strong></td><td class="td-desc">386 g/kWh</td></tr>
+              <tr><td class="td-cat">Nuclear</td><td class="td-desc">$0.002</td><td class="td-desc">$0.001</td><td class="td-desc">$0.004</td><td class="td-desc"><strong>$0.007</strong></td><td class="td-desc">12 g/kWh</td></tr>
+              <tr><td class="td-cat">Wind</td><td class="td-desc">$0.002</td><td class="td-desc">$0.001</td><td class="td-desc">$0.002</td><td class="td-desc"><strong>$0.005</strong></td><td class="td-desc">11 g/kWh</td></tr>
+              <tr><td class="td-cat">Solar</td><td class="td-desc">$0.009</td><td class="td-desc">$0.001</td><td class="td-desc">$0.001</td><td class="td-desc"><strong>$0.011</strong></td><td class="td-desc">48 g/kWh</td></tr>
+            </tbody>
+          </table>
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:.5rem"><strong>Home heating</strong> uses natural gas intensity of 8 therms per 100 sq ft per year (EIA RECS 2020), multiplied by 5.306 kg CO₂/therm (EPA GHG Factors) and the SCC. The home size default is 1,800 sq ft; the US Census Bureau (2024) reports the median new home at 2,210 sq ft [14]. Heat pump and electric heating externalities are captured within the kWh usage slider to avoid double-counting.</p>
+        </div>
+
+        <!-- CONSUMER TAB -->
+        <div class="hview" id="mv-consumer">
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">Consumer goods externalities are calculated per-item or per-category using published damage estimates, then scaled by a spending multiplier:</p>
+          <table class="bk-table" style="margin-bottom:1rem">
+            <thead><tr><th>Category</th><th>Rate</th><th>Derivation</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">Clothing</td><td class="td-desc">$0.90/garment × items/month × 12</td><td class="td-desc">Midpoint of $0.70–$1.20 range. Covers water pollution (textile dyeing = ~20% of global industrial water pollution), labor exploitation, end-of-life waste. US average: ~53–68 garments/yr = ~4–6/month.</td><td class="td-desc">Ellen MacArthur (2017) [8]; PIRG (2023) [16]</td></tr>
+              <tr><td class="td-cat">Electronics</td><td class="td-desc">$120/device</td><td class="td-desc">Midpoint of $60–$180 range. Covers e-waste toxicity (only 17.4% formally recycled globally), cobalt/rare earth mining harms, semiconductor fab energy.</td><td class="td-desc">Xu et al. (2020) [9]; Forti et al. (2020)</td></tr>
+              <tr><td class="td-cat">General shopping</td><td class="td-desc">$340 × spending multiplier</td><td class="td-desc">Baseline supply-chain and end-of-life externalities across all consumer goods. Multiplier: 0.45 (minimal) → 1.0 (average) → 3.2 (very high), calibrated to U.S. BEA personal consumption data.</td><td class="td-desc">True Price (2022) [5]; BEA (2023)</td></tr>
+              <tr><td class="td-cat">Streaming</td><td class="td-desc">~$0.0034/hr (18g CO₂/hr × SCC)</td><td class="td-desc"><strong>Upstream only.</strong> The full streaming chain emits ~65g CO₂/hr (range 36–97g), but IEA analysis splits that energy as devices 72%, data transmission 23%, data centres 5%. Your device's electricity is already counted in the Home Energy kWh slider, so only the upstream 28% (data centres + network ≈ 18g CO₂/hr) is charged here — avoiding double-counting. Upstream infrastructure runs on regional grids, so the home grid selection does not apply.</td><td class="td-desc">Andrae &amp; Edler (2015) [10]; Kamiya / IEA (2020) [24]</td></tr>
+              <tr><td class="td-cat">AI chatbot use</td><td class="td-desc">~$0.01/yr per daily prompt</td><td class="td-desc">0.3 Wh per text prompt (Epoch AI 2025 central; Google measured 0.24 Wh median; de Vries upper bound 3.0 Wh) × US-average grid externality rate ($0.111/kWh). Data centers run on regional grids, so the home grid selection does not apply. Includes ~0.26 mL direct cooling water per prompt; training and hardware manufacturing amortize to small additions per query at current usage scale.</td><td class="td-desc">Google (2025) [21]; de Vries (2023) [22]; Li et al. (2023) [23]</td></tr>
+            </tbody>
+          </table>
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">All consumer externalities include supply-chain impacts across the full lifecycle — not just point-of-sale or use-phase impacts. This is the key distinction between this calculator's approach and simple carbon footprint calculators that only count direct emissions.</p>
+          <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a"><strong>System boundary — avoiding double-counting:</strong> Streaming and AI use both consume electricity in two places: on your device at home, and in off-site data centres and network infrastructure. The home-side electricity is already captured by the Annual Electricity slider in Home Energy, so the Streaming and AI line items count <em>only the off-site (upstream) portion</em>. This is also why those two items use US-average grid rates rather than your selected home grid — Netflix's and OpenAI's data centres don't run on your utility plan. Drawing system boundaries carefully like this is a core practice in lifecycle assessment.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /out-col -->
+</div><!-- /wrap -->
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const DEFS = {vehicle:'ev',miles:12000,fshort:2,flong:1,transit:500,
+  diet:'mixed',waste:1,local:1,takeout:2,
+  grid:'natgas',kwh:10500,heat:'natgas',sqft:1800,
+  clothes:2,elec:1,spend:'average',stream:4,ai:10};
+let s = {...DEFS};
+
+// ═══════════════════════════════════════════════
+// PARAMETERS (academically sourced)
+// ═══════════════════════════════════════════════
+const SCC = 190; // EPA 2023, $/tCO₂e
+
+// Vehicle: kg CO₂/mi → climate $; + direct $/mi for air quality (NAS 2010)
+const vR = {
+  ev:    {co2pmi:0,      air:0.001, other:0.006},
+  hybrid:{co2pmi:0.178,  air:0.007, other:0.006}, // ~50MPG
+  gas:   {co2pmi:0.355,  air:0.014, other:0.006}, // ~25MPG, 8.887 kgCO₂/gal
+  none:  {co2pmi:0,      air:0,     other:0}
+};
+// Flight tonnes CO₂e per flight, IPCC RF×1.9
+const fR = {short:0.255*500*1.9/1000, long:0.195*3500*1.9/1000};
+const transitRate = 0.204*SCC/1000 + 0.001; // FTA national avg 0.45 lb (~204g) CO₂/pax-mi + air quality
+
+// Diet $/yr (FAO 2021, True Price 2022)
+const dietBase = {
+  vegan: {cl:420,  w:90,  la:130, h:60 },
+  veggie:{cl:580,  w:140, la:190, h:180},
+  mixed: {cl:1050, w:320, la:490, h:240},
+  meat:  {cl:2100, w:680, la:750, h:280}
+};
+const wasteMul  = [0.75,1.0,1.35];
+const wasteStr  = ['Minimal','Average','High'];
+const localDis  = [1.0,0.88,0.74];
+const localStr  = ['Mostly imported','Some local','Mostly local'];
+const takeoutPM = 1.85; // $/meal packaging + delivery
+
+// Grid $/kWh (Epstein 2011, NREL 2021, NAS 2010)
+const gR = {
+  coal:  {cl:0.156, air:0.082, eco:0.019},
+  natgas:{cl:0.093, air:0.018, eco:0.003},
+  mixed: {cl:0.076, air:0.028, eco:0.007},
+  nuclear:{cl:0.002,air:0.001, eco:0.004},
+  wind:  {cl:0.002, air:0.001, eco:0.002},
+  solar: {cl:0.009, air:0.001, eco:0.001}
+};
+// Heating: nat gas 8 therms/100sqft (EIA RECS), 5.306 kgCO₂/therm (EPA GHG factors)
+// airsf = air-quality $/sqft/yr, ~12% of climate cost per NAS (2010) for natural gas
+const hR = {
+  natgas:  {co2sf:8*5.306/100/1000, airsf:0.010},
+  heatpump:{co2sf:0, airsf:0}, // captured in kWh
+  electric:{co2sf:0, airsf:0},
+  minimal: {co2sf:2*5.306/100/1000, airsf:0.0025}
+};
+const clothExt = 0.90; // $/garment Ellen MacArthur 2017
+const elecExt  = 120;  // $/device Xu et al. 2020
+const spendMul = {minimal:0.45,average:1.0,high:1.8,'very-high':3.2};
+const spendBase= 340;
+// Streaming: upstream (data center + network) share ONLY — device electricity is
+// already counted in the Home Energy kWh slider. Full-chain rate: 65g CO₂/hr
+// (Andrae & Edler 2015); upstream share 28% (IEA 2020: devices 72%, transmission 23%,
+// data centres 5%) → 18g CO₂/hr. Off-site infrastructure, so home grid does not apply.
+const streamPH = 0.018/1000*SCC;
+// AI chatbot use: Wh per text prompt — Google measured 0.24 median (arXiv:2508.15734),
+// Epoch AI (2025) ~0.3 central, de Vries (2023, Joule) ~3.0 upper bound.
+// Data centers run on regional grids, so externality uses the US-average mix, not the home grid.
+const aiWh = {lo:0.24, mid:0.30, hi:3.0};
+
+const CLR = {transport:'#4a7c59',food:'#c8963e',energy:'#5b9bd5',consumer:'#a07cc5'};
+
+// ═══════════════════════════════════════════════
+// CALC
+// ═══════════════════════════════════════════════
+function calc() {
+  const gr = gR[s.grid];
+  const vr = vR[s.vehicle];
+
+  // Transport
+  let vCl = vr.co2pmi/1000*SCC*s.miles;
+  let vAir = vr.air*s.miles, vOt = vr.other*s.miles;
+  if (s.vehicle==='ev') { vCl=gr.cl*(s.miles/3.5); vAir=gr.air*(s.miles/3.5)*0.25; }
+  const vCost = vCl+vAir+vOt;
+  const fSh = s.fshort*fR.short*SCC;
+  const fLo = s.flong *fR.long *SCC;
+  const trCo = s.transit*transitRate;
+  const transport = vCost+fSh+fLo+trCo;
+
+  // Food
+  const db=dietBase[s.diet], wm=wasteMul[s.waste], ld=localDis[s.local];
+  const fCl=db.cl*wm*ld, fW=db.w*wm*ld, fLa=db.la*wm*ld, fH=db.h;
+  const fWa=(wm-1)*220, fTk=s.takeout*52*takeoutPM;
+  const food = fCl+fW+fLa+fH+fWa+fTk;
+
+  // Energy
+  const gCl=gr.cl*s.kwh, gAir=gr.air*s.kwh, gEc=gr.eco*s.kwh;
+  const hr=hR[s.heat], hCl=hr.co2sf*SCC*s.sqft, hAir=hr.airsf*s.sqft;
+  const energy = gCl+gAir+gEc+hCl+hAir;
+
+  // Consumer
+  const sm=spendMul[s.spend];
+  const cCl=s.clothes*12*clothExt*sm, cEl=s.elec*elecExt;
+  const cSh=spendBase*sm, cSt=s.stream*365*streamPH;
+  const cAI=s.ai*365*(aiWh.mid/1000)*(gR.mixed.cl+gR.mixed.air+gR.mixed.eco);
+  const consumer = cCl+cEl+cSh+cSt+cAI;
+
+  const total=transport+food+energy+consumer;
+  // CO₂e from climate-only dollars (health, water, labor etc. are not carbon).
+  // Pure-climate items counted in full; mixed items use their climate share
+  // from the harm decomposition (fWa 40%, fTk 35%, cSh 30%, cEl 15%).
+  const climate$ = vCl + fSh + fLo + s.transit*0.204*SCC/1000 + fCl
+    + fWa*0.40 + fTk*0.35 + gCl + hCl + cSt + cSh*0.30 + cEl*0.15
+    + s.ai*365*(aiWh.mid/1000)*gR.mixed.cl;
+  return {transport,food,energy,consumer,total,
+    co2:climate$/SCC,
+    d:{vCost,fSh,fLo,trCo,fCl,fW,fLa,fH,fWa,fTk,gCl,gAir,gEc,hCl,hAir,cCl,cEl,cSh,cSt,cAI}};
+}
+
+// ═══════════════════════════════════════════════
+// CANVAS CHART LIBRARY (no external deps)
+// ═══════════════════════════════════════════════
+function getCanvas(id) {
+  const c = document.getElementById(id);
+  const w = c.parentElement.clientWidth || 700;
+  const h = c.parentElement.clientHeight || 300;
+  c.width = w * devicePixelRatio;
+  c.height = h * devicePixelRatio;
+  c.style.width = w+'px'; c.style.height = h+'px';
+  const ctx = c.getContext('2d');
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  ctx.clearRect(0,0,w,h);
+  return {ctx,w,h};
+}
+
+function drawBar(id, labels, values, colors) {
+  const {ctx,w,h} = getCanvas(id);
+  const pad={t:20,r:20,b:60,l:70};
+  const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+  const max=Math.max(...values,1);
+  const n=labels.length, bw=Math.max(18, cw/n*0.55), gap=cw/n;
+
+  // Grid lines
+  ctx.strokeStyle='rgba(200,210,205,0.35)'; ctx.lineWidth=1;
+  for (let i=0;i<=4;i++) {
+    const y=pad.t+ch*(1-i/4);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.fillStyle='#8ca89a'; ctx.font='11px system-ui';
+    ctx.textAlign='right';
+    const v=Math.round(max*i/4);
+    ctx.fillText('$'+(v>=1000?(v/1000).toFixed(0)+'k':v), pad.l-8, y+4);
+  }
+
+  // Bars
+  values.forEach((v,i) => {
+    const bh = Math.max(2, ch*(v/max));
+    const x = pad.l+i*gap+(gap-bw)/2;
+    const y = pad.t+ch-bh;
+    ctx.fillStyle = colors[i % colors.length];
+    // Rounded top
+    const r=3;
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+bw-r,y);
+    ctx.quadraticCurveTo(x+bw,y,x+bw,y+r);
+    ctx.lineTo(x+bw,y+bh); ctx.lineTo(x,y+bh); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.fill();
+
+    // Value label on bar
+    if (v > max*0.05) {
+      ctx.fillStyle='#fff'; ctx.font='bold 10px system-ui'; ctx.textAlign='center';
+      ctx.fillText('$'+(v>=1000?(v/1000).toFixed(0)+'k':Math.round(v)), x+bw/2, y+14);
+    }
+
+    // X label
+    ctx.fillStyle='#8ca89a'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    const lparts=labels[i].split('\n');
+    lparts.forEach((lp,li)=>{
+      ctx.fillText(lp, x+bw/2, pad.t+ch+16+li*13);
+    });
+  });
+
+  // Axis
+  ctx.strokeStyle='rgba(200,210,205,0.5)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
+}
+
+function drawDonut(id, labels, values, colors) {
+  const {ctx,w,h} = getCanvas(id);
+  const total=values.reduce((a,b)=>a+b,0)||1;
+  const cx=w*0.38, cy=h/2, r=Math.min(cx,cy)*0.78, ri=r*0.58;
+
+  let ang=-Math.PI/2;
+  values.forEach((v,i) => {
+    const slice=2*Math.PI*(v/total);
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,ang,ang+slice);
+    ctx.closePath(); ctx.fillStyle=colors[i]; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,ri,ang,ang+slice);
+    ctx.closePath(); ctx.fillStyle='#fdfaf5'; ctx.fill();
+    ang+=slice;
+  });
+
+  // Center text
+  ctx.fillStyle='#1a3028'; ctx.font='bold 15px Georgia';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(total>=1000?'$'+(total/1000).toFixed(1)+'k':'$'+Math.round(total).toLocaleString(), cx, cy-8);
+  ctx.font='11px system-ui'; ctx.fillStyle='#8ca89a';
+  ctx.fillText('total/yr', cx, cy+10);
+
+  // Legend
+  const lx=w*0.72, ly=cy-labels.length*16;
+  labels.forEach((lb,i)=>{
+    const y=ly+i*32;
+    ctx.fillStyle=colors[i]; ctx.fillRect(lx,y,14,14);
+    ctx.fillStyle='#1a3028'; ctx.font='12px system-ui'; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText(lb, lx+20, y);
+    ctx.fillStyle='#8ca89a'; ctx.font='11px system-ui';
+    const pct=Math.round(values[i]/total*100);
+    ctx.fillText('$'+Math.round(values[i]).toLocaleString()+' ('+pct+'%)', lx+20, y+14);
+  });
+}
+
+
+// Chart state
+let activeTab='bar';
+
+function renderCharts(r) {
+  const barColors=['#4a7c59','#7aab8a','#a8cdb5','#c8963e','#e8b86d','#f5d49a','#5b9bd5','#8ec1ea','#a07cc5','#c5a8e8','#c8a0d4','#e0c8f0','#b594d6'];
+  const d=r.d;
+
+  if (activeTab==='bar') {
+    drawBar('ch-bar',
+      ['Vehicle','Flights','Transit','Diet\n(all)','Food\nWaste','Takeout','Grid\nElec','Heating','Clothing','Electronics','Shopping','Streaming','AI\nUse'],
+      [d.vCost,d.fSh+d.fLo,d.trCo,d.fCl+d.fW+d.fLa+d.fH,d.fWa,d.fTk,d.gCl+d.gAir+d.gEc,d.hCl+d.hAir,d.cCl,d.cEl,d.cSh,d.cSt,d.cAI].map(v=>Math.max(0,v)),
+      barColors
+    );
+  } else if (activeTab==='donut') {
+    drawDonut('ch-donut',
+      ['Transportation','Food','Energy','Consumer'],
+      [r.transport,r.food,r.energy,r.consumer],
+      Object.values(CLR)
+    );
+  } else if (activeTab==='range') {
+    drawSensitivityRange();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// UPDATE
+// ═══════════════════════════════════════════════
+function go() {
+  const r=calc(); const d=r.d;
+
+  // Total
+  const tn=document.getElementById('t-num');
+  tn.classList.remove('pop'); void tn.offsetWidth;
+  tn.textContent='$'+Math.round(r.total).toLocaleString();
+  tn.classList.add('pop');
+
+  document.getElementById('p-co2').textContent='CO₂e: ~'+Math.round(r.co2)+' t/yr';
+
+  // Cards
+  const vals=[r.transport,r.food,r.energy,r.consumer];
+  const catK=['transport','food','energy','consumer'];
+  const maxV=Math.max(...vals,1);
+  catK.forEach((k,i)=>{
+    document.getElementById('cv-'+k).textContent='$'+Math.round(vals[i]).toLocaleString();
+    document.getElementById('cb-'+k).style.width=Math.min(100,vals[i]/maxV*100)+'%';
+    document.getElementById('cp-'+k).textContent=Math.round(vals[i]/r.total*100)+'% of total';
+  });
+
+  // Insight
+  const bigI=vals.indexOf(Math.max(...vals));
+  const bigLbl=['transportation','food choices','home energy use','consumer goods'][bigI];
+  const bigPct=Math.round(Math.max(...vals)/r.total*100);
+  let ins=`Your largest externality is <strong>${bigLbl}</strong> (${bigPct}% of your total).`;
+  if(bigI===0&&s.vehicle==='gas') ins+=' Switching to an EV on a clean grid could cut vehicle emissions by ~75%.';
+  else if(bigI===0&&s.flong>3) ins+=' Long-haul flights are significant — each transoceanic round-trip can equal 2–3 tonnes CO₂e.';
+  else if(bigI===1&&s.diet==='meat') ins+=' A shift toward a plant-rich diet could reduce your food externalities by up to 60%.';
+  else if(bigI===2&&(s.grid==='coal'||s.grid==='natgas')) ins+=' Switching to a renewable provider or rooftop solar could cut this category dramatically.';
+  else ins+=' Explore each slider to see which changes have the largest impact on your total.';
+  document.getElementById('insight-text').innerHTML=ins;
+  document.getElementById('insight-box').classList.add('show');
+
+  // Breakdown table
+  const rows=[
+    {ico:'🚗',name:'Vehicle Driving',  cat:'transport',desc:`${s.miles.toLocaleString()} mi/yr · ${s.vehicle==='none'?'No car':s.vehicle.toUpperCase()}`,val:d.vCost},
+    {ico:'✈️',name:'Flights (short)',  cat:'transport',desc:`${s.fshort} flights/yr · ~500 mi · RF×1.9`,val:d.fSh},
+    {ico:'✈️',name:'Flights (long)',   cat:'transport',desc:`${s.flong} flights/yr · ~3,500 mi · RF×1.9`,val:d.fLo},
+    {ico:'🚌',name:'Public Transit',   cat:'transport',desc:`${s.transit.toLocaleString()} mi/yr · 204g CO₂/pax-mi FTA avg`,val:d.trCo},
+    {ico:'🌱',name:'Diet (all costs)', cat:'food',desc:`${s.diet} · ${wasteStr[s.waste].toLowerCase()} waste · ${localStr[s.local].toLowerCase()}`,val:d.fCl+d.fW+d.fLa+d.fH},
+    {ico:'🗑️',name:'Food Waste',      cat:'food',desc:`Waste mult ×${wasteMul[s.waste]} ${wasteMul[s.waste]<1?'below baseline (credit)':wasteMul[s.waste]>1?'above baseline':'(baseline)'}`,val:d.fWa},
+    {ico:'🛵',name:'Takeout & Delivery',cat:'food',desc:`${s.takeout} meals/wk · packaging + delivery`,val:d.fTk},
+    {ico:'⚡',name:'Grid Electricity', cat:'energy',desc:`${s.kwh.toLocaleString()} kWh/yr · ${s.grid} grid`,val:d.gCl+d.gAir+d.gEc},
+    {ico:'🔥',name:'Home Heating',     cat:'energy',desc:`${s.heat} · ${s.sqft.toLocaleString()} sq ft`,val:d.hCl+d.hAir},
+    {ico:'👕',name:'Clothing',         cat:'consumer',desc:`${s.clothes} items/mo × 12 = ${s.clothes*12} items/yr · $${clothExt}/item ext.`,val:d.cCl},
+    {ico:'💻',name:'Electronics',      cat:'consumer',desc:`${s.elec} devices/yr · ~$${elecExt}/device`,val:d.cEl},
+    {ico:'🛒',name:'General Shopping', cat:'consumer',desc:`${s.spend} spending level`,val:d.cSh},
+    {ico:'📺',name:'Streaming',        cat:'consumer',desc:`${s.stream} hrs/day · 18g CO₂/hr · data center + network only`,val:d.cSt},
+    {ico:'🤖',name:'AI Chatbot Use',   cat:'consumer',desc:`${s.ai} prompts/day · ~0.3 Wh/prompt · US-avg grid`,val:d.cAI}
+  ];
+  const maxRow=Math.max(...rows.map(rw=>rw.val),1);
+  document.getElementById('bk-body').innerHTML=rows.map(rw=>{
+    const pct=Math.max(0,Math.min(100,rw.val/maxRow*100));
+    const cls=rw.val>2500?'hi':rw.val<200?'lo':'';
+    const absV=Math.abs(rw.val);
+    const cost=(rw.val<0?'−$':'$')+(absV>0&&absV<10?absV.toFixed(2):Math.round(absV).toLocaleString());
+    return `<tr>
+      <td><div class="td-cat">${rw.ico} ${rw.name}</div></td>
+      <td class="td-desc">${rw.desc}</td>
+      <td><div class="mini-bar-wrap"><div class="mini-bar" style="width:${pct}%;background:${CLR[rw.cat]}"></div></div></td>
+      <td class="td-cost ${cls}">${cost}</td>
+    </tr>`;
+  }).join('');
+
+  renderCharts(r);
+  updateHarmSection(r);
+}
+
+// ═══════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════
+const disp={
+  miles:v=>Number(v).toLocaleString()+' mi',
+  fshort:v=>v,flong:v=>v,transit:v=>Number(v).toLocaleString()+' mi',
+  waste:v=>wasteStr[v],local:v=>localStr[v],takeout:v=>v,
+  kwh:v=>Number(v).toLocaleString()+' kWh',sqft:v=>Number(v).toLocaleString()+' sq ft',
+  clothes:v=>v+' items/mo',elec:v=>v,stream:v=>v+' hrs/day',ai:v=>v+' prompts/day'
+};
+function slVal(k,v){ s[k]=Number(v); const el=document.getElementById('dv-'+k); if(el&&disp[k])el.textContent=disp[k](v); }
+function updateMilesState(){
+  const sl=document.getElementById('sl-miles');
+  const noCar=s.vehicle==='none';
+  sl.disabled=noCar;
+  sl.closest('.cr').style.opacity=noCar?.45:1;
+}
+function setSeg(k,v,btn){ s[k]=v; document.getElementById('sg-'+k).querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); if(k==='vehicle')updateMilesState(); go(); }
+
+function switchTab(name,btn){
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.cview').forEach(v=>v.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('cv-'+name).classList.add('on');
+  activeTab=name;
+  go();
+}
+
+function resetAll(){
+  s={...DEFS};
+  Object.entries({miles:12000,fshort:2,flong:1,transit:500,waste:1,local:1,takeout:2,kwh:10500,sqft:1800,clothes:2,elec:1,stream:4,ai:10}).forEach(([k,v])=>{
+    const el=document.getElementById('sl-'+k); if(el){el.value=v;slVal(k,v);}
+  });
+  [{k:'vehicle',v:'ev'},{k:'diet',v:'mixed'},{k:'heat',v:'natgas'},{k:'spend',v:'average'}].forEach(({k,v})=>{
+    const grp=document.getElementById('sg-'+k);
+    if(grp){grp.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));
+    const btn=[...grp.querySelectorAll('.seg-btn')].find(b=>b.onclick&&b.getAttribute('onclick').includes("'"+v+"'"));
+    if(btn)btn.classList.add('on');}
+  });
+  document.getElementById('sel-grid').value=DEFS.grid;
+  updateMilesState();
+  go();
+}
+
+// ═══════════════════════════════════════════════
+// SENSITIVITY ANALYSIS
+// Parameter ranges from published literature:
+// SCC: $51 (IWG 2021 interim, 3% discount) / $190 (EPA 2023 central, 2% discount) / $308 (Rennert et al. 2022 at 1.5% discount)
+// Vehicle MPG: best-in-class / EPA avg / older fleet avg
+// Diet: True Price low / FAO central / Pirog & Benjamin high estimates
+// Grid rates: NREL lower bound / NAS central / Epstein upper bound
+// Consumer: BEA lower / True Price central / Trucost higher
+// ═══════════════════════════════════════════════
+
+function calcRange() {
+  // Three SCC scenarios
+  const SCC_LO  = 51;   // IWG interim estimate (2021), 3% discount rate
+  const SCC_MID = 190;  // EPA 2023, 2.0% near-term Ramsey discount rate — used in central calc
+  const SCC_HI  = 308;  // Rennert et al. 2022, Nature, at 1.5% discount rate (central: $185 at 2%)
+
+  const gr = gR[s.grid];
+
+  // ── TRANSPORT ranges ──
+  // Vehicle: vary SCC and MPG assumptions
+  // Gas: 20 MPG (older fleet) / 25 MPG (avg) / 32 MPG (best-in-class)
+  // kg CO₂/mi: best-in-class 32 MPG / central (same 0.355 rate as the main calc) / older fleet 20 MPG
+  const gasCO2 = {lo:8.887/32, mid:vR.gas.co2pmi, hi:8.887/20};
+  function gasCost(co2pmi, scc) {
+    return (co2pmi/1000*scc + vR.gas.air + vR.gas.other) * s.miles;
+  }
+  function hybridCost(scc) {
+    return (vR.hybrid.co2pmi/1000*scc + vR.hybrid.air + vR.hybrid.other) * s.miles;
+  }
+  function evCost(scc) {
+    const gridScaled = { cl: gr.cl * (scc/SCC_MID), air: gr.air, eco: gr.eco };
+    return (gridScaled.cl*(s.miles/3.5)) + (gr.air*(s.miles/3.5)*0.25) + vR.ev.other*s.miles;
+  }
+
+  let vLo, vMid, vHi;
+  if (s.vehicle==='gas') {
+    vLo  = gasCost(gasCO2.lo,  SCC_LO);
+    vMid = gasCost(gasCO2.mid, SCC_MID);
+    vHi  = gasCost(gasCO2.hi,  SCC_HI);
+  } else if (s.vehicle==='hybrid') {
+    vLo  = hybridCost(SCC_LO);
+    vMid = hybridCost(SCC_MID);
+    vHi  = hybridCost(SCC_HI);
+  } else if (s.vehicle==='ev') {
+    vLo  = evCost(SCC_LO);
+    vMid = evCost(SCC_MID);
+    vHi  = evCost(SCC_HI);
+  } else {
+    vLo=vMid=vHi=0;
+  }
+
+  // Flights: vary SCC + RF multiplier (IPCC low 1.3 / central 1.9 / high 2.7, Lee et al. 2021)
+  const RF = {lo:1.3, mid:1.9, hi:2.7};
+  function flightCost(rf, scc) {
+    const sh = s.fshort * 0.255*500*rf/1000 * scc;
+    const lo = s.flong  * 0.195*3500*rf/1000 * scc;
+    return sh + lo;
+  }
+  const fLo  = flightCost(RF.lo,  SCC_LO);
+  const fMid = flightCost(RF.mid, SCC_MID);
+  const fHi  = flightCost(RF.hi,  SCC_HI);
+
+  // Transit: climate component scales with SCC scenario
+  const transitC = scc => s.transit*(0.204*scc/1000 + 0.001);
+  const transportLo  = vLo  + fLo  + transitC(SCC_LO);
+  const transportMid = vMid + fMid + transitC(SCC_MID);
+  const transportHi  = vHi  + fHi  + transitC(SCC_HI);
+
+  // ── FOOD ranges ──
+  // Diet: True Price lower estimates / FAO central / Pirog & Benjamin (2001) + updated NAS upper
+  // Scale factors relative to central: lo=0.62, mid=1.0, hi=1.55
+  // (Published range across major studies; see Poore & Nemecek 2018 vs FAO 2021 vs older USDA estimates)
+  const dietScale = {lo:0.62, mid:1.0, hi:1.55};
+  const db = dietBase[s.diet];
+  const wm = wasteMul[s.waste], ld = localDis[s.local];
+  // Health term excluded from waste/local multipliers, matching the central calc
+  const baseDiet = (db.cl+db.w+db.la)*wm*ld + db.h + (wm-1)*220 + s.takeout*52*takeoutPM;
+  const foodLo  = baseDiet * dietScale.lo;
+  const foodMid = baseDiet * dietScale.mid;
+  const foodHi  = baseDiet * dietScale.hi;
+
+  // ── ENERGY ranges ──
+  // Grid: vary lifecycle CO2e rates (NREL lower / NAS central / Epstein upper) + SCC
+  // Scale climate component by SCC, keep air/eco rates as central (less variance)
+  const gridScales = {lo: SCC_LO/SCC_MID, mid:1.0, hi: SCC_HI/SCC_MID};
+  // Also vary air quality: NAS gives ranges ±40% across studies
+  const airScales  = {lo:0.6, mid:1.0, hi:1.4};
+
+  function gridCost(sccScale, airScale) {
+    return (gr.cl*sccScale + gr.air*airScale + gr.eco) * s.kwh;
+  }
+  const hr = hR[s.heat];
+  function heatCost(sccScale) {
+    return hr.co2sf * (SCC_MID*sccScale) * s.sqft + hr.airsf*s.sqft;
+  }
+
+  const energyLo  = gridCost(gridScales.lo,  airScales.lo)  + heatCost(gridScales.lo);
+  const energyMid = gridCost(gridScales.mid, airScales.mid) + heatCost(gridScales.mid);
+  const energyHi  = gridCost(gridScales.hi,  airScales.hi)  + heatCost(gridScales.hi);
+
+  // ── CONSUMER ranges ──
+  // Clothing: Ellen MacArthur $0.70 low / $0.90 central / $1.20 high per garment
+  // Electronics: Xu et al. $60 low / $120 central / $180 high per device
+  // Shopping: BEA lower / True Price central / Trucost 1.8× higher
+  // Streaming: Andrae low (36g/hr) / central (65g/hr) / high (97g/hr)
+  const sm = spendMul[s.spend];
+  // Streaming: upstream-only g/hr — 28% (IEA 2020) of the Andrae & Edler full-chain range 36/65/97
+  // AI: Wh/prompt from Google 0.24 (low) / Epoch AI 0.3 (central) / de Vries 3.0 (high), SCC-scaled climate share
+  const aiCost = (wh, sccScale) => s.ai*365*(wh/1000)*(gR.mixed.cl*sccScale + gR.mixed.air + gR.mixed.eco);
+  const consumerLo  = s.clothes*12*0.70*sm + s.elec*60  + spendBase*sm*0.7 + s.stream*365*(0.010/1000*SCC_LO) + aiCost(aiWh.lo, SCC_LO/SCC_MID);
+  const consumerMid = s.clothes*12*0.90*sm + s.elec*120 + spendBase*sm     + s.stream*365*(0.018/1000*SCC_MID) + aiCost(aiWh.mid, 1);
+  const consumerHi  = s.clothes*12*1.20*sm + s.elec*180 + spendBase*sm*1.8 + s.stream*365*(0.027/1000*SCC_HI) + aiCost(aiWh.hi, SCC_HI/SCC_MID);
+
+  const totalLo  = transportLo  + foodLo  + energyLo  + consumerLo;
+  const totalMid = transportMid + foodMid + energyMid + consumerMid;
+  const totalHi  = transportHi  + foodHi  + energyHi  + consumerHi;
+
+  return {
+    total: { lo:totalLo, mid:totalMid, hi:totalHi },
+    cats: [
+      { label:'Transportation', color:CLR.transport,
+        lo:transportLo, mid:transportMid, hi:transportHi,
+        srcLo:'IWG interim SCC $51 (2021); best-in-class MPG; RF 1.3× (Lee et al. 2021)',
+        srcMid:'EPA SCC $190 (2023); avg MPG; RF 1.9×',
+        srcHi:'Rennert et al. SCC $308 at 1.5% (Nature 2022); older fleet MPG; RF 2.7×' },
+      { label:'Food & Diet', color:CLR.food,
+        lo:foodLo, mid:foodMid, hi:foodHi,
+        srcLo:'True Price Foundation lower estimates; Poore & Nemecek (2018) conservative range',
+        srcMid:'FAO True Cost of Food (2021) central estimates',
+        srcHi:'Pirog & Benjamin (2001); NAS updated upper; includes full externality chain' },
+      { label:'Home Energy', color:CLR.energy,
+        lo:energyLo, mid:energyMid, hi:energyHi,
+        srcLo:'NREL lower lifecycle bounds; IWG interim SCC $51; NAS air quality lower confidence interval',
+        srcMid:'NAS (2010) / Epstein (2011) central; EPA SCC $190',
+        srcHi:'Epstein (2011) upper bounds; Rennert SCC $308; NAS air quality upper CI ±40%' },
+      { label:'Consumer Goods', color:CLR.consumer,
+        lo:consumerLo, mid:consumerMid, hi:consumerHi,
+        srcLo:'Ellen MacArthur $0.70/garment; Xu et al. $60/device; BEA lower estimates; Google 0.24 Wh/AI prompt',
+        srcMid:'Ellen MacArthur $0.90/garment; Xu et al. $120/device; True Price (2022); Epoch AI 0.3 Wh/AI prompt',
+        srcHi:'Ellen MacArthur $1.20/garment; Xu et al. $180/device; Trucost 1.8×; de Vries 3.0 Wh/AI prompt' }
+    ]
+  };
+}
+
+function drawSensitivityRange() {
+  const data = calcRange();
+  const {ctx,w,h} = getCanvas('ch-range');
+  const pad={t:28,r:160,b:50,l:130};
+  const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+
+  const rows = [...data.cats, {
+    label:'TOTAL', color:'#1a3028',
+    lo:data.total.lo, mid:data.total.mid, hi:data.total.hi
+  }];
+  const n=rows.length;
+  const maxVal = Math.max(...rows.map(r=>r.hi)) * 1.08;
+  const rowH = ch/n;
+
+  // Grid lines (vertical)
+  ctx.strokeStyle='rgba(200,210,205,0.3)'; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const x=pad.l+cw*(i/4);
+    ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+ch); ctx.stroke();
+    ctx.fillStyle='#8ca89a'; ctx.font='10px system-ui'; ctx.textAlign='center'; ctx.textBaseline='top';
+    const v=maxVal*i/4;
+    ctx.fillText('$'+(v>=1000?(v/1000).toFixed(0)+'k':Math.round(v)), x, pad.t+ch+6);
+  }
+
+  rows.forEach((row,ri) => {
+    const cy = pad.t + ri*rowH + rowH/2;
+    const barH = ri===n-1 ? 22 : 16;
+    const isTotal = ri===n-1;
+
+    // Row label
+    ctx.fillStyle = isTotal ? '#1a3028' : '#4a6055';
+    ctx.font = isTotal ? 'bold 12px system-ui' : '11px system-ui';
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    ctx.fillText(row.label, pad.l-10, cy);
+
+    // Range bar (lo → hi)
+    const xLo  = pad.l + cw*(row.lo/maxVal);
+    const xMid = pad.l + cw*(row.mid/maxVal);
+    const xHi  = pad.l + cw*(row.hi/maxVal);
+
+    // Background range band (lo to hi)
+    ctx.fillStyle = row.color+'28';
+    ctx.beginPath();
+    const rr=3, bx=xLo, by=cy-barH/2, bw2=xHi-xLo, bh2=barH;
+    ctx.moveTo(bx+rr,by); ctx.lineTo(bx+bw2-rr,by);
+    ctx.quadraticCurveTo(bx+bw2,by,bx+bw2,by+rr);
+    ctx.lineTo(bx+bw2,by+bh2-rr); ctx.quadraticCurveTo(bx+bw2,by+bh2,bx+bw2-rr,by+bh2);
+    ctx.lineTo(bx+rr,by+bh2); ctx.quadraticCurveTo(bx,by+bh2,bx,by+bh2-rr);
+    ctx.lineTo(bx,by+rr); ctx.quadraticCurveTo(bx,by,bx+rr,by);
+    ctx.closePath();
+    ctx.fill();
+
+    // Whisker line (lo to hi)
+    ctx.strokeStyle = row.color+'80'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(xLo, cy); ctx.lineTo(xHi, cy); ctx.stroke();
+
+    // Low cap
+    ctx.strokeStyle=row.color+'99'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(xLo, cy-barH/2+3); ctx.lineTo(xLo, cy+barH/2-3); ctx.stroke();
+
+    // High cap
+    ctx.beginPath(); ctx.moveTo(xHi, cy-barH/2+3); ctx.lineTo(xHi, cy+barH/2-3); ctx.stroke();
+
+    // Central bar (solid)
+    const midW = Math.max(6, isTotal ? 10 : 7);
+    ctx.fillStyle = row.color;
+    ctx.fillRect(xMid-midW/2, cy-barH/2, midW, barH);
+
+    // Dollar labels
+    ctx.font='10px system-ui'; ctx.textBaseline='middle';
+    // Lo
+    ctx.fillStyle=isTotal?'#2f5a47':CLR.transport===row.color?'#3d6648':'#4a6055';
+    ctx.textAlign='right';
+    ctx.fillStyle='#6aab7a';
+    ctx.fillText('$'+(row.lo>=1000?(row.lo/1000).toFixed(0)+'k':Math.round(row.lo)), xLo-5, cy);
+    // Mid (above bar)
+    ctx.fillStyle=row.color; ctx.font=isTotal?'bold 11px system-ui':'bold 10px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('$'+(row.mid>=1000?(row.mid/1000).toFixed(1)+'k':Math.round(row.mid)), xMid, cy-barH/2-5);
+    // Hi
+    ctx.fillStyle='#c94040'; ctx.font='10px system-ui';
+    ctx.textAlign='left';
+    ctx.fillText('$'+(row.hi>=1000?(row.hi/1000).toFixed(0)+'k':Math.round(row.hi)), xHi+5, cy);
+
+    // Separator line
+    if(ri<n-1){
+      ctx.strokeStyle='rgba(200,210,205,0.4)'; ctx.lineWidth=1; ctx.setLineDash([3,4]);
+      ctx.beginPath(); ctx.moveTo(pad.l-80, pad.t+(ri+1)*rowH); ctx.lineTo(pad.l+cw, pad.t+(ri+1)*rowH); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  });
+
+  // Axis
+  ctx.strokeStyle='rgba(200,210,205,0.5)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.stroke();
+
+  // Legend top-right
+  const lx=pad.l+cw+12, ly=pad.t+8;
+  [['Low est.','#6aab7a'],['Central','#1a3028'],['High est.','#c94040']].forEach(([lbl,c],i)=>{
+    ctx.fillStyle=c; ctx.fillRect(lx,ly+i*18,10,10);
+    ctx.fillStyle='#5a7a6a'; ctx.font='10px system-ui'; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText(lbl, lx+14, ly+i*18+1);
+  });
+
+  // Detail cards
+  const detail = document.getElementById('range-detail');
+  detail.innerHTML = data.cats.map(row => `
+    <div class="rng-card">
+      <div class="rng-card-accent" style="background:${row.color}"></div>
+      <div class="rng-card-title" style="padding-left:.5rem">${row.label}</div>
+      <div class="rng-card-vals" style="padding-left:.5rem">
+        <span class="rng-lo">$${Math.round(row.lo).toLocaleString()}</span>
+        <span class="rng-arrow">→</span>
+        <span class="rng-mid">$${Math.round(row.mid).toLocaleString()}</span>
+        <span class="rng-arrow">→</span>
+        <span class="rng-hi">$${Math.round(row.hi).toLocaleString()}</span>
+      </div>
+      <div class="rng-src" style="padding-left:.5rem">
+        <span style="color:#6aab7a;font-style:normal">▼ Low:</span> ${row.srcLo}<br>
+        <span style="color:#1a3028;font-style:normal">● Central:</span> ${row.srcMid}<br>
+        <span style="color:#c94040;font-style:normal">▲ High:</span> ${row.srcHi}
+      </div>
+    </div>
+  `).join('');
+}
+
+let rzTimer;
+window.addEventListener('resize',()=>{ clearTimeout(rzTimer); rzTimer=setTimeout(go,150); });
+document.addEventListener('DOMContentLoaded',()=>{
+  go();
+  initPanels();
+});
+
+// ═══════════════════════════════════════════════
+// COLLAPSIBLE PANELS
+// Every panel header toggles its body. Sources and
+// Methodology start collapsed (long reference content).
+// ═══════════════════════════════════════════════
+function initPanels() {
+  const collapseByDefault = ['📚', '🔬'];
+  document.querySelectorAll('.panel').forEach(panel => {
+    const ph = panel.querySelector('.ph');
+    if (!ph) return;
+
+    // Wrap everything after the header so any panel body can collapse
+    let wrap = panel.querySelector('.panel-body-wrap');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.className = 'panel-body-wrap';
+      while (ph.nextSibling) wrap.appendChild(ph.nextSibling);
+      panel.appendChild(wrap);
+    }
+
+    const icon = ph.querySelector('.ph-icon');
+    if (icon && collapseByDefault.includes(icon.textContent.trim())) {
+      wrap.style.maxHeight = '0px';
+      wrap.classList.add('collapsed');
+      ph.classList.add('collapsed');
+    }
+    // Expanded panels get no max-height, so content can grow freely
+
+    ph.addEventListener('click', () => {
+      const isCollapsed = wrap.classList.contains('collapsed');
+      if (isCollapsed) {
+        wrap.classList.remove('collapsed');
+        ph.classList.remove('collapsed');
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        // Release the cap once the animation finishes so dynamic content isn't clipped
+        setTimeout(() => {
+          if (!wrap.classList.contains('collapsed')) wrap.style.maxHeight = 'none';
+        }, 380);
+      } else {
+        wrap.style.maxHeight = wrap.scrollHeight + 'px'; // fixed start point for the transition
+        requestAnimationFrame(() => {
+          wrap.classList.add('collapsed');
+          ph.classList.add('collapsed');
+          wrap.style.maxHeight = '0px';
+        });
+      }
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// HARM-TYPE BREAKDOWN
+// ═══════════════════════════════════════════════
+// Harm type proportions grounded in academic literature.
+// Each externality dollar is decomposed into harm categories.
+// Sources: NAS (2010), Epstein (2011), FAO (2021), True Price (2022),
+//          EPA SCC methodology, IPCC AR6 (2022), Ellen MacArthur (2017)
+
+// Harm category definitions with colors and descriptions
+const HARM_DEFS = {
+  climate: {
+    icon:'🌡️', name:'Climate Change Damage',
+    color:'#c94040',
+    desc:'Costs of rising temperatures, extreme weather events, sea-level rise, and ecosystem disruption. Valued using the EPA Social Cost of Carbon ($190/tCO₂e).',
+    sources:'[1] EPA SCC 2023; [6] IPCC AR6 2022'
+  },
+  health: {
+    icon:'🫁', name:'Human Health Costs',
+    color:'#e07b39',
+    desc:'Premature mortality, respiratory illness, cardiovascular disease, and lost productivity from air pollutants (PM2.5, NOₓ, SOₓ, ozone). Largest single cost category for fossil fuels.',
+    sources:'[2] NAS 2010; [3] Epstein et al. 2011'
+  },
+  ecosystem: {
+    icon:'🌊', name:'Ecosystem & Biodiversity Loss',
+    color:'#4a7c59',
+    desc:'Damage to forests, wetlands, fisheries, and biodiversity from pollution, land-use change, and water extraction. Includes deforestation costs and aquatic ecosystem degradation.',
+    sources:'[3] Epstein 2011; [4] FAO 2021; [5] True Price 2022'
+  },
+  water: {
+    icon:'💧', name:'Water Depletion & Pollution',
+    color:'#5b9bd5',
+    desc:'Groundwater depletion, surface water contamination, and water quality degradation. Especially significant in food production — beef requires ~1,800 gallons per pound.',
+    sources:'[4] FAO True Cost 2021; [5] True Price 2022'
+  },
+  land: {
+    icon:'🌾', name:'Land Use & Soil Degradation',
+    color:'#8fba6e',
+    desc:'Costs of converting natural habitat to agricultural or industrial use, soil erosion, desertification, and loss of carbon stored in soils and vegetation.',
+    sources:'[4] FAO 2021; [5] True Price 2022'
+  },
+  social: {
+    icon:'👷', name:'Labor & Social Costs',
+    color:'#a07cc5',
+    desc:'Supply-chain labor exploitation, occupational health risks, community displacement, and "sacrifice zone" costs borne by communities near extraction and production sites.',
+    sources:'[5] True Price 2022; [8] Ellen MacArthur 2017; [9] Xu 2020'
+  },
+  waste: {
+    icon:'♻️', name:'Waste & Pollution Costs',
+    color:'#7aab8a',
+    desc:'End-of-life disposal, landfill leachate, e-waste toxicity, plastic pollution, and chemical contamination from manufacturing and packaging.',
+    sources:'[8] Ellen MacArthur 2017; [9] Xu 2020'
+  },
+  congestion: {
+    icon:'🚦', name:'Congestion & Accident Costs',
+    color:'#c8963e',
+    desc:'Road congestion imposes time costs on other drivers (~$87B/yr in US). Traffic accidents impose medical, legal, and productivity costs beyond what insurance covers.',
+    sources:'[2] NAS 2010; Texas Transportation Institute 2023'
+  }
+};
+
+// ── HARM PROPORTIONS by activity type (shares summing to 1.0)
+// These proportions come directly from the source decompositions.
+// NAS (2010) Table ES-1 decomposes vehicle externalities by type.
+// Epstein (2011) Table 2 decomposes coal lifecycle costs by category.
+// FAO (2021) decomposes food system costs into health, climate, nature, social.
+
+const harmProportions = {
+  // Vehicle driving (NAS 2010 Table ES-1 + EPA SCC):
+  // Health (air quality) ~40%, Climate ~35%, Congestion/accident ~25%
+  vCost:   {climate:0.35, health:0.40, congestion:0.25},
+
+  // Flights: almost entirely climate (RF×1.9) + minor health from airport pollution
+  fSh:     {climate:0.88, health:0.07, social:0.05},
+  fLo:     {climate:0.88, health:0.07, social:0.05},
+  trCo:    {climate:0.97, health:0.03},
+
+  // Food system (FAO 2021 — health 27%, climate 29%, water/land/nature 35%, social 9%)
+  fCl:     {climate:1.0},                                      // pure climate cost
+  fW:      {water:1.0},                                        // pure water cost
+  fLa:     {land:0.70, ecosystem:0.30},                        // land + ecosystem
+  fH:      {health:1.0},                                       // pure health cost
+  fWa:     {climate:0.40, ecosystem:0.30, water:0.20, land:0.10}, // waste mixed
+  fTk:     {climate:0.35, waste:0.40, social:0.15, ecosystem:0.10},
+
+  // Grid electricity (Epstein 2011 for coal; NREL for others)
+  // Coal: Health 49%, Climate 39%, Ecosystem 12%  (Epstein Table 2)
+  // Nat Gas: Climate 74%, Health 19%, Eco 7%  (NAS 2010)
+  gCl:     {climate:1.0},
+  gAir:    {health:1.0},
+  gEc:     {ecosystem:0.60, water:0.40},
+
+  // Heating — similar to nat gas grid
+  hCl:     {climate:1.0},
+  hAir:    {health:1.0},
+
+  // Consumer goods
+  cCl:     {social:0.50, waste:0.30, water:0.12, ecosystem:0.08}, // clothing
+  cEl:     {waste:0.45, social:0.30, climate:0.15, ecosystem:0.10}, // electronics
+  cSh:     {climate:0.30, social:0.25, waste:0.25, ecosystem:0.20}, // general
+  cSt:     {climate:1.0},  // streaming — carbon-only by construction (gCO₂/hr × SCC)
+  // AI: US-avg grid mix (climate 68%, air-health 25%, eco 7%) with a slice
+  // reassigned to water per data-center cooling findings (Li et al. 2023; Google 2025)
+  cAI:     {climate:0.68, health:0.20, water:0.07, ecosystem:0.05}
+};
+
+function calcHarm(r) {
+  const d = r.d;
+  const totals = {};
+
+  Object.entries(harmProportions).forEach(([key, shares]) => {
+    const val = d[key] || 0;
+    Object.entries(shares).forEach(([harm, share]) => {
+      totals[harm] = (totals[harm] || 0) + val * share;
+    });
+  });
+
+  return totals;
+}
+
+let activeHarmTab = 'cards';
+
+function renderHarmCards(r) {
+  const harmTotals = calcHarm(r);
+  const grandTotal = r.total;
+
+  // Sort by value desc
+  const sorted = Object.entries(harmTotals)
+    .filter(([,v]) => v > 5)
+    .sort((a,b) => b[1]-a[1]);
+
+  const grid = document.getElementById('harm-grid');
+  grid.innerHTML = sorted.map(([key, val]) => {
+    const def = HARM_DEFS[key];
+    if (!def) return '';
+    const pct = Math.round(val / grandTotal * 100);
+    const barPct = Math.min(100, val / sorted[0][1] * 100);
+    return `<div class="harm-card">
+      <div class="harm-card-accent" style="background:${def.color}"></div>
+      <span class="harm-icon">${def.icon}</span>
+      <div class="harm-name">${def.name}</div>
+      <div class="harm-val">$${Math.round(val).toLocaleString()}</div>
+      <div class="harm-pct" style="color:${def.color}">${pct}% of total</div>
+      <div class="harm-desc">${def.desc}</div>
+      <div class="harm-bar-track">
+        <div class="harm-bar-fill" style="width:${barPct}%;background:${def.color}"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function drawWaterfall(r) {
+  const {ctx,w,h} = getCanvas('ch-waterfall');
+  const harmTotals = calcHarm(r);
+  const sorted = Object.entries(harmTotals)
+    .filter(([,v])=>v>5)
+    .sort((a,b)=>b[1]-a[1]);
+
+  const pad={t:24,r:24,b:56,l:72};
+  const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+  const total = sorted.reduce((a,[,v])=>a+v,0);
+  const maxVal = sorted[0][1]*1.08;
+
+  // Grid
+  ctx.strokeStyle='rgba(200,210,205,0.3)'; ctx.lineWidth=1;
+  for (let i=0;i<=4;i++) {
+    const y=pad.t+ch*(1-i/4);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.fillStyle='#8ca89a'; ctx.font='11px system-ui'; ctx.textAlign='right';
+    const v=Math.round(maxVal*i/4);
+    ctx.fillText('$'+(v>=1000?(v/1000).toFixed(1)+'k':v), pad.l-6, y+4);
+  }
+
+  const n=sorted.length;
+  const bw=Math.min(52, cw/n*0.6), gap=cw/n;
+
+  sorted.forEach(([key,val],i) => {
+    const def = HARM_DEFS[key];
+    if (!def) return;
+    const bh = ch*(val/maxVal);
+    const x = pad.l+i*gap+(gap-bw)/2;
+    const y = pad.t+ch-bh;
+
+    // Bar with rounded top
+    ctx.fillStyle=def.color;
+    const rr=3;
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y); ctx.lineTo(x+bw-rr,y);
+    ctx.quadraticCurveTo(x+bw,y,x+bw,y+rr);
+    ctx.lineTo(x+bw,y+bh); ctx.lineTo(x,y+bh); ctx.lineTo(x,y+rr);
+    ctx.quadraticCurveTo(x,y,x+rr,y);
+    ctx.fill();
+
+    // Dollar label inside bar if tall enough
+    if (bh > 24) {
+      ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.font='bold 10px system-ui'; ctx.textAlign='center';
+      ctx.fillText('$'+(val>=1000?(val/1000).toFixed(1)+'k':Math.round(val)), x+bw/2, y+14);
+    }
+
+    // % label above bar
+    const pct = Math.round(val/total*100);
+    ctx.fillStyle=def.color; ctx.font='bold 10px system-ui'; ctx.textAlign='center';
+    ctx.fillText(pct+'%', x+bw/2, y-5);
+
+    // Icon + label below
+    ctx.font='14px system-ui'; ctx.fillText(def.icon, x+bw/2, pad.t+ch+18);
+    ctx.fillStyle='#8ca89a'; ctx.font='9px system-ui';
+    // Wrap label
+    const words=def.name.split(' ');
+    let line='', line2='';
+    words.forEach(w=>{
+      if (line.length+w.length<9) line+=(line?' ':'')+w;
+      else line2+=(line2?' ':'')+w;
+    });
+    ctx.fillText(line, x+bw/2, pad.t+ch+30);
+    if(line2) ctx.fillText(line2, x+bw/2, pad.t+ch+41);
+  });
+
+  // Axis
+  ctx.strokeStyle='rgba(200,210,205,0.5)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
+
+  // Legend
+  const leg = document.getElementById('wf-legend');
+  leg.innerHTML = sorted.map(([key,val])=>{
+    const def=HARM_DEFS[key]; if(!def)return'';
+    return `<div class="wf-leg-item">
+      <div class="wf-leg-dot" style="background:${def.color}"></div>
+      <span>${def.name}: <strong style="color:var(--forest)">$${Math.round(val).toLocaleString()}</strong></span>
+    </div>`;
+  }).join('');
+}
+
+function drawHarmCompare(r) {
+  const {ctx,w,h} = getCanvas('ch-harm-compare');
+  const harmTotals = calcHarm(r);
+
+  // Sector harm breakdown from literature (proportions)
+  // NAS (2010) vehicle: Health 40%, Climate 35%, Other 25%
+  // Epstein (2011) coal: Health 49%, Climate 39%, Eco 12%
+  // FAO (2021) food: Health 27%, Climate 29%, Nature 35%, Social 9%
+  // True Price (2022) consumer: Social 40%, Waste 30%, Climate 20%, Eco 10%
+
+  const sectors = [
+    { name:'Transportation', yourVal: r.transport,
+      literature:[ {h:'Climate',c:'#c94040',pct:35},{h:'Health',c:'#e07b39',pct:40},{h:'Congestion',c:'#c8963e',pct:25} ],
+      ref:'NAS 2010' },
+    { name:'Food', yourVal: r.food,
+      literature:[ {h:'Climate',c:'#c94040',pct:29},{h:'Health',c:'#e07b39',pct:27},{h:'Ecosystem\n& Water',c:'#4a7c59',pct:35},{h:'Social',c:'#a07cc5',pct:9} ],
+      ref:'FAO 2021' },
+    { name:'Energy', yourVal: r.energy,
+      literature:[ {h:'Climate',c:'#c94040',pct:39},{h:'Health',c:'#e07b39',pct:49},{h:'Ecosystem',c:'#4a7c59',pct:12} ],
+      ref:'Epstein 2011 (coal); NAS 2010' },
+    { name:'Consumer', yourVal: r.consumer,
+      literature:[ {h:'Social',c:'#a07cc5',pct:40},{h:'Waste',c:'#7aab8a',pct:30},{h:'Climate',c:'#c94040',pct:20},{h:'Ecosystem',c:'#4a7c59',pct:10} ],
+      ref:'True Price 2022; Ellen MacArthur 2017' }
+  ];
+
+  const pad={t:20,r:24,b:40,l:90};
+  const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+  const nSectors=sectors.length;
+  const rowH=ch/nSectors;
+  const maxVal=Math.max(...sectors.map(s=>s.yourVal))*1.1;
+
+  // Draw each sector row as stacked horizontal bar
+  sectors.forEach((sec,si) => {
+    const y=pad.t+si*rowH;
+    const bh=Math.min(28, rowH*0.55);
+    const by=y+(rowH-bh)/2;
+
+    // Label
+    ctx.fillStyle='#1a3028'; ctx.font='bold 11px system-ui'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    ctx.fillText(sec.name, pad.l-10, by+bh/2);
+
+    // Stacked segments
+    const barW=cw*(sec.yourVal/maxVal);
+    let xOff=pad.l;
+    sec.literature.forEach(seg => {
+      const segW=barW*(seg.pct/100);
+      ctx.fillStyle=seg.c;
+      ctx.fillRect(xOff, by, segW, bh);
+
+      // Label inside if wide enough
+      if(segW>30) {
+        ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.font='9px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(seg.pct+'%', xOff+segW/2, by+bh/2);
+      }
+      xOff+=segW;
+    });
+
+    // Dollar total
+    ctx.fillStyle='#1a3028'; ctx.font='11px system-ui'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText('$'+Math.round(sec.yourVal).toLocaleString(), pad.l+barW+8, by+bh/2);
+
+    // Source ref
+    ctx.fillStyle='#8ca89a'; ctx.font='9px system-ui'; ctx.textAlign='right';
+    ctx.fillText(sec.ref, w-pad.r, by+bh+8);
+  });
+
+  // Harm type legend (collect unique)
+  const seen={};
+  const legendItems=[];
+  sectors.forEach(s=>s.literature.forEach(seg=>{
+    if(!seen[seg.h]){seen[seg.h]=seg.c; legendItems.push({h:seg.h,c:seg.c});}
+  }));
+
+  const legY=pad.t+ch+12;
+  let legX=pad.l;
+  ctx.textBaseline='top';
+  legendItems.forEach(li=>{
+    ctx.fillStyle=li.c; ctx.fillRect(legX,legY,10,10);
+    ctx.fillStyle='#5a7a6a'; ctx.font='10px system-ui'; ctx.textAlign='left';
+    ctx.fillText(li.h.replace('\n',' '), legX+13, legY+1);
+    legX+=ctx.measureText(li.h.replace('\n',' ')).width+32;
+    if(legX>w-100){legX=pad.l;} // wrap (shouldn't be needed)
+  });
+
+  // Axis
+  ctx.strokeStyle='rgba(200,210,205,0.5)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.stroke();
+}
+
+function updateHarmSection(r) {
+  if (activeHarmTab==='cards')     renderHarmCards(r);
+  else if (activeHarmTab==='waterfall') drawWaterfall(r);
+  else if (activeHarmTab==='compare')  drawHarmCompare(r);
+}
+
+function switchMeth(name, btn) {
+  const tabs = btn.closest('.chart-tabs') || document.getElementById('meth-tabs');
+  tabs.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  ['notincluded','scc','transport','food','energy','consumer'].forEach(n=>{
+    const el=document.getElementById('mv-'+n);
+    if(el) el.className='hview'+(n===name?' on':'');
+  });
+}
+
+function switchHarm(name, btn) {
+  document.querySelectorAll('.htab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.hview').forEach(v=>v.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('hv-'+name).classList.add('on');
+  activeHarmTab=name;
+  updateHarmSection(calc());
+}
+</script>
+</body>
+</html>

@@ -183,77 +183,309 @@ canvas{display:block}
 body.embed header{display:none}
 
 /* ── hand-drawn icons ───────────────────────────────────────────
-   Each icon is a <use> of a 24×24 sketched symbol. Strokes use
-   currentColor so an icon picks up the colour of its context. */
+   Each icon is a <use> of a 24×24 sketched symbol. Colours are baked
+   into the sprite through four inherited paint slots (--i-f1/-f2/-ln/-ac),
+   so a context can repaint the whole set by setting those variables. */
 .ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;flex:none}
-.hd{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
-    filter:url(#hd-rough)}
+.hd{stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:url(#hd-rough)}
 /* the roughening filter is decorative — drop it where motion/contrast
    preferences ask for the plainest possible rendering */
 @media (prefers-reduced-motion:reduce){.hd{filter:none}}
-.seg-btn .ico{margin-right:.25em}
-.td-cat .ico{color:var(--moss)}
 .ph-icon{display:inline-flex;align-items:center}
-.card-ico .ico,.harm-icon .ico{width:1em;height:1em}
+.ph-icon .ico{width:1.15em;height:1.15em}
+.card-ico .ico,.harm-icon .ico{width:1.15em;height:1.15em}
+.td-cat .ico{width:1.05em;height:1.05em}
+.seg-btn .ico{margin-right:.28em}
+/* a selected segmented button flips to white-on-forest, where the baked
+   colours would go muddy — repaint the icon as a light line drawing */
+.seg-btn.on{--i-f1:rgba(255,255,255,.24);--i-f2:rgba(255,255,255,.40);
+            --i-ln:#fdfaf5;--i-ac:#c8e0cf}
 </style>
 </head>
 <body>
 <!-- ═══════════════════════════════════════════════
      HAND-DRAWN ICON SPRITE
-     Stroke-based line art on a 24×24 grid. Paths are drawn with
-     deliberately imperfect coordinates and round caps/joins so they
-     read as sketched rather than geometric. Strokes inherit
-     currentColor, so an icon takes the colour of whatever it sits in.
+     41 sketched illustrations on a 24×24 grid. Flat colour fills drawn
+     from the app palette sit under a dark ink outline, and a fractal-noise
+     displacement filter bows every edge so the shapes read as drawn.
+
+     Colours go through four inherited paint slots — --i-f1 (main fill),
+     --i-f2 (secondary fill), --i-ln (outline) and --i-ac (accent) — each
+     with the icon's own colour as the fallback. Any context can therefore
+     restyle the whole set by setting those four variables; the active
+     segmented buttons use that to flip to white-on-dark.
      ═══════════════════════════════════════════════ -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
-<!-- Roughening filter: displaces every stroke by a small amount of
-     fractal noise, so straight lines bow slightly and circles go a
-     little out of true — the wobble of a pen rather than a compass. -->
 <filter id="hd-rough" x="-14%" y="-14%" width="128%" height="128%" filterUnits="objectBoundingBox">
-  <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="5" result="noise"/>
-  <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+  <feTurbulence type="fractalNoise" baseFrequency="0.026" numOctaves="3" seed="5" result="noise"/>
+  <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
 </filter>
-<symbol id="ic-car" viewBox="0 0 24 24"><g class="hd"><path d="M2.7 15.1c-.1-1.6.2-2.5 1.1-2.7l2-3.3c.4-.7 1-1 1.8-1h6c.7 0 1.3.3 1.7.9l2.3 3.3c.9.3 1.2 1.1 1.2 2.6l-.1 1.6c0 .4-.3.6-.7.6h-1.3"/><path d="M8.6 16.2H5.1c-.4 0-.7-.2-.8-.6"/><path d="M4.2 12.5c4.6-.5 10.9-.5 15.4 0"/><circle cx="7.2" cy="16.3" r="1.9"/><circle cx="16.4" cy="16.3" r="1.9"/><path d="M9.1 16.3h5.3"/></g></symbol>
-<symbol id="ic-leaf" viewBox="0 0 24 24"><g class="hd"><path d="M19.4 4.3c.7 5.3-.6 9.4-3.4 11.7-2.6 2.2-6.2 2.3-8.2.4-1.9-1.8-1.7-5 .5-7 2.4-2.2 6.6-3.4 11.1-5.1z"/><path d="M17.8 6.1c-3.5 2-6.6 5.4-8.6 10.1"/><path d="M5.1 20c1-1.6 2.1-3 3.4-4.2"/></g></symbol>
-<symbol id="ic-bolt" viewBox="0 0 24 24"><g class="hd"><path d="M13.6 2.4 5.2 13.3c-.3.4-.1.8.4.8h4.9l-1.4 7.3 8.5-11c.3-.4.1-.8-.4-.8h-5z"/></g></symbol>
-<symbol id="ic-bag" viewBox="0 0 24 24"><g class="hd"><path d="M4.6 8.3h14.6l-1 12c0 .6-.5 1-1.1 1H6.7c-.6 0-1-.4-1.1-1z"/><path d="M8.6 10.6V6.4c0-2 1.5-3.6 3.4-3.6s3.5 1.6 3.5 3.6v4.2"/></g></symbol>
-<symbol id="ic-chart" viewBox="0 0 24 24"><g class="hd"><path d="M3.4 20.4h17.3"/><path d="M3.6 20.3V3.7"/><rect x="6.4" y="12.1" width="3.4" height="8.2" rx=".5"/><rect x="11.5" y="7.4" width="3.4" height="12.9" rx=".5"/><rect x="16.5" y="14.8" width="3.4" height="5.5" rx=".5"/></g></symbol>
-<symbol id="ic-warning" viewBox="0 0 24 24"><g class="hd"><path d="M12.1 3.3 21.4 19c.3.5 0 1.1-.6 1.1H3.3c-.6 0-.9-.6-.6-1.1z"/><path d="M12 9.1v4.8"/><path d="M12 16.9v.1"/></g></symbol>
-<symbol id="ic-clipboard" viewBox="0 0 24 24"><g class="hd"><path d="M8.4 4.3H6.3c-.7 0-1.2.5-1.2 1.2v14.4c0 .7.5 1.2 1.2 1.2h11.5c.7 0 1.2-.5 1.2-1.2V5.5c0-.7-.5-1.2-1.2-1.2h-2.1"/><rect x="8.3" y="2.5" width="7.5" height="3.6" rx=".9"/><path d="M8.2 11.2h7.7"/><path d="M8.2 14.8h7.7"/><path d="M8.2 18.1h4.6"/></g></symbol>
-<symbol id="ic-books" viewBox="0 0 24 24"><g class="hd"><path d="M4.3 4.6h4.3c.6 0 1 .4 1 1v14.1c0 .5-.4.9-1 .9H4.3c-.5 0-.9-.4-.9-.9V5.6c0-.6.4-1 .9-1z"/><path d="M10.4 4.6h4.2c.6 0 1 .4 1 1v14.1c0 .5-.4.9-1 .9h-4.2"/><path d="M3.6 9.2h5.8"/><path d="M10.2 9.2h5.3"/><path d="M17.1 6.4l3 .6c.5.1.8.6.7 1.1l-2.5 12c-.1.5-.6.8-1.1.7l-1.1-.3"/></g></symbol>
-<symbol id="ic-microscope" viewBox="0 0 24 24"><g class="hd"><path d="M6.6 21.1h13.8"/><path d="M9.4 21c-2.4-1.3-3.9-3.7-3.9-6.5 0-1.9.7-3.6 1.9-5"/><path d="M13.3 3.5l3.9 5.6c.4.5.2 1.2-.3 1.6l-2.2 1.5c-.5.4-1.2.2-1.6-.3L9.2 6.3c-.4-.5-.2-1.2.3-1.6l2.2-1.5c.5-.4 1.2-.2 1.6.3z"/><path d="M11.6 12.6l1.9 2.7c.9 1.3.6 3-.6 3.9"/><path d="M15.9 14.1c1.6 1.1 2.3 3 1.9 4.8"/></g></symbol>
-<symbol id="ic-plug" viewBox="0 0 24 24"><g class="hd"><path d="M8.2 2.9v5.2"/><path d="M15.8 2.9v5.2"/><path d="M5.4 8.2h13.2v3.1c0 3.3-2.6 6-5.9 6h-1.4c-3.3 0-5.9-2.7-5.9-6z"/><path d="M12 17.4v3.8"/></g></symbol>
-<symbol id="ic-battery" viewBox="0 0 24 24"><g class="hd"><rect x="2.6" y="7.2" width="16.6" height="9.7" rx="1.6"/><path d="M21.3 10.6v3"/><path d="M5.6 10.2v3.7"/><path d="M9 10.2v3.7"/><path d="M12.4 10.2v3.7"/></g></symbol>
-<symbol id="ic-fuel" viewBox="0 0 24 24"><g class="hd"><path d="M3.6 20.9h10.2"/><path d="M4.5 20.8V4.6c0-.9.7-1.6 1.6-1.6h5.3c1 0 1.7.7 1.7 1.6v16.2"/><rect x="6.6" y="5.6" width="4.8" height="4.1" rx=".6"/><path d="M13.9 9.1h2.6c.8 0 1.5.7 1.5 1.5v5.9c0 .9.6 1.5 1.4 1.5s1.4-.7 1.4-1.5V8.4l-2.3-2.6"/></g></symbol>
-<symbol id="ic-walk" viewBox="0 0 24 24"><g class="hd"><circle cx="13.1" cy="4.2" r="1.9"/><path d="M9.1 21.3l2.4-5.3.9-4.5"/><path d="M12.4 11.5 9.6 9.2c-.6-.5-.7-1.3-.3-1.9l1-1.4c.5-.7 1.5-.9 2.2-.4l2.4 1.7 2.7.5"/><path d="M12.9 13.3l2.5 2.3 1.6 5.6"/><path d="M6.6 12.9l2.1-3.4"/></g></symbol>
-<symbol id="ic-sprout" viewBox="0 0 24 24"><g class="hd"><path d="M12 21.2v-8.4"/><path d="M12 13c-.3-3.1-2.6-5.4-5.7-5.6-.4 0-.6.2-.6.6.2 3.1 2.6 5.4 5.7 5.6"/><path d="M12.1 12.4c.3-3.6 2.8-6.3 6.3-6.6.4 0 .7.3.6.7-.3 3.6-2.9 6.3-6.4 6.5"/></g></symbol>
-<symbol id="ic-broccoli" viewBox="0 0 24 24"><g class="hd"><path d="M8.4 10.6c-1.8-.2-3.1-1.6-3-3.3.1-1.5 1.3-2.7 2.9-2.8.5-1.5 1.9-2.5 3.6-2.5 1.7 0 3.2 1.1 3.6 2.6 1.6.1 2.8 1.3 2.8 2.8 0 1.7-1.4 3-3.2 3.2"/><path d="M8.2 10.5h7.7l-1.2 9.7c-.1.6-.6 1-1.2 1h-3c-.6 0-1.1-.4-1.2-1z"/><path d="M12 10.8v10.2"/></g></symbol>
-<symbol id="ic-plate" viewBox="0 0 24 24"><g class="hd"><circle cx="12" cy="12" r="9.1"/><circle cx="12" cy="12" r="5.4"/></g></symbol>
-<symbol id="ic-steak" viewBox="0 0 24 24"><g class="hd"><path d="M6.6 6.1c2-2 5.5-2.9 8.8-2.1 4 .9 6.6 4.2 6 7.7-.7 3.9-4.7 6.4-9 5.8-2.1-.3-3.9-1.3-5.1-2.7"/><path d="M6.7 6.2c-1.6-.4-2.9.4-3.2 1.9-.3 1.4.5 2.7 1.9 3.2-.9 1-1 2.4-.2 3.4.8 1.1 2.3 1.4 3.6.8"/><path d="M11.2 8c2.1-.6 4.1.4 4.6 2.1.5 1.8-.7 3.6-2.7 4.1"/></g></symbol>
-<symbol id="ic-flame" viewBox="0 0 24 24"><g class="hd"><path d="M12.3 2.6c3.4 3.3 5.9 6.3 5.9 10.1 0 3.9-2.8 6.7-6.3 6.7s-6.2-2.8-6.2-6.5c0-2 .9-3.6 2.3-5.3.2 1.4.9 2.3 1.9 2.5.6-2.6 1.2-4.8 2.4-7.5z"/><path d="M12.1 19.3c-1.8 0-3.1-1.4-3.1-3.2 0-1.5 1-2.6 3-4.5 1.9 1.9 3.1 3 3.1 4.6 0 1.7-1.3 3.1-3 3.1z"/></g></symbol>
-<symbol id="ic-thermo" viewBox="0 0 24 24"><g class="hd"><path d="M13.9 13.6V5.1c0-1.3-1-2.3-2.2-2.3S9.4 3.8 9.4 5.1v8.5c-1.1.8-1.8 2-1.8 3.4 0 2.4 1.9 4.3 4.2 4.3s4.1-1.9 4.1-4.2c0-1.4-.7-2.7-2-3.5z"/><path d="M11.7 8.6v8"/><circle cx="11.7" cy="17.2" r="1.6"/></g></symbol>
-<symbol id="ic-sun" viewBox="0 0 24 24"><g class="hd"><circle cx="12" cy="12" r="4.6"/><path d="M12 1.9v2.3"/><path d="M12 19.8v2.3"/><path d="M1.9 12h2.3"/><path d="M19.8 12h2.3"/><path d="M4.9 4.8 6.5 6.5"/><path d="M17.6 17.5l1.6 1.7"/><path d="M19.2 4.8 17.5 6.5"/><path d="M6.5 17.5 4.8 19.2"/></g></symbol>
-<symbol id="ic-plane" viewBox="0 0 24 24"><g class="hd"><path d="M12.2 2.5c.9 0 1.6 1.9 1.6 4.3v2.3l6.7 4c.3.2.5.5.5.9v1.6c0 .4-.4.7-.8.5l-6.4-1.9v3.3l2 1.6c.2.2.3.4.3.6v1c0 .4-.3.6-.7.5l-3.2-.9-3.3.9c-.4.1-.7-.1-.7-.5v-1c0-.2.1-.4.3-.6l2-1.6v-3.3l-6.4 1.9c-.4.2-.8-.1-.8-.5v-1.6c0-.4.2-.7.5-.9l6.7-4V6.8c0-2.4.8-4.3 1.7-4.3z"/></g></symbol>
-<symbol id="ic-bus" viewBox="0 0 24 24"><g class="hd"><rect x="3.4" y="3.3" width="17.3" height="14.2" rx="2.1"/><path d="M3.6 12.3h17"/><path d="M7.4 3.5v8.6"/><path d="M16.5 3.5v8.6"/><circle cx="7.3" cy="19.6" r="1.7"/><circle cx="16.6" cy="19.6" r="1.7"/><path d="M3.5 17.4v1.4"/><path d="M20.6 17.4v1.4"/></g></symbol>
-<symbol id="ic-trash" viewBox="0 0 24 24"><g class="hd"><path d="M3.6 6.2h16.7"/><path d="M9.1 6.1V4.4c0-.8.6-1.4 1.4-1.4h3.1c.8 0 1.4.6 1.4 1.4v1.7"/><path d="M5.6 6.3l.9 13.4c.1.8.7 1.4 1.5 1.4h8.1c.8 0 1.4-.6 1.5-1.4l.9-13.4"/><path d="M10.1 10.1v7.1"/><path d="M14 10.1v7.1"/></g></symbol>
-<symbol id="ic-scooter" viewBox="0 0 24 24"><g class="hd"><circle cx="5.1" cy="17.6" r="2.9"/><circle cx="18.9" cy="17.6" r="2.9"/><path d="M5.2 17.5h9.1c.4-3.8 1.5-6.7 3.5-9.1"/><path d="M14.4 4.6h2.6c.9 0 1.5.7 1.6 1.6l.4 11.3"/><path d="M8.4 17.5c0-3 1.3-4.6 3.9-4.7"/></g></symbol>
-<symbol id="ic-shirt" viewBox="0 0 24 24"><g class="hd"><path d="M8.6 2.9 3.2 5.6c-.5.2-.7.8-.5 1.3l1.6 3.6c.2.5.8.7 1.3.5l1.5-.7v9.5c0 .7.5 1.2 1.2 1.2h7.5c.7 0 1.2-.5 1.2-1.2v-9.5l1.5.7c.5.2 1.1 0 1.3-.5l1.6-3.6c.2-.5 0-1.1-.5-1.3l-5.4-2.7"/><path d="M8.6 2.9c0 1.9 1.5 3.4 3.4 3.4s3.4-1.5 3.4-3.4"/></g></symbol>
-<symbol id="ic-laptop" viewBox="0 0 24 24"><g class="hd"><path d="M4.6 5.4c0-.8.6-1.4 1.4-1.4h12c.8 0 1.4.6 1.4 1.4v10.1H4.6z"/><path d="M2.4 15.4h19.2l-1.3 2.9c-.2.5-.7.8-1.2.8H4.9c-.5 0-1-.3-1.2-.8z"/><path d="M10.3 17.2h3.4"/></g></symbol>
-<symbol id="ic-cart" viewBox="0 0 24 24"><g class="hd"><path d="M2.4 3.4h2.4c.6 0 1.1.4 1.2 1l2.2 10.2c.1.6.6 1 1.2 1h8.7c.6 0 1.1-.4 1.2-1l1.6-7.2c.1-.6-.3-1.1-.9-1.1H6.2"/><circle cx="9.6" cy="19.7" r="1.7"/><circle cx="17.4" cy="19.7" r="1.7"/></g></symbol>
-<symbol id="ic-tv" viewBox="0 0 24 24"><g class="hd"><rect x="2.6" y="6.3" width="18.8" height="12.4" rx="1.8"/><path d="M8.1 2.7 12 6.2l3.9-3.5"/><path d="M17.4 21.3H6.6"/></g></symbol>
-<symbol id="ic-robot" viewBox="0 0 24 24"><g class="hd"><rect x="3.6" y="7.4" width="16.8" height="12.1" rx="2.4"/><path d="M12 7.3V4.4"/><circle cx="12" cy="3.2" r="1.4"/><circle cx="8.6" cy="12.4" r="1.4"/><circle cx="15.4" cy="12.4" r="1.4"/><path d="M9.2 16.2h5.6"/><path d="M1.4 11.6v3.6"/><path d="M22.6 11.6v3.6"/></g></symbol>
-<symbol id="ic-lungs" viewBox="0 0 24 24"><g class="hd"><path d="M12 2.8v9.4"/><path d="M9.4 8.4c0-1.2-1.1-2.1-2.2-1.8-1.5.4-2.6 1.9-3 4.1-.4 2.3-.4 4.9.1 7 .2 1 1.1 1.6 2.1 1.4l2.2-.5c.9-.2 1.5-1 1.5-1.9z"/><path d="M14.6 8.4c0-1.2 1.1-2.1 2.2-1.8 1.5.4 2.6 1.9 3 4.1.4 2.3.4 4.9-.1 7-.2 1-1.1 1.6-2.1 1.4l-2.2-.5c-.9-.2-1.5-1-1.5-1.9z"/></g></symbol>
-<symbol id="ic-wave" viewBox="0 0 24 24"><g class="hd"><path d="M2.4 8.1c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1"/><path d="M2.4 13.2c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1"/><path d="M2.4 18.3c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1"/></g></symbol>
-<symbol id="ic-drop" viewBox="0 0 24 24"><g class="hd"><path d="M12.1 2.6c3.6 4.6 6.1 8.2 6.1 11.4 0 3.6-2.8 6.4-6.2 6.4s-6.1-2.8-6.1-6.3c0-3.2 2.5-6.8 6.2-11.5z"/><path d="M8.9 14.3c0 1.9 1.3 3.4 3.1 3.7"/></g></symbol>
-<symbol id="ic-wheat" viewBox="0 0 24 24"><g class="hd"><path d="M12 21.3V9.4"/><path d="M12 9.6c-1.6-1.1-2.3-2.7-1.9-4.4.2-.6.9-.8 1.4-.4 1.4 1.1 1.9 2.8 1.4 4.4"/><path d="M11.9 12.9c-1.9-.3-3.1-1.5-3.4-3.3-.1-.6.4-1.1 1-1 1.8.3 3 1.6 3.2 3.4"/><path d="M12.2 12.9c1.9-.3 3.1-1.5 3.4-3.3.1-.6-.4-1.1-1-1-1.8.3-3 1.6-3.2 3.4"/><path d="M11.9 17.2c-1.9-.3-3.1-1.5-3.4-3.3-.1-.6.4-1.1 1-1 1.8.3 3 1.6 3.2 3.4"/><path d="M12.2 17.2c1.9-.3 3.1-1.5 3.4-3.3.1-.6-.4-1.1-1-1-1.8.3-3 1.6-3.2 3.4"/></g></symbol>
-<symbol id="ic-worker" viewBox="0 0 24 24"><g class="hd"><path d="M7.5 8.3c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"/><path d="M5.7 8.4h12.6"/><path d="M12 3.9V8.2"/><path d="M9.1 8.5v1.3c0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9V8.5"/><path d="M5.2 21.1c.4-2.7 3.2-4.6 6.8-4.6s6.4 1.9 6.8 4.6"/></g></symbol>
-<symbol id="ic-recycle" viewBox="0 0 24 24"><g class="hd"><path d="M9.1 3.9c.9-1.5 3-1.5 3.9 0l2.3 3.9"/><path d="M13.4 6.3l2 1.4-.1-2.5"/><path d="M20.4 13.6c.9 1.5-.2 3.4-1.9 3.4h-4.6"/><path d="M15.7 15.2l-1.9 1.7 2 1.6"/><path d="M5.4 17H3.6c-1.8 0-2.9-1.9-2-3.4l2.3-4"/><path d="M6.1 12.1l-2.2.5 1.6 1.9"/><path d="M8.4 17h6.7"/></g></symbol>
-<symbol id="ic-traffic" viewBox="0 0 24 24"><g class="hd"><rect x="7.1" y="2.6" width="9.8" height="16.1" rx="2.6"/><circle cx="12" cy="6.6" r="1.6"/><circle cx="12" cy="10.7" r="1.6"/><circle cx="12" cy="14.8" r="1.6"/><path d="M12 18.7v2.6"/><path d="M8.6 21.3h6.8"/></g></symbol>
-<symbol id="ic-road" viewBox="0 0 24 24"><g class="hd"><path d="M7.6 2.8 3.4 21.2"/><path d="M16.4 2.8l4.2 18.4"/><path d="M12 3.4v2.9"/><path d="M12 10.1v3.4"/><path d="M12 17.3v3.4"/></g></symbol>
-<symbol id="ic-speaker" viewBox="0 0 24 24"><g class="hd"><path d="M11.4 4.2 6.6 8.4H3.4c-.6 0-1 .4-1 1v5.2c0 .6.4 1 1 1h3.2l4.8 4.2c.6.5 1.4.1 1.4-.7V4.9c0-.8-.8-1.2-1.4-.7z"/><path d="M16.4 8.8c1.7 1.8 1.7 4.6 0 6.4"/><path d="M19.2 6.2c3 3.2 3 8.4 0 11.6"/></g></symbol>
-<symbol id="ic-hospital" viewBox="0 0 24 24"><g class="hd"><path d="M4.1 8.6 12 2.9l7.9 5.7v11.2c0 .7-.6 1.3-1.3 1.3H5.4c-.7 0-1.3-.6-1.3-1.3z"/><path d="M12 8.9v7.2"/><path d="M8.4 12.5h7.2"/></g></symbol>
-<symbol id="ic-shield" viewBox="0 0 24 24"><g class="hd"><path d="M12 2.7 4.4 5.9v6.2c0 4.2 3.1 8 7.6 9.2 4.5-1.2 7.6-5 7.6-9.2V5.9z"/><path d="M8.8 11.9l2.3 2.4 4.2-4.6"/></g></symbol>
-<symbol id="ic-bulb" viewBox="0 0 24 24"><g class="hd"><path d="M12 2.8c-3.5 0-6.3 2.8-6.3 6.2 0 2.2 1.1 3.8 2.2 5 .6.7 1 1.5 1 2.4v.4h6.2v-.4c0-.9.4-1.7 1-2.4 1.1-1.2 2.2-2.8 2.2-5 0-3.4-2.8-6.2-6.3-6.2z"/><path d="M9.4 19.4h5.2"/><path d="M10.2 21.3h3.6"/></g></symbol>
+
+<symbol id="ic-car" viewBox="0 0 24 24"><g class="hd">
+<path d="M2.7 15.1c-.1-1.6.2-2.5 1.1-2.7l2-3.3c.4-.7 1-1 1.8-1h6c.7 0 1.3.3 1.7.9l2.3 3.3c.9.3 1.2 1.1 1.2 2.6l-.1 1.6c0 .4-.3.6-.7.6H5.1c-.4 0-.7-.2-.8-.6z" fill="var(--i-f1,#c8e0cf)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M4.2 12.5c4.6-.5 10.9-.5 15.4 0" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<circle cx="7.2" cy="16.3" r="1.9" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#1a3028)"/>
+<circle cx="16.4" cy="16.3" r="1.9" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#1a3028)"/>
+</g></symbol>
+
+<symbol id="ic-leaf" viewBox="0 0 24 24"><g class="hd">
+<path d="M19.4 4.3c.7 5.3-.6 9.4-3.4 11.7-2.6 2.2-6.2 2.3-8.2.4-1.9-1.8-1.7-5 .5-7 2.4-2.2 6.6-3.4 11.1-5.1z" fill="var(--i-f1,#a9d5b2)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M17.8 6.1c-3.5 2-6.6 5.4-8.6 10.1" fill="none" stroke="var(--i-ac,#2b5c3e)"/>
+<path d="M5.1 20c1-1.6 2.1-3 3.4-4.2" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+</g></symbol>
+
+<symbol id="ic-bolt" viewBox="0 0 24 24"><g class="hd">
+<path d="M13.6 2.4 5.2 13.3c-.3.4-.1.8.4.8h4.9l-1.4 7.3 8.5-11c.3-.4.1-.8-.4-.8h-5z" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+</g></symbol>
+
+<symbol id="ic-bag" viewBox="0 0 24 24"><g class="hd">
+<path d="M4.6 8.3h14.6l-1 12c0 .6-.5 1-1.1 1H6.7c-.6 0-1-.4-1.1-1z" fill="var(--i-f1,#d9c6ea)" stroke="var(--i-ln,#6b4b8a)"/>
+<path d="M8.6 10.6V6.4c0-2 1.5-3.6 3.4-3.6s3.5 1.6 3.5 3.6v4.2" fill="none" stroke="var(--i-ln,#6b4b8a)"/>
+</g></symbol>
+
+<symbol id="ic-chart" viewBox="0 0 24 24"><g class="hd">
+<path d="M3.4 20.4h17.3" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M3.6 20.3V3.7" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<rect x="6.4" y="12.1" width="3.4" height="8.2" rx=".5" fill="var(--i-f1,#a9d5b2)" stroke="var(--i-ln,#2b5c3e)"/>
+<rect x="11.5" y="7.4" width="3.4" height="12.9" rx=".5" fill="var(--i-f2,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<rect x="16.5" y="14.8" width="3.4" height="5.5" rx=".5" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+</g></symbol>
+
+<symbol id="ic-warning" viewBox="0 0 24 24"><g class="hd">
+<path d="M12.1 3.3 21.4 19c.3.5 0 1.1-.6 1.1H3.3c-.6 0-.9-.6-.6-1.1z" fill="var(--i-f1,#f5d9a8)" stroke="var(--i-ln,#a8642a)"/>
+<path d="M12 9.1v4.8" fill="none" stroke="var(--i-ac,#a8642a)"/>
+<path d="M12 16.9v.1" fill="none" stroke="var(--i-ac,#a8642a)"/>
+</g></symbol>
+
+<symbol id="ic-clipboard" viewBox="0 0 24 24"><g class="hd">
+<path d="M8.4 4.3H6.3c-.7 0-1.2.5-1.2 1.2v14.4c0 .7.5 1.2 1.2 1.2h11.5c.7 0 1.2-.5 1.2-1.2V5.5c0-.7-.5-1.2-1.2-1.2h-2.1" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<rect x="8.3" y="2.5" width="7.5" height="3.6" rx=".9" fill="var(--i-f2,#c8e0cf)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M8.2 11.2h7.7" fill="none" stroke="var(--i-ac,#5d7a6c)"/>
+<path d="M8.2 14.8h7.7" fill="none" stroke="var(--i-ac,#5d7a6c)"/>
+<path d="M8.2 18.1h4.6" fill="none" stroke="var(--i-ac,#5d7a6c)"/>
+</g></symbol>
+
+<symbol id="ic-books" viewBox="0 0 24 24"><g class="hd">
+<path d="M4.3 4.6h4.3c.6 0 1 .4 1 1v14.1c0 .5-.4.9-1 .9H4.3c-.5 0-.9-.4-.9-.9V5.6c0-.6.4-1 .9-1z" fill="var(--i-f1,#a9d5b2)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M10.4 4.6h4.2c.6 0 1 .4 1 1v14.1c0 .5-.4.9-1 .9h-4.2z" fill="var(--i-f2,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M3.6 9.2h5.8" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M10.2 9.2h5.3" fill="none" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M17.1 6.4l3 .6c.5.1.8.6.7 1.1l-2.5 12c-.1.5-.6.8-1.1.7l-1.1-.3" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+</g></symbol>
+
+<symbol id="ic-microscope" viewBox="0 0 24 24"><g class="hd">
+<path d="M6.6 21.1h13.8" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M9.4 21c-2.4-1.3-3.9-3.7-3.9-6.5 0-1.9.7-3.6 1.9-5" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M13.3 3.5l3.9 5.6c.4.5.2 1.2-.3 1.6l-2.2 1.5c-.5.4-1.2.2-1.6-.3L9.2 6.3c-.4-.5-.2-1.2.3-1.6l2.2-1.5c.5-.4 1.2-.2 1.6.3z" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M11.6 12.6l1.9 2.7c.9 1.3.6 3-.6 3.9" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M15.9 14.1c1.6 1.1 2.3 3 1.9 4.8" fill="none" stroke="var(--i-ac,#5d7a6c)"/>
+</g></symbol>
+
+<symbol id="ic-plug" viewBox="0 0 24 24"><g class="hd">
+<path d="M8.2 2.9v5.2" fill="none" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M15.8 2.9v5.2" fill="none" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M5.4 8.2h13.2v3.1c0 3.3-2.6 6-5.9 6h-1.4c-3.3 0-5.9-2.7-5.9-6z" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M12 17.4v3.8" fill="none" stroke="var(--i-ln,#8a5f1c)"/>
+</g></symbol>
+
+<symbol id="ic-battery" viewBox="0 0 24 24"><g class="hd">
+<rect x="2.6" y="7.2" width="16.6" height="9.7" rx="1.6" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M21.3 10.6v3" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<rect x="4.6" y="9.4" width="2.6" height="5.3" rx=".5" fill="var(--i-f2,#a9d5b2)" stroke="var(--i-ln,#2b5c3e)"/>
+<rect x="8.4" y="9.4" width="2.6" height="5.3" rx=".5" fill="var(--i-f2,#a9d5b2)" stroke="var(--i-ln,#2b5c3e)"/>
+<rect x="12.2" y="9.4" width="2.6" height="5.3" rx=".5" fill="var(--i-f2,#a9d5b2)" stroke="var(--i-ln,#2b5c3e)"/>
+</g></symbol>
+
+<symbol id="ic-fuel" viewBox="0 0 24 24"><g class="hd">
+<path d="M3.6 20.9h10.2" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M4.5 20.8V4.6c0-.9.7-1.6 1.6-1.6h5.3c1 0 1.7.7 1.7 1.6v16.2z" fill="var(--i-f1,#e8a9a9)" stroke="var(--i-ln,#8f3434)"/>
+<rect x="6.6" y="5.6" width="4.8" height="4.1" rx=".6" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#8f3434)"/>
+<path d="M13.9 9.1h2.6c.8 0 1.5.7 1.5 1.5v5.9c0 .9.6 1.5 1.4 1.5s1.4-.7 1.4-1.5V8.4l-2.3-2.6" fill="none" stroke="var(--i-ln,#8f3434)"/>
+</g></symbol>
+
+<symbol id="ic-walk" viewBox="0 0 24 24"><g class="hd">
+<circle cx="13.1" cy="4.2" r="1.9" fill="var(--i-f1,#c8e0cf)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M9.1 21.3l2.4-5.3.9-4.5" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M12.4 11.5 9.6 9.2c-.6-.5-.7-1.3-.3-1.9l1-1.4c.5-.7 1.5-.9 2.2-.4l2.4 1.7 2.7.5" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M12.9 13.3l2.5 2.3 1.6 5.6" fill="none" stroke="var(--i-ln,#1a3028)"/>
+<path d="M6.6 12.9l2.1-3.4" fill="none" stroke="var(--i-ac,#5d7a6c)"/>
+</g></symbol>
+
+<symbol id="ic-sprout" viewBox="0 0 24 24"><g class="hd">
+<path d="M12 21.2v-8.4" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M12 13c-.3-3.1-2.6-5.4-5.7-5.6-.4 0-.6.2-.6.6.2 3.1 2.6 5.4 5.7 5.6z" fill="var(--i-f1,#8fc79f)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M12.1 12.4c.3-3.6 2.8-6.3 6.3-6.6.4 0 .7.3.6.7-.3 3.6-2.9 6.3-6.4 6.5z" fill="var(--i-f2,#c2e3cb)" stroke="var(--i-ln,#2b5c3e)"/>
+</g></symbol>
+
+<symbol id="ic-broccoli" viewBox="0 0 24 24"><g class="hd">
+<path d="M8.4 10.6c-1.8-.2-3.1-1.6-3-3.3.1-1.5 1.3-2.7 2.9-2.8.5-1.5 1.9-2.5 3.6-2.5 1.7 0 3.2 1.1 3.6 2.6 1.6.1 2.8 1.3 2.8 2.8 0 1.7-1.4 3-3.2 3.2z" fill="var(--i-f1,#7ab98c)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M8.2 10.5h7.7l-1.2 9.7c-.1.6-.6 1-1.2 1h-3c-.6 0-1.1-.4-1.2-1z" fill="var(--i-f2,#c2e3cb)" stroke="var(--i-ln,#2b5c3e)"/>
+</g></symbol>
+
+<symbol id="ic-plate" viewBox="0 0 24 24"><g class="hd">
+<circle cx="12" cy="12" r="9.1" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#5d7a6c)"/>
+<circle cx="12" cy="12" r="5.4" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#5d7a6c)"/>
+</g></symbol>
+
+<symbol id="ic-steak" viewBox="0 0 24 24"><g class="hd">
+<path d="M6.6 6.1c2-2 5.5-2.9 8.8-2.1 4 .9 6.6 4.2 6 7.7-.7 3.9-4.7 6.4-9 5.8-2.1-.3-3.9-1.3-5.1-2.7z" fill="var(--i-f1,#d78a8a)" stroke="var(--i-ln,#8f3434)"/>
+<path d="M6.7 6.2c-1.6-.4-2.9.4-3.2 1.9-.3 1.4.5 2.7 1.9 3.2-.9 1-1 2.4-.2 3.4.8 1.1 2.3 1.4 3.6.8" fill="var(--i-f2,#f2ead9)" stroke="var(--i-ln,#8f3434)"/>
+<path d="M11.2 8c2.1-.6 4.1.4 4.6 2.1.5 1.8-.7 3.6-2.7 4.1" fill="none" stroke="var(--i-ac,#8f3434)"/>
+</g></symbol>
+
+<symbol id="ic-flame" viewBox="0 0 24 24"><g class="hd">
+<path d="M12.3 2.6c3.4 3.3 5.9 6.3 5.9 10.1 0 3.9-2.8 6.7-6.3 6.7s-6.2-2.8-6.2-6.5c0-2 .9-3.6 2.3-5.3.2 1.4.9 2.3 1.9 2.5.6-2.6 1.2-4.8 2.4-7.5z" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#a8642a)"/>
+<path d="M12.1 19.3c-1.8 0-3.1-1.4-3.1-3.2 0-1.5 1-2.6 3-4.5 1.9 1.9 3.1 3 3.1 4.6 0 1.7-1.3 3.1-3 3.1z" fill="var(--i-f2,#d76a4a)" stroke="var(--i-ln,#a8642a)"/>
+</g></symbol>
+
+<symbol id="ic-thermo" viewBox="0 0 24 24"><g class="hd">
+<path d="M13.9 13.6V5.1c0-1.3-1-2.3-2.2-2.3S9.4 3.8 9.4 5.1v8.5c-1.1.8-1.8 2-1.8 3.4 0 2.4 1.9 4.3 4.2 4.3s4.1-1.9 4.1-4.2c0-1.4-.7-2.7-2-3.5z" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#8f3434)"/>
+<path d="M11.7 9.4v7.4" fill="none" stroke="var(--i-ac,#c94040)" stroke-width="2.2"/>
+<circle cx="11.7" cy="17.2" r="2.1" fill="var(--i-f2,#d76a6a)" stroke="var(--i-ln,#8f3434)"/>
+</g></symbol>
+
+<symbol id="ic-sun" viewBox="0 0 24 24"><g class="hd">
+<circle cx="12" cy="12" r="4.6" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M12 1.9v2.3M12 19.8v2.3M1.9 12h2.3M19.8 12h2.3M4.9 4.8 6.5 6.5M17.6 17.5l1.6 1.7M19.2 4.8 17.5 6.5M6.5 17.5 4.8 19.2" fill="none" stroke="var(--i-ac,#a8642a)"/>
+</g></symbol>
+
+<symbol id="ic-plane" viewBox="0 0 24 24"><g class="hd">
+<path d="M12.2 2.5c.9 0 1.6 1.9 1.6 4.3v2.3l6.7 4c.3.2.5.5.5.9v1.6c0 .4-.4.7-.8.5l-6.4-1.9v3.3l2 1.6c.2.2.3.4.3.6v1c0 .4-.3.6-.7.5l-3.2-.9-3.3.9c-.4.1-.7-.1-.7-.5v-1c0-.2.1-.4.3-.6l2-1.6v-3.3l-6.4 1.9c-.4.2-.8-.1-.8-.5v-1.6c0-.4.2-.7.5-.9l6.7-4V6.8c0-2.4.8-4.3 1.7-4.3z" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+</g></symbol>
+
+<symbol id="ic-bus" viewBox="0 0 24 24"><g class="hd">
+<rect x="3.4" y="3.3" width="17.3" height="14.2" rx="2.1" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M4.4 6.6h15.3v5.4H4.4z" fill="var(--i-f2,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M8.6 6.7v5.2M15.4 6.7v5.2" fill="none" stroke="var(--i-ln,#2c5f88)"/>
+<circle cx="7.3" cy="19.6" r="1.7" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<circle cx="16.6" cy="19.6" r="1.7" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+</g></symbol>
+
+<symbol id="ic-trash" viewBox="0 0 24 24"><g class="hd">
+<path d="M3.6 6.2h16.7" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M9.1 6.1V4.4c0-.8.6-1.4 1.4-1.4h3.1c.8 0 1.4.6 1.4 1.4v1.7" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M5.6 6.3l.9 13.4c.1.8.7 1.4 1.5 1.4h8.1c.8 0 1.4-.6 1.5-1.4l.9-13.4z" fill="var(--i-f1,#c2e3cb)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M10.1 10.1v7.1M14 10.1v7.1" fill="none" stroke="var(--i-ac,#2b5c3e)"/>
+</g></symbol>
+
+<symbol id="ic-scooter" viewBox="0 0 24 24"><g class="hd">
+<circle cx="5.1" cy="17.6" r="2.9" fill="var(--i-f2,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<circle cx="18.9" cy="17.6" r="2.9" fill="var(--i-f2,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M5.2 17.5h9.1c.4-3.8 1.5-6.7 3.5-9.1" fill="none" stroke="var(--i-ln,#8f3434)"/>
+<path d="M14.4 4.6h2.6c.9 0 1.5.7 1.6 1.6l.4 11.3" fill="none" stroke="var(--i-ln,#8f3434)"/>
+<path d="M8.4 17.5c0-3 1.3-4.6 3.9-4.7" fill="none" stroke="var(--i-ac,#d76a4a)"/>
+</g></symbol>
+
+<symbol id="ic-shirt" viewBox="0 0 24 24"><g class="hd">
+<path d="M8.6 2.9 3.2 5.6c-.5.2-.7.8-.5 1.3l1.6 3.6c.2.5.8.7 1.3.5l1.5-.7v9.5c0 .7.5 1.2 1.2 1.2h7.5c.7 0 1.2-.5 1.2-1.2v-9.5l1.5.7c.5.2 1.1 0 1.3-.5l1.6-3.6c.2-.5 0-1.1-.5-1.3l-5.4-2.7z" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M8.6 2.9c0 1.9 1.5 3.4 3.4 3.4s3.4-1.5 3.4-3.4" fill="none" stroke="var(--i-ln,#2c5f88)"/>
+</g></symbol>
+
+<symbol id="ic-laptop" viewBox="0 0 24 24"><g class="hd">
+<path d="M4.6 5.4c0-.8.6-1.4 1.4-1.4h12c.8 0 1.4.6 1.4 1.4v10.1H4.6z" fill="var(--i-f1,#c8e0cf)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M6.6 6.4h10.8v7.2H6.6z" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#5d7a6c)"/>
+<path d="M2.4 15.4h19.2l-1.3 2.9c-.2.5-.7.8-1.2.8H4.9c-.5 0-1-.3-1.2-.8z" fill="var(--i-f1,#c8e0cf)" stroke="var(--i-ln,#1a3028)"/>
+</g></symbol>
+
+<symbol id="ic-cart" viewBox="0 0 24 24"><g class="hd">
+<path d="M2.4 3.4h2.4c.6 0 1.1.4 1.2 1l2.2 10.2c.1.6.6 1 1.2 1h8.7c.6 0 1.1-.4 1.2-1l1.6-7.2c.1-.6-.3-1.1-.9-1.1H6.2" fill="var(--i-f1,#d9c6ea)" stroke="var(--i-ln,#6b4b8a)"/>
+<circle cx="9.6" cy="19.7" r="1.7" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#6b4b8a)"/>
+<circle cx="17.4" cy="19.7" r="1.7" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#6b4b8a)"/>
+</g></symbol>
+
+<symbol id="ic-tv" viewBox="0 0 24 24"><g class="hd">
+<rect x="2.6" y="6.3" width="18.8" height="12.4" rx="1.8" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+<rect x="4.6" y="8.3" width="14.8" height="8.4" rx="1" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M8.1 2.7 12 6.2l3.9-3.5" fill="none" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M17.4 21.3H6.6" fill="none" stroke="var(--i-ln,#2c5f88)"/>
+</g></symbol>
+
+<symbol id="ic-robot" viewBox="0 0 24 24"><g class="hd">
+<rect x="3.6" y="7.4" width="16.8" height="12.1" rx="2.4" fill="var(--i-f1,#d9c6ea)" stroke="var(--i-ln,#6b4b8a)"/>
+<path d="M12 7.3V4.4" fill="none" stroke="var(--i-ln,#6b4b8a)"/>
+<circle cx="12" cy="3.2" r="1.4" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#6b4b8a)"/>
+<circle cx="8.6" cy="12.4" r="1.5" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#6b4b8a)"/>
+<circle cx="15.4" cy="12.4" r="1.5" fill="var(--i-f2,#fdfaf5)" stroke="var(--i-ln,#6b4b8a)"/>
+<path d="M9.2 16.2h5.6" fill="none" stroke="var(--i-ac,#6b4b8a)"/>
+<path d="M1.4 11.6v3.6M22.6 11.6v3.6" fill="none" stroke="var(--i-ln,#6b4b8a)"/>
+</g></symbol>
+
+<symbol id="ic-lungs" viewBox="0 0 24 24"><g class="hd">
+<path d="M12 2.8v9.4" fill="none" stroke="var(--i-ln,#8f3434)"/>
+<path d="M9.4 8.4c0-1.2-1.1-2.1-2.2-1.8-1.5.4-2.6 1.9-3 4.1-.4 2.3-.4 4.9.1 7 .2 1 1.1 1.6 2.1 1.4l2.2-.5c.9-.2 1.5-1 1.5-1.9z" fill="var(--i-f1,#e8a9a9)" stroke="var(--i-ln,#8f3434)"/>
+<path d="M14.6 8.4c0-1.2 1.1-2.1 2.2-1.8 1.5.4 2.6 1.9 3 4.1.4 2.3.4 4.9-.1 7-.2 1-1.1 1.6-2.1 1.4l-2.2-.5c-.9-.2-1.5-1-1.5-1.9z" fill="var(--i-f1,#e8a9a9)" stroke="var(--i-ln,#8f3434)"/>
+</g></symbol>
+
+<symbol id="ic-wave" viewBox="0 0 24 24"><g class="hd">
+<path d="M2.4 8.1c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1" fill="none" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M2.4 13.2c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1" fill="none" stroke="var(--i-ac,#5b9bd5)"/>
+<path d="M2.4 18.3c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1" fill="none" stroke="var(--i-ln,#2c5f88)"/>
+</g></symbol>
+
+<symbol id="ic-drop" viewBox="0 0 24 24"><g class="hd">
+<path d="M12.1 2.6c3.6 4.6 6.1 8.2 6.1 11.4 0 3.6-2.8 6.4-6.2 6.4s-6.1-2.8-6.1-6.3c0-3.2 2.5-6.8 6.2-11.5z" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M8.9 14.3c0 1.9 1.3 3.4 3.1 3.7" fill="none" stroke="var(--i-f2,#fdfaf5)"/>
+</g></symbol>
+
+<symbol id="ic-wheat" viewBox="0 0 24 24"><g class="hd">
+<path d="M12 21.3V9.4" fill="none" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M12 9.6c-1.6-1.1-2.3-2.7-1.9-4.4.2-.6.9-.8 1.4-.4 1.4 1.1 1.9 2.8 1.4 4.4z" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M11.9 12.9c-1.9-.3-3.1-1.5-3.4-3.3-.1-.6.4-1.1 1-1 1.8.3 3 1.6 3.2 3.4z" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M12.2 12.9c1.9-.3 3.1-1.5 3.4-3.3.1-.6-.4-1.1-1-1-1.8.3-3 1.6-3.2 3.4z" fill="var(--i-f2,#f5d9a8)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M11.9 17.2c-1.9-.3-3.1-1.5-3.4-3.3-.1-.6.4-1.1 1-1 1.8.3 3 1.6 3.2 3.4z" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M12.2 17.2c1.9-.3 3.1-1.5 3.4-3.3.1-.6-.4-1.1-1-1-1.8.3-3 1.6-3.2 3.4z" fill="var(--i-f2,#f5d9a8)" stroke="var(--i-ln,#8a5f1c)"/>
+</g></symbol>
+
+<symbol id="ic-worker" viewBox="0 0 24 24"><g class="hd">
+<path d="M7.5 8.3c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5z" fill="var(--i-f1,#e8b86d)" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M5.7 8.4h12.6" fill="none" stroke="var(--i-ln,#8a5f1c)"/>
+<path d="M9.1 8.5v1.3c0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9V8.5" fill="var(--i-f2,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M5.2 21.1c.4-2.7 3.2-4.6 6.8-4.6s6.4 1.9 6.8 4.6" fill="var(--i-f1,#c8e0cf)" stroke="var(--i-ln,#1a3028)"/>
+</g></symbol>
+
+<symbol id="ic-recycle" viewBox="0 0 24 24"><g class="hd">
+<path d="M9.1 3.9c.9-1.5 3-1.5 3.9 0l2.3 3.9" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M13.4 6.3l2 1.4-.1-2.5" fill="var(--i-f1,#8fc79f)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M20.4 13.6c.9 1.5-.2 3.4-1.9 3.4h-4.6" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M15.7 15.2l-1.9 1.7 2 1.6z" fill="var(--i-f1,#8fc79f)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M5.4 17H3.6c-1.8 0-2.9-1.9-2-3.4l2.3-4" fill="none" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M6.1 12.1l-2.2.5 1.6 1.9z" fill="var(--i-f1,#8fc79f)" stroke="var(--i-ln,#2b5c3e)"/>
+<path d="M8.4 17h6.7" fill="none" stroke="var(--i-ac,#2b5c3e)"/>
+</g></symbol>
+
+<symbol id="ic-traffic" viewBox="0 0 24 24"><g class="hd">
+<rect x="7.1" y="2.6" width="9.8" height="16.1" rx="2.6" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<circle cx="12" cy="6.6" r="1.7" fill="var(--i-ac,#c94040)" stroke="var(--i-ln,#1a3028)"/>
+<circle cx="12" cy="10.7" r="1.7" fill="var(--i-f2,#e8b86d)" stroke="var(--i-ln,#1a3028)"/>
+<circle cx="12" cy="14.8" r="1.7" fill="var(--i-f2,#8fc79f)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M12 18.7v2.6M8.6 21.3h6.8" fill="none" stroke="var(--i-ln,#1a3028)"/>
+</g></symbol>
+
+<symbol id="ic-road" viewBox="0 0 24 24"><g class="hd">
+<path d="M7.6 2.8 3.4 21.2h17.2L16.4 2.8z" fill="var(--i-f1,#d8dcd4)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M12 3.4v2.9M12 10.1v3.4M12 17.3v3.4" fill="none" stroke="var(--i-ac,#e8b86d)" stroke-width="2"/>
+</g></symbol>
+
+<symbol id="ic-speaker" viewBox="0 0 24 24"><g class="hd">
+<path d="M11.4 4.2 6.6 8.4H3.4c-.6 0-1 .4-1 1v5.2c0 .6.4 1 1 1h3.2l4.8 4.2c.6.5 1.4.1 1.4-.7V4.9c0-.8-.8-1.2-1.4-.7z" fill="var(--i-f1,#c8e0cf)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M16.4 8.8c1.7 1.8 1.7 4.6 0 6.4" fill="none" stroke="var(--i-ac,#5d7a6c)"/>
+<path d="M19.2 6.2c3 3.2 3 8.4 0 11.6" fill="none" stroke="var(--i-ac,#5d7a6c)"/>
+</g></symbol>
+
+<symbol id="ic-hospital" viewBox="0 0 24 24"><g class="hd">
+<path d="M4.1 8.6 12 2.9l7.9 5.7v11.2c0 .7-.6 1.3-1.3 1.3H5.4c-.7 0-1.3-.6-1.3-1.3z" fill="var(--i-f1,#f2ead9)" stroke="var(--i-ln,#1a3028)"/>
+<path d="M12 8.9v7.2M8.4 12.5h7.2" fill="none" stroke="var(--i-ac,#c94040)" stroke-width="2.2"/>
+</g></symbol>
+
+<symbol id="ic-shield" viewBox="0 0 24 24"><g class="hd">
+<path d="M12 2.7 4.4 5.9v6.2c0 4.2 3.1 8 7.6 9.2 4.5-1.2 7.6-5 7.6-9.2V5.9z" fill="var(--i-f1,#a8cbe6)" stroke="var(--i-ln,#2c5f88)"/>
+<path d="M8.8 11.9l2.3 2.4 4.2-4.6" fill="none" stroke="var(--i-f2,#fdfaf5)" stroke-width="2.2"/>
+</g></symbol>
+
+<symbol id="ic-bulb" viewBox="0 0 24 24"><g class="hd">
+<path d="M12 2.8c-3.5 0-6.3 2.8-6.3 6.2 0 2.2 1.1 3.8 2.2 5 .6.7 1 1.5 1 2.4v.4h6.2v-.4c0-.9.4-1.7 1-2.4 1.1-1.2 2.2-2.8 2.2-5 0-3.4-2.8-6.2-6.3-6.2z" fill="var(--i-f1,#f5d9a8)" stroke="var(--i-ln,#a8642a)"/>
+<path d="M9.4 19.4h5.2M10.2 21.3h3.6" fill="none" stroke="var(--i-ln,#a8642a)"/>
+</g></symbol>
 </defs></svg>
 <script>if(new URLSearchParams(location.search).has('embed'))document.body.classList.add('embed');</script>
 

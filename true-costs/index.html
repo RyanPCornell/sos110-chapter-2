@@ -182,6 +182,32 @@ canvas{display:block}
 /* embed mode (?embed=1): the hosting slide provides the header */
 body.embed header{display:none}
 
+/* ── methodology prose ──────────────────────────────────────────
+   Shared style for the explanatory paragraphs in the Methodology
+   panel, so the long inline style isn't repeated per paragraph. */
+.mp{font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem}
+.mp:last-child{margin-bottom:0}
+.mp strong{color:var(--forest)}
+.mh{font-family:Georgia,serif;font-size:.95rem;color:var(--forest);margin:1.4rem 0 .55rem;font-weight:700}
+.mh:first-child{margin-top:0}
+.mnote{border-left:3px solid var(--gold);background:var(--gold-pale);padding:.7rem .95rem;
+  border-radius:0 4px 4px 0;margin-bottom:1rem}
+.mnote .mp{margin-bottom:0}
+.basis{font-family:'Courier New',monospace;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.12rem .4rem;border-radius:3px;white-space:nowrap}
+.basis.pub{background:#dceadf;color:#2b5c3e}
+.basis.der{background:#dbe7f2;color:#2c5f88}
+.basis.cal{background:#f7e3c6;color:#8a5f1c}
+/* the shared table right-aligns its last column, which suits short source
+   citations but not the prose columns in the framing/calibration tables */
+.bk-table.prose td:last-child,.bk-table.prose th:last-child{text-align:left}
+.bk-table.prose td{vertical-align:top}
+
+/* range shown beside the headline total */
+.t-range{font-family:'Courier New',monospace;font-size:.66rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--sage-lt);margin-top:.45rem}
+.t-range b{color:var(--gold-lt);font-weight:400}
+
 /* ── hand-drawn icons ───────────────────────────────────────────
    Each icon is a <use> of a 24×24 sketched symbol. Colours are baked
    into the sprite through four inherited paint slots (--i-f1/-f2/-ln/-ac),
@@ -503,7 +529,7 @@ body.embed header{display:none}
 
 <div class="wrap">
   <!-- ══ DISCLAIMER ══ -->
-  <div class="disclaimer sans"><svg class="ico" aria-hidden="true"><use href="#ic-warning"/></svg> <strong>This tool is for educational purposes only.</strong> The values shown — while based on the academic sources cited — are estimates, not precise measurements of any individual's actual impact.</div>
+  <div class="disclaimer sans"><svg class="ico" aria-hidden="true"><use href="#ic-warning"/></svg> <strong>This tool is for educational purposes only.</strong> The values shown — while based on the academic sources cited — are estimates, not precise measurements of any individual's actual impact. They are also <strong>one valuation framework among several</strong>: putting a dollar figure on harm requires ethical choices (which discount rate, whether ecosystems can be priced at all) that reasonable people dispute. See <em>Framing &amp; Limits</em> under Methodology.</div>
 
   <!-- ══ CONTROLS ══ -->
   <div class="ctrl-col">
@@ -665,6 +691,7 @@ body.embed header{display:none}
         <div class="t-eye">Total Annual Externality Cost</div>
         <div class="t-num" id="t-num">$—</div>
         <div class="t-sub sans">Unpriced social &amp; environmental costs imposed on society per year</div>
+        <div class="t-range" id="t-range">Plausible range <b id="t-range-val">— </b> · one estimate, not a precise value</div>
       </div>
       <div class="t-pills">
         <div class="pill" id="p-co2">CO₂e: — t/yr</div>
@@ -855,16 +882,52 @@ body.embed header{display:none}
       <div class="ph" data-start-collapsed="1"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-microscope"/></svg></span><span class="ph-title">Methodology — How This Calculator Works</span><span class="ph-chevron">▾</span></div>
       <div class="pb">
         <div class="chart-tabs" id="meth-tabs">
-          <button class="ctab on" onclick="switchMeth('notincluded',this)">What's Not Included</button>
+          <button class="ctab on" onclick="switchMeth('framing',this)">Framing &amp; Limits</button>
+          <button class="ctab" onclick="switchMeth('notincluded',this)">What's Not Included</button>
           <button class="ctab" onclick="switchMeth('scc',this)">Social Cost of Carbon</button>
           <button class="ctab" onclick="switchMeth('transport',this)">Transportation</button>
           <button class="ctab" onclick="switchMeth('food',this)">Food</button>
           <button class="ctab" onclick="switchMeth('energy',this)">Energy</button>
           <button class="ctab" onclick="switchMeth('consumer',this)">Consumer Goods</button>
+          <button class="ctab" onclick="switchMeth('calib',this)">Calibration &amp; Overlap</button>
+        </div>
+
+        <!-- FRAMING & LIMITS TAB -->
+        <div class="hview on" id="mv-framing">
+          <div class="mh">This is one valuation framework, not <em>the</em> true cost</div>
+          <p class="mp">The calculator uses <strong>damage-cost valuation</strong>: it estimates the physical harm caused by an activity, then converts that harm into present-day dollars. That is a legitimate and widely used method — it underpins EPA regulatory analysis — but it is <strong>a choice, not a measurement</strong>, and it carries ethical commitments that reasonable people reject.</p>
+          <p class="mp">Three of those commitments do most of the work here:</p>
+          <table class="bk-table prose" style="margin-bottom:1rem">
+            <thead><tr><th>Assumption</th><th>Why it is contested</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">Future harm is discounted</td><td class="td-desc">Moving only the discount rate from 2.0% to 1.5% raises the SCC from $190 to $340 — nearly doubling every climate line in this tool — with no change whatsoever in the underlying physics. No scientific finding selects that rate; it is a judgement about how much a person born in 2100 counts relative to one alive now.</td></tr>
+              <tr><td class="td-cat">Harm can be priced at all</td><td class="td-desc">Assigning dollars to a lost species, a displaced community, or a premature death treats them as commensurable with money. Rights-based (deontological) ethics holds that some harms are wrongs to be prohibited, not costs to be traded off — so on that view the entire exercise is category error.</td></tr>
+              <tr><td class="td-cat">Aggregate totals are the right unit</td><td class="td-desc">A single national average conceals who actually bears the harm. Air pollution and extraction damages fall disproportionately on low-income communities and communities of colour; a per-person figure is silent about that distribution.</td></tr>
+            </tbody>
+          </table>
+          <p class="mp">Read the headline number as <strong>&ldquo;one defensible estimate under stated assumptions,&rdquo;</strong> not as the cost. A different-but-equally-defensible set of choices would produce a materially different figure — which is exactly what the range beside the total shows.</p>
+
+          <div class="mh">Uncertainty is large, and the range is a scenario, not a confidence interval</div>
+          <p class="mp">The figure beside the total is built by moving <strong>every</strong> parameter to its low end simultaneously, then to its high end — SCC, fuel economy, radiative forcing, diet study, air-quality damages, per-item consumer rates. That is deliberately a bounding exercise.</p>
+          <div class="mnote"><p class="mp">Because the parameters are moved together, the low and high ends assume the uncertainties are <strong>perfectly correlated</strong>, which they are not. Treat them as plausible bounding scenarios, not as a 95% confidence interval, and do not read the width as a probability statement. A genuine interval would require a Monte Carlo treatment with correlations between parameters — beyond what this teaching tool attempts.</p></div>
+
+          <div class="mh">These are average, not marginal, externalities</div>
+          <p class="mp">Every coefficient here is an <strong>average lifecycle intensity</strong>. The result therefore estimates the externality <em>embodied in a pattern of living</em> — not the social benefit of avoiding one more unit of anything.</p>
+          <p class="mp">The distinction bites hardest for electricity. This tool applies the <em>average</em> grid mix you select, but the generator that actually responds when you add or remove a kilowatt-hour is the <em>marginal</em> one — frequently natural gas, and in some hours and regions considerably dirtier or cleaner than the average. Avoided emissions from switching off a light are not the average rate shown. The same gap applies to a single flight (load factors, aircraft substitution, whether the flight departs regardless) and to a single garment.</p>
+          <div class="mnote"><p class="mp"><strong>So do not read a line item as a saving.</strong> &ldquo;Flights (long) $246&rdquo; does not mean society gains $246 if you cancel one flight. It means: of the total externality embodied in this lifestyle, $246 is attributable to long-haul flying.</p></div>
+
+          <div class="mh">Where these numbers apply</div>
+          <p class="mp">The model is <strong>US-centred</strong>. Emission factors (EPA), energy use (EIA), air-quality damages (NAS/APEEP), transit intensity (FTA), spending (BEA) and home size (US Census) are all US figures, and the defaults describe a US household.</p>
+          <p class="mp">Some inputs are global: food externalities (FAO), e-waste (Forti et al.), streaming infrastructure (IEA) and aviation radiative forcing (IPCC). Mixing the two is a real limitation — a global average food footprint applied to a US diet will misstate some streams.</p>
+          <p class="mp">The <strong>SCC is deliberately global</strong>: a tonne of CO₂ does the same damage wherever it is emitted, and EPA's $190 counts worldwide damages. One consequence worth stating plainly is that most of the climate harm counted here <em>does not fall on the person generating it</em>. Air-quality damages behave in the opposite way — they are intensely local, and the same tailpipe emission harms far more people in a dense city than in a rural county. The fixed $/mile rates average over that variation entirely.</p>
+
+          <div class="mh">The inputs are treated as independent, but they are not</div>
+          <p class="mp">Each slider moves on its own. In reality household electricity, floor area, consumer spending, device purchases and vehicle miles are strongly correlated — larger, higher-income households tend to be higher on all of them at once.</p>
+          <p class="mp">Two consequences: the tool will let you build combinations that rarely occur together (a 4,000 sq ft home with minimal consumption), and it cannot show you the <em>compounding</em> that makes real high-consumption lifestyles diverge from averages faster than any single slider suggests.</p>
         </div>
 
         <!-- BENCHMARK TAB -->
-        <div class="hview on" id="mv-notincluded">
+        <div class="hview" id="mv-notincluded">
           <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">
             This calculator focuses on externalities that are <strong>directly responsive to individual lifestyle choices</strong>. Several significant externality categories from the aggregate literature are intentionally excluded because they are systemic, location-dependent, or not calculable from the inputs available here. The key sources for the excluded categories are listed below.
           </p>
@@ -952,13 +1015,68 @@ body.embed header{display:none}
             <tbody>
               <tr><td class="td-cat">Clothing</td><td class="td-desc">$0.90/garment × items/month × 12</td><td class="td-desc">Midpoint of $0.70–$1.20 range. Covers water pollution (textile dyeing = ~20% of global industrial water pollution), labor exploitation, end-of-life waste. US average: ~53–68 garments/yr = ~4–6/month.</td><td class="td-desc">Ellen MacArthur (2017) [8]; PIRG (2023) [16]</td></tr>
               <tr><td class="td-cat">Electronics</td><td class="td-desc">$120/device</td><td class="td-desc">Midpoint of $60–$180 range. Covers e-waste toxicity (only 17.4% formally recycled globally), cobalt/rare earth mining harms, semiconductor fab energy.</td><td class="td-desc">Xu et al. (2020) [9]; Forti et al. (2020)</td></tr>
-              <tr><td class="td-cat">General shopping</td><td class="td-desc">$340 × spending multiplier</td><td class="td-desc">Baseline supply-chain and end-of-life externalities across all consumer goods. Multiplier: 0.45 (minimal) → 1.0 (average) → 3.2 (very high), calibrated to U.S. BEA personal consumption data.</td><td class="td-desc">True Price (2022) [5]; BEA (2023)</td></tr>
+              <tr><td class="td-cat">General shopping</td><td class="td-desc">$340 × spending multiplier</td><td class="td-desc">Baseline supply-chain and end-of-life externalities across all consumer goods. Multiplier: 0.45 (minimal) → 1.0 (average) → 3.2 (very high), bracketing US expenditure quintiles in BEA personal consumption data. These are calibration choices, not fitted coefficients — see <em>Calibration &amp; Overlap</em> for the full derivation and its limits.</td><td class="td-desc">True Price (2022) [5]; BEA (2023)</td></tr>
               <tr><td class="td-cat">Streaming</td><td class="td-desc">~$0.0034/hr (18g CO₂/hr × SCC)</td><td class="td-desc"><strong>Upstream only.</strong> The full streaming chain emits ~65g CO₂/hr (range 36–97g), but IEA analysis splits that energy as devices 72%, data transmission 23%, data centres 5%. Your device's electricity is already counted in the Home Energy kWh slider, so only the upstream 28% (data centres + network ≈ 18g CO₂/hr) is charged here — avoiding double-counting. Upstream infrastructure runs on regional grids, so the home grid selection does not apply.</td><td class="td-desc">Andrae &amp; Edler (2015) [10]; Kamiya / IEA (2020) [24]</td></tr>
               <tr><td class="td-cat">AI chatbot use</td><td class="td-desc">~$0.01/yr per daily prompt</td><td class="td-desc">0.3 Wh per text prompt (Epoch AI 2025 central; Google measured 0.24 Wh median; de Vries upper bound 3.0 Wh) × US-average grid externality rate ($0.111/kWh). Data centers run on regional grids, so the home grid selection does not apply. Includes ~0.26 mL direct cooling water per prompt; training and hardware manufacturing amortize to small additions per query at current usage scale.</td><td class="td-desc">Google (2025) [21]; de Vries (2023) [22]; Li et al. (2023) [23]</td></tr>
             </tbody>
           </table>
           <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a;margin-bottom:1rem">All consumer externalities include supply-chain impacts across the full lifecycle — not just point-of-sale or use-phase impacts. This is the key distinction between this calculator's approach and simple carbon footprint calculators that only count direct emissions.</p>
           <p style="font-family:system-ui,sans-serif;font-size:.82rem;line-height:1.7;color:#3d5a4a"><strong>System boundary — avoiding double-counting:</strong> Streaming and AI use both consume electricity in two places: on your device at home, and in off-site data centres and network infrastructure. The home-side electricity is already captured by the Annual Electricity slider in Home Energy, so the Streaming and AI line items count <em>only the off-site (upstream) portion</em>. This is also why those two items use US-average grid rates rather than your selected home grid — Netflix's and OpenAI's data centres don't run on your utility plan. Drawing system boundaries carefully like this is a core practice in lifecycle assessment.</p>
+        </div>
+
+        <!-- CALIBRATION & OVERLAP TAB -->
+        <div class="hview" id="mv-calib">
+          <div class="mh">How each number was obtained</div>
+          <p class="mp">Not every coefficient in this tool has the same standing. Some are lifted directly from a published table; some are computed from published values by a stated formula; and some are <strong>calibration choices</strong> — judgement anchored on the literature, but not a number any single paper reports. Conflating the three would overstate the model's precision, so every input is tagged below.</p>
+          <p class="mp">
+            <span class="basis pub">Published</span> taken directly from the cited source &nbsp;
+            <span class="basis der">Derived</span> computed from published values by the formula shown &nbsp;
+            <span class="basis cal">Calibrated</span> judgement anchored on the literature
+          </p>
+          <table class="bk-table prose" style="margin-bottom:1rem">
+            <thead><tr><th>Input</th><th>Basis</th><th>How it was set</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">SCC $190/tCO₂e</td><td class="td-desc"><span class="basis pub">Published</span></td><td class="td-desc">EPA (2023) central estimate at a 2.0% near-term Ramsey discount rate. Used verbatim.</td></tr>
+              <tr><td class="td-cat">Gasoline 8.887 kg CO₂/gal</td><td class="td-desc"><span class="basis pub">Published</span></td><td class="td-desc">EPA combustion stoichiometry. Per-mile figures are <span class="basis der">Derived</span>: ÷ MPG.</td></tr>
+              <tr><td class="td-cat">Grid $/kWh by source</td><td class="td-desc"><span class="basis pub">Published</span></td><td class="td-desc">Lifecycle damage rates from Epstein et al. (2011) for coal, NREL harmonisation for renewables/nuclear, NAS (2010) for air quality. Climate component is <span class="basis der">Derived</span>: g CO₂e/kWh × SCC.</td></tr>
+              <tr><td class="td-cat">Home heating</td><td class="td-desc"><span class="basis der">Derived</span></td><td class="td-desc">8 therms per 100 sq ft/yr (EIA RECS 2020) × 5.306 kg CO₂/therm (EPA GHG factors) × sq ft × SCC. Air-quality adder set at ~12% of the climate cost, per NAS (2010) for natural gas.</td></tr>
+              <tr><td class="td-cat">Flight RF multiplier 1.9×</td><td class="td-desc"><span class="basis pub">Published</span></td><td class="td-desc">IPCC AR6 (2022) and Lee et al. (2021), covering contrails, NOx-ozone and water vapour.</td></tr>
+              <tr><td class="td-cat">Diet base table (4 diets × 4 streams)</td><td class="td-desc"><span class="basis cal">Calibrated</span></td><td class="td-desc"><strong>See the derivation below.</strong> FAO (2021) and True Price (2022) supply the four-stream decomposition and the order of magnitude; the individual per-diet annual dollar values are calibrated to that literature rather than read off a single table.</td></tr>
+              <tr><td class="td-cat">Food waste multipliers 0.75 / 1.0 / 1.35</td><td class="td-desc"><span class="basis cal">Calibrated</span></td><td class="td-desc">Bracketed around the US average household food-waste rate of ~30% (ReFED 2021). &ldquo;Minimal&rdquo; approximates halving that rate; &ldquo;high&rdquo; approximates a third above it.</td></tr>
+              <tr><td class="td-cat">Local sourcing 1.0 → 0.74</td><td class="td-desc"><span class="basis cal">Calibrated</span></td><td class="td-desc">Bounded by Weber &amp; Matthews (2008), who find transport is only ~11% of food-related GHG. The maximum 26% discount therefore reflects transport <em>plus</em> seasonality and reduced spoilage — it deliberately cannot approach zero, because local sourcing cannot eliminate production impacts.</td></tr>
+              <tr><td class="td-cat">Clothing $0.90/garment</td><td class="td-desc"><span class="basis cal">Calibrated</span></td><td class="td-desc">Midpoint of the published $0.70–$1.20 range (Ellen MacArthur 2017; PIRG 2023). A midpoint is a choice; the low and high ends both appear in the Sensitivity Analysis.</td></tr>
+              <tr><td class="td-cat">Electronics $120/device</td><td class="td-desc"><span class="basis cal">Calibrated</span></td><td class="td-desc">Midpoint of the $60–$180 range derived from the e-waste health-impact literature (Xu et al. 2020; Forti et al. 2020). <strong>A single per-device figure is the coarsest simplification in the model</strong> — a laptop and a pair of earbuds differ by more than this range's full width.</td></tr>
+              <tr><td class="td-cat">Shopping base $340 and multipliers 0.45 / 1.0 / 1.8 / 3.2</td><td class="td-desc"><span class="basis cal">Calibrated</span></td><td class="td-desc"><strong>See the derivation below.</strong> The least precisely grounded numbers in the tool.</td></tr>
+              <tr><td class="td-cat">CO₂e climate shares (food waste 40%, takeout 35%, shopping 30%, electronics 15%)</td><td class="td-desc"><span class="basis cal">Calibrated</span></td><td class="td-desc">Used only to convert mixed-harm dollars back into a tonnage for the CO₂e pill. Items whose externality is purely climate are counted in full; these four are partly water, land, labour or toxicity, so only the climate share is reversed through the SCC.</td></tr>
+            </tbody>
+          </table>
+
+          <div class="mh">Derivation: the diet table</div>
+          <p class="mp">FAO's <em>True Cost of Food</em> (2021) reports global agrifood externalities decomposed into environmental, social and health streams; True Price (2022) reports per-product external costs for a set of foods. Neither publishes &ldquo;dollars per person per year by diet type,&rdquo; which is what this tool needs. The table was built in three steps:</p>
+          <p class="mp"><strong>1.</strong> Adopt FAO's four-stream structure (climate, water, land, health) so each stream traces to a distinct damage literature rather than one blended figure. <strong>2.</strong> Anchor the <em>mixed omnivore</em> row — the US-typical diet — at the per-capita magnitude implied by FAO's national-scale figures. <strong>3.</strong> Scale the other three diets by the relative footprints reported in the product-level literature, principally Poore &amp; Nemecek (2018), whose meta-analysis gives the ratio between animal- and plant-heavy diets for land, water and emissions.</p>
+          <div class="mnote"><p class="mp">Step 3 is where the judgement concentrates. The <em>ratios</em> between diets are far better established than the <em>absolute levels</em>, so comparisons across diet types in this tool are more reliable than any single diet's dollar figure. The Sensitivity Analysis varies the whole table by ×0.62 to ×1.55 to reflect the spread across published studies.</p></div>
+
+          <div class="mh">Derivation: the spending multiplier</div>
+          <p class="mp">The general-shopping term is <code>$340 × multiplier</code>, covering supply-chain and end-of-life externalities of goods <em>not</em> itemised elsewhere. Both parts are calibration choices:</p>
+          <p class="mp">The <strong>$340 base</strong> is set as the residual once clothing, electronics, food and energy are removed from economy-wide per-capita consumption externality estimates (True Price 2022; Trucost/TEEB 2013), so that itemised and non-itemised consumption do not overlap. The <strong>multipliers</strong> (0.45 / 1.0 / 1.8 / 3.2) bracket consumption tiers roughly spanning the spread between lower and upper US expenditure quintiles in BEA personal consumption data — they are not a fitted function of income, and no equation maps a dollar of spending onto a multiplier.</p>
+          <div class="mnote"><p class="mp"><strong>Treat this line as indicative rather than estimated.</strong> If you need one number from this tool to be defensible, do not choose this one. It exists so that consumption beyond the itemised categories is not silently valued at zero — an omission that would bias the total downward more than a rough estimate does.</p></div>
+
+          <div class="mh">Overlap: how double-counting was checked</div>
+          <p class="mp">The method is a single rule: <strong>each physical harm is assigned to exactly one input.</strong> Where two inputs could plausibly claim the same harm, one is scoped down. Every overlap identified is listed here, including the one that required a correction.</p>
+          <table class="bk-table prose" style="margin-bottom:1rem">
+            <thead><tr><th>Potential overlap</th><th>Resolution</th></tr></thead>
+            <tbody>
+              <tr><td class="td-cat">Streaming ↔ home electricity</td><td class="td-desc"><strong>Was double-counted; corrected.</strong> Streaming originally charged the full ~65g CO₂/hr chain, but 72% of that is device electricity already metered by the Home Energy slider. Streaming now counts only the upstream 28% (≈18g/hr) per IEA (2020).</td></tr>
+              <tr><td class="td-cat">AI use ↔ home electricity</td><td class="td-desc">No overlap. Inference runs in off-site data centres, so it is charged at US-average grid rates and is independent of both the household kWh slider and the selected home grid.</td></tr>
+              <tr><td class="td-cat">Grid air quality ↔ healthcare system burden</td><td class="td-desc">No overlap. The $/kWh air-quality rate covers only health damages attributable to generation. The broader healthcare <em>system</em> burden (~$1,500/person/yr) is <strong>excluded from the total entirely</strong> — see <em>What's Not Included</em>.</td></tr>
+              <tr><td class="td-cat">Food health stream ↔ &ldquo;Human Health Costs&rdquo; harm category</td><td class="td-desc">No overlap. The harm categories are a <strong>re-slicing of the same dollars</strong>, not an additional layer: the eight harm categories sum to exactly the headline total, which is why they always show 100%.</td></tr>
+              <tr><td class="td-cat">Vehicle climate ↔ vehicle air quality</td><td class="td-desc">No overlap. Distinct pathways (CO₂ warming vs. PM<sub>2.5</sub>/NOx exposure), valued from separate literatures (EPA SCC vs. NAS/APEEP).</td></tr>
+              <tr><td class="td-cat">Diet waste multiplier ↔ separate food-waste externality</td><td class="td-desc">No overlap. The multiplier scales the <em>production</em> externality of food that is grown and then wasted; the separate term (up to $220/yr) covers <em>disposal</em> — landfill methane. Different lifecycle stages.</td></tr>
+              <tr><td class="td-cat">Home heating ↔ grid electricity</td><td class="td-desc">No overlap. Heat pump and resistive-electric heating are assigned zero direct externality here precisely because their energy is already counted in the kWh slider; only combustion heating carries its own term.</td></tr>
+            </tbody>
+          </table>
+          <div class="mnote"><p class="mp"><strong>Known asymmetry.</strong> The spending multiplier scales general shopping <em>and</em> clothing, but not electronics — clothing is read as having a price/quality tier on top of the garment count you set, while electronics is counted by device count alone. This is a simplification rather than a principled distinction, and it means clothing responds to the spending slider while electronics does not.</p></div>
+          <p class="mp">Overlaps <em>between</em> published studies remain the hardest residual risk. Damage estimates from FAO, NAS, Epstein et al. and True Price were produced with different system boundaries, and where two sources might both include, say, agricultural water pollution, no reconciliation across their underlying accounting is possible from the published figures alone. The categories above are drawn to minimise this, but it cannot be eliminated — which is a further reason to read the total as an estimate with a wide range rather than a settled figure.</p>
         </div>
       </div>
     </div>
@@ -1228,6 +1346,14 @@ function go() {
   tn.classList.add('pop');
 
   document.getElementById('p-co2').textContent='CO₂e: ~'+Math.round(r.co2)+' t/yr';
+
+  // Headline range — same low/high scenarios the Sensitivity Analysis draws,
+  // so the single figure is never presented without its spread.
+  try {
+    const rg = calcRange().total;
+    document.getElementById('t-range-val').textContent =
+      '$'+Math.round(rg.lo).toLocaleString()+'–$'+Math.round(rg.hi).toLocaleString();
+  } catch(e) { /* range is advisory; never let it break the main readout */ }
 
   // Cards
   const vals=[r.transport,r.food,r.energy,r.consumer];
@@ -1987,9 +2113,10 @@ function switchMeth(name, btn) {
   const tabs = btn.closest('.chart-tabs') || document.getElementById('meth-tabs');
   tabs.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
   btn.classList.add('on');
-  ['notincluded','scc','transport','food','energy','consumer'].forEach(n=>{
-    const el=document.getElementById('mv-'+n);
-    if(el) el.className='hview'+(n===name?' on':'');
+  // Derive the pane list from the DOM rather than hardcoding it, so adding a
+  // methodology tab never needs a matching edit here.
+  document.querySelectorAll('[id^="mv-"]').forEach(el=>{
+    el.className='hview'+(el.id==='mv-'+name?' on':'');
   });
 }
 

@@ -74,7 +74,11 @@ input[type=range]:disabled{cursor:not-allowed}
 select{width:100%;padding:.45rem 2rem .45rem .75rem;font-family:system-ui,sans-serif;font-size:.85rem;background:var(--cream);border:1px solid var(--cream-dk);border-radius:5px;color:var(--forest);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a7c59' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center}
 
 /* OUTPUT COL */
-.out-col{display:flex;flex-direction:column;gap:1rem}
+/* min-width:0 is required: the .wrap grid's 1fr track defaults to
+   min-width:auto, so without it the track cannot shrink below this column's
+   min-content and any wide child (a long tab row, a table) pushes the whole
+   layout past the viewport — leaving the header narrower than the content. */
+.out-col{display:flex;flex-direction:column;gap:1rem;min-width:0}
 
 /* DISCLAIMER */
 .disclaimer{grid-column:1/-1;background:var(--gold-pale);border:1px solid rgba(200,150,62,.3);border-left:3px solid var(--gold);border-radius:var(--r);padding:.65rem 1rem;font-size:.78rem;line-height:1.6;color:var(--forest)}
@@ -97,7 +101,7 @@ select{width:100%;padding:.45rem 2rem .45rem .75rem;font-family:system-ui,sans-s
 .card-pct{font-family:'Courier New',monospace;font-size:.6rem;margin-top:.1rem}
 
 /* CHART TABS - horizontally scrollable */
-.chart-tabs{display:flex;gap:0;margin-bottom:1rem;border-bottom:1px solid var(--cream-dk);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chart-tabs{display:flex;gap:0;margin-bottom:1rem;border-bottom:1px solid var(--cream-dk);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-width:0}
 .chart-tabs::-webkit-scrollbar{display:none}
 .ctab{font-family:system-ui,sans-serif;font-size:.76rem;font-weight:500;padding:.5rem .9rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--mist);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
 .ctab.on{color:var(--forest);border-bottom-color:var(--gold)}
@@ -691,7 +695,7 @@ body.embed header{display:none}
         <div class="t-eye">Total Annual Externality Cost</div>
         <div class="t-num" id="t-num">$—</div>
         <div class="t-sub sans">Unpriced social &amp; environmental costs imposed on society per year</div>
-        <div class="t-range" id="t-range">Plausible range <b id="t-range-val">— </b> · one estimate, not a precise value</div>
+        <div class="t-range" id="t-range">Plausible range <b id="t-range-val">— </b> · one estimate, not an exact value</div>
       </div>
       <div class="t-pills">
         <div class="pill" id="p-co2">CO₂e: — t/yr</div>

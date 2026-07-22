@@ -1932,6 +1932,31 @@ function renderHarmCards(r) {
   }).join('');
 }
 
+// Draw a centred category label under a bar, wrapped to at most two lines that
+// each fit maxW. Measures with the live font rather than guessing at character
+// counts, so long names ("Ecosystem & Biodiversity Loss") don't run into their
+// neighbours; the second line is ellipsised if it still won't fit.
+function wrapAxisLabel(ctx, text, cx, topY, maxW) {
+  ctx.textAlign = 'center';
+  const fits = s => ctx.measureText(s).width <= maxW;
+  if (fits(text)) { ctx.fillText(text, cx, topY); return; }
+
+  const words = text.split(' ');
+  let line1 = '', i = 0;
+  while (i < words.length) {
+    const next = line1 ? line1 + ' ' + words[i] : words[i];
+    if (line1 && !fits(next)) break;
+    line1 = next; i++;
+  }
+  let line2 = words.slice(i).join(' ');
+  if (line2 && !fits(line2)) {
+    while (line2.length > 1 && !fits(line2 + '…')) line2 = line2.slice(0, -1);
+    line2 += '…';
+  }
+  ctx.fillText(line1, cx, topY);
+  if (line2) ctx.fillText(line2, cx, topY + 11);
+}
+
 function drawWaterfall(r) {
   const {ctx,w,h} = getCanvas('ch-waterfall');
   const harmTotals = calcHarm(r);
@@ -1939,7 +1964,8 @@ function drawWaterfall(r) {
     .filter(([,v])=>v>5)
     .sort((a,b)=>b[1]-a[1]);
 
-  const pad={t:24,r:24,b:56,l:72};
+  // b was 56 to clear an icon row that is no longer drawn; two label lines need 44
+  const pad={t:24,r:24,b:44,l:72};
   const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
   const total = sorted.reduce((a,[,v])=>a+v,0);
   const maxVal = sorted[0][1]*1.08;
@@ -1985,18 +2011,10 @@ function drawWaterfall(r) {
     ctx.fillStyle=def.color; ctx.font='bold 10px system-ui'; ctx.textAlign='center';
     ctx.fillText(pct+'%', x+bw/2, y-5);
 
-    // Icon + label below
-    ctx.font='14px system-ui'; ctx.fillText(def.icon, x+bw/2, pad.t+ch+18);
+    // Label below. No icon here: HARM_DEFS.icon holds SVG markup for the DOM
+    // cards, which a canvas cannot draw — fillText would print the raw tag.
     ctx.fillStyle='#8ca89a'; ctx.font='9px system-ui';
-    // Wrap label
-    const words=def.name.split(' ');
-    let line='', line2='';
-    words.forEach(w=>{
-      if (line.length+w.length<9) line+=(line?' ':'')+w;
-      else line2+=(line2?' ':'')+w;
-    });
-    ctx.fillText(line, x+bw/2, pad.t+ch+30);
-    if(line2) ctx.fillText(line2, x+bw/2, pad.t+ch+41);
+    wrapAxisLabel(ctx, def.name, x+bw/2, pad.t+ch+18, gap-6);
   });
 
   // Axis

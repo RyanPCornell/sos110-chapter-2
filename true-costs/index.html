@@ -182,9 +182,79 @@ canvas{display:block}
 /* embed mode (?embed=1): the hosting slide provides the header */
 body.embed header{display:none}
 
+/* ── hand-drawn icons ───────────────────────────────────────────
+   Each icon is a <use> of a 24×24 sketched symbol. Strokes use
+   currentColor so an icon picks up the colour of its context. */
+.ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;flex:none}
+.hd{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+    filter:url(#hd-rough)}
+/* the roughening filter is decorative — drop it where motion/contrast
+   preferences ask for the plainest possible rendering */
+@media (prefers-reduced-motion:reduce){.hd{filter:none}}
+.seg-btn .ico{margin-right:.25em}
+.td-cat .ico{color:var(--moss)}
+.ph-icon{display:inline-flex;align-items:center}
+.card-ico .ico,.harm-icon .ico{width:1em;height:1em}
 </style>
 </head>
 <body>
+<!-- ═══════════════════════════════════════════════
+     HAND-DRAWN ICON SPRITE
+     Stroke-based line art on a 24×24 grid. Paths are drawn with
+     deliberately imperfect coordinates and round caps/joins so they
+     read as sketched rather than geometric. Strokes inherit
+     currentColor, so an icon takes the colour of whatever it sits in.
+     ═══════════════════════════════════════════════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<!-- Roughening filter: displaces every stroke by a small amount of
+     fractal noise, so straight lines bow slightly and circles go a
+     little out of true — the wobble of a pen rather than a compass. -->
+<filter id="hd-rough" x="-14%" y="-14%" width="128%" height="128%" filterUnits="objectBoundingBox">
+  <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="5" result="noise"/>
+  <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<symbol id="ic-car" viewBox="0 0 24 24"><g class="hd"><path d="M2.7 15.1c-.1-1.6.2-2.5 1.1-2.7l2-3.3c.4-.7 1-1 1.8-1h6c.7 0 1.3.3 1.7.9l2.3 3.3c.9.3 1.2 1.1 1.2 2.6l-.1 1.6c0 .4-.3.6-.7.6h-1.3"/><path d="M8.6 16.2H5.1c-.4 0-.7-.2-.8-.6"/><path d="M4.2 12.5c4.6-.5 10.9-.5 15.4 0"/><circle cx="7.2" cy="16.3" r="1.9"/><circle cx="16.4" cy="16.3" r="1.9"/><path d="M9.1 16.3h5.3"/></g></symbol>
+<symbol id="ic-leaf" viewBox="0 0 24 24"><g class="hd"><path d="M19.4 4.3c.7 5.3-.6 9.4-3.4 11.7-2.6 2.2-6.2 2.3-8.2.4-1.9-1.8-1.7-5 .5-7 2.4-2.2 6.6-3.4 11.1-5.1z"/><path d="M17.8 6.1c-3.5 2-6.6 5.4-8.6 10.1"/><path d="M5.1 20c1-1.6 2.1-3 3.4-4.2"/></g></symbol>
+<symbol id="ic-bolt" viewBox="0 0 24 24"><g class="hd"><path d="M13.6 2.4 5.2 13.3c-.3.4-.1.8.4.8h4.9l-1.4 7.3 8.5-11c.3-.4.1-.8-.4-.8h-5z"/></g></symbol>
+<symbol id="ic-bag" viewBox="0 0 24 24"><g class="hd"><path d="M4.6 8.3h14.6l-1 12c0 .6-.5 1-1.1 1H6.7c-.6 0-1-.4-1.1-1z"/><path d="M8.6 10.6V6.4c0-2 1.5-3.6 3.4-3.6s3.5 1.6 3.5 3.6v4.2"/></g></symbol>
+<symbol id="ic-chart" viewBox="0 0 24 24"><g class="hd"><path d="M3.4 20.4h17.3"/><path d="M3.6 20.3V3.7"/><rect x="6.4" y="12.1" width="3.4" height="8.2" rx=".5"/><rect x="11.5" y="7.4" width="3.4" height="12.9" rx=".5"/><rect x="16.5" y="14.8" width="3.4" height="5.5" rx=".5"/></g></symbol>
+<symbol id="ic-warning" viewBox="0 0 24 24"><g class="hd"><path d="M12.1 3.3 21.4 19c.3.5 0 1.1-.6 1.1H3.3c-.6 0-.9-.6-.6-1.1z"/><path d="M12 9.1v4.8"/><path d="M12 16.9v.1"/></g></symbol>
+<symbol id="ic-clipboard" viewBox="0 0 24 24"><g class="hd"><path d="M8.4 4.3H6.3c-.7 0-1.2.5-1.2 1.2v14.4c0 .7.5 1.2 1.2 1.2h11.5c.7 0 1.2-.5 1.2-1.2V5.5c0-.7-.5-1.2-1.2-1.2h-2.1"/><rect x="8.3" y="2.5" width="7.5" height="3.6" rx=".9"/><path d="M8.2 11.2h7.7"/><path d="M8.2 14.8h7.7"/><path d="M8.2 18.1h4.6"/></g></symbol>
+<symbol id="ic-books" viewBox="0 0 24 24"><g class="hd"><path d="M4.3 4.6h4.3c.6 0 1 .4 1 1v14.1c0 .5-.4.9-1 .9H4.3c-.5 0-.9-.4-.9-.9V5.6c0-.6.4-1 .9-1z"/><path d="M10.4 4.6h4.2c.6 0 1 .4 1 1v14.1c0 .5-.4.9-1 .9h-4.2"/><path d="M3.6 9.2h5.8"/><path d="M10.2 9.2h5.3"/><path d="M17.1 6.4l3 .6c.5.1.8.6.7 1.1l-2.5 12c-.1.5-.6.8-1.1.7l-1.1-.3"/></g></symbol>
+<symbol id="ic-microscope" viewBox="0 0 24 24"><g class="hd"><path d="M6.6 21.1h13.8"/><path d="M9.4 21c-2.4-1.3-3.9-3.7-3.9-6.5 0-1.9.7-3.6 1.9-5"/><path d="M13.3 3.5l3.9 5.6c.4.5.2 1.2-.3 1.6l-2.2 1.5c-.5.4-1.2.2-1.6-.3L9.2 6.3c-.4-.5-.2-1.2.3-1.6l2.2-1.5c.5-.4 1.2-.2 1.6.3z"/><path d="M11.6 12.6l1.9 2.7c.9 1.3.6 3-.6 3.9"/><path d="M15.9 14.1c1.6 1.1 2.3 3 1.9 4.8"/></g></symbol>
+<symbol id="ic-plug" viewBox="0 0 24 24"><g class="hd"><path d="M8.2 2.9v5.2"/><path d="M15.8 2.9v5.2"/><path d="M5.4 8.2h13.2v3.1c0 3.3-2.6 6-5.9 6h-1.4c-3.3 0-5.9-2.7-5.9-6z"/><path d="M12 17.4v3.8"/></g></symbol>
+<symbol id="ic-battery" viewBox="0 0 24 24"><g class="hd"><rect x="2.6" y="7.2" width="16.6" height="9.7" rx="1.6"/><path d="M21.3 10.6v3"/><path d="M5.6 10.2v3.7"/><path d="M9 10.2v3.7"/><path d="M12.4 10.2v3.7"/></g></symbol>
+<symbol id="ic-fuel" viewBox="0 0 24 24"><g class="hd"><path d="M3.6 20.9h10.2"/><path d="M4.5 20.8V4.6c0-.9.7-1.6 1.6-1.6h5.3c1 0 1.7.7 1.7 1.6v16.2"/><rect x="6.6" y="5.6" width="4.8" height="4.1" rx=".6"/><path d="M13.9 9.1h2.6c.8 0 1.5.7 1.5 1.5v5.9c0 .9.6 1.5 1.4 1.5s1.4-.7 1.4-1.5V8.4l-2.3-2.6"/></g></symbol>
+<symbol id="ic-walk" viewBox="0 0 24 24"><g class="hd"><circle cx="13.1" cy="4.2" r="1.9"/><path d="M9.1 21.3l2.4-5.3.9-4.5"/><path d="M12.4 11.5 9.6 9.2c-.6-.5-.7-1.3-.3-1.9l1-1.4c.5-.7 1.5-.9 2.2-.4l2.4 1.7 2.7.5"/><path d="M12.9 13.3l2.5 2.3 1.6 5.6"/><path d="M6.6 12.9l2.1-3.4"/></g></symbol>
+<symbol id="ic-sprout" viewBox="0 0 24 24"><g class="hd"><path d="M12 21.2v-8.4"/><path d="M12 13c-.3-3.1-2.6-5.4-5.7-5.6-.4 0-.6.2-.6.6.2 3.1 2.6 5.4 5.7 5.6"/><path d="M12.1 12.4c.3-3.6 2.8-6.3 6.3-6.6.4 0 .7.3.6.7-.3 3.6-2.9 6.3-6.4 6.5"/></g></symbol>
+<symbol id="ic-broccoli" viewBox="0 0 24 24"><g class="hd"><path d="M8.4 10.6c-1.8-.2-3.1-1.6-3-3.3.1-1.5 1.3-2.7 2.9-2.8.5-1.5 1.9-2.5 3.6-2.5 1.7 0 3.2 1.1 3.6 2.6 1.6.1 2.8 1.3 2.8 2.8 0 1.7-1.4 3-3.2 3.2"/><path d="M8.2 10.5h7.7l-1.2 9.7c-.1.6-.6 1-1.2 1h-3c-.6 0-1.1-.4-1.2-1z"/><path d="M12 10.8v10.2"/></g></symbol>
+<symbol id="ic-plate" viewBox="0 0 24 24"><g class="hd"><circle cx="12" cy="12" r="9.1"/><circle cx="12" cy="12" r="5.4"/></g></symbol>
+<symbol id="ic-steak" viewBox="0 0 24 24"><g class="hd"><path d="M6.6 6.1c2-2 5.5-2.9 8.8-2.1 4 .9 6.6 4.2 6 7.7-.7 3.9-4.7 6.4-9 5.8-2.1-.3-3.9-1.3-5.1-2.7"/><path d="M6.7 6.2c-1.6-.4-2.9.4-3.2 1.9-.3 1.4.5 2.7 1.9 3.2-.9 1-1 2.4-.2 3.4.8 1.1 2.3 1.4 3.6.8"/><path d="M11.2 8c2.1-.6 4.1.4 4.6 2.1.5 1.8-.7 3.6-2.7 4.1"/></g></symbol>
+<symbol id="ic-flame" viewBox="0 0 24 24"><g class="hd"><path d="M12.3 2.6c3.4 3.3 5.9 6.3 5.9 10.1 0 3.9-2.8 6.7-6.3 6.7s-6.2-2.8-6.2-6.5c0-2 .9-3.6 2.3-5.3.2 1.4.9 2.3 1.9 2.5.6-2.6 1.2-4.8 2.4-7.5z"/><path d="M12.1 19.3c-1.8 0-3.1-1.4-3.1-3.2 0-1.5 1-2.6 3-4.5 1.9 1.9 3.1 3 3.1 4.6 0 1.7-1.3 3.1-3 3.1z"/></g></symbol>
+<symbol id="ic-thermo" viewBox="0 0 24 24"><g class="hd"><path d="M13.9 13.6V5.1c0-1.3-1-2.3-2.2-2.3S9.4 3.8 9.4 5.1v8.5c-1.1.8-1.8 2-1.8 3.4 0 2.4 1.9 4.3 4.2 4.3s4.1-1.9 4.1-4.2c0-1.4-.7-2.7-2-3.5z"/><path d="M11.7 8.6v8"/><circle cx="11.7" cy="17.2" r="1.6"/></g></symbol>
+<symbol id="ic-sun" viewBox="0 0 24 24"><g class="hd"><circle cx="12" cy="12" r="4.6"/><path d="M12 1.9v2.3"/><path d="M12 19.8v2.3"/><path d="M1.9 12h2.3"/><path d="M19.8 12h2.3"/><path d="M4.9 4.8 6.5 6.5"/><path d="M17.6 17.5l1.6 1.7"/><path d="M19.2 4.8 17.5 6.5"/><path d="M6.5 17.5 4.8 19.2"/></g></symbol>
+<symbol id="ic-plane" viewBox="0 0 24 24"><g class="hd"><path d="M12.2 2.5c.9 0 1.6 1.9 1.6 4.3v2.3l6.7 4c.3.2.5.5.5.9v1.6c0 .4-.4.7-.8.5l-6.4-1.9v3.3l2 1.6c.2.2.3.4.3.6v1c0 .4-.3.6-.7.5l-3.2-.9-3.3.9c-.4.1-.7-.1-.7-.5v-1c0-.2.1-.4.3-.6l2-1.6v-3.3l-6.4 1.9c-.4.2-.8-.1-.8-.5v-1.6c0-.4.2-.7.5-.9l6.7-4V6.8c0-2.4.8-4.3 1.7-4.3z"/></g></symbol>
+<symbol id="ic-bus" viewBox="0 0 24 24"><g class="hd"><rect x="3.4" y="3.3" width="17.3" height="14.2" rx="2.1"/><path d="M3.6 12.3h17"/><path d="M7.4 3.5v8.6"/><path d="M16.5 3.5v8.6"/><circle cx="7.3" cy="19.6" r="1.7"/><circle cx="16.6" cy="19.6" r="1.7"/><path d="M3.5 17.4v1.4"/><path d="M20.6 17.4v1.4"/></g></symbol>
+<symbol id="ic-trash" viewBox="0 0 24 24"><g class="hd"><path d="M3.6 6.2h16.7"/><path d="M9.1 6.1V4.4c0-.8.6-1.4 1.4-1.4h3.1c.8 0 1.4.6 1.4 1.4v1.7"/><path d="M5.6 6.3l.9 13.4c.1.8.7 1.4 1.5 1.4h8.1c.8 0 1.4-.6 1.5-1.4l.9-13.4"/><path d="M10.1 10.1v7.1"/><path d="M14 10.1v7.1"/></g></symbol>
+<symbol id="ic-scooter" viewBox="0 0 24 24"><g class="hd"><circle cx="5.1" cy="17.6" r="2.9"/><circle cx="18.9" cy="17.6" r="2.9"/><path d="M5.2 17.5h9.1c.4-3.8 1.5-6.7 3.5-9.1"/><path d="M14.4 4.6h2.6c.9 0 1.5.7 1.6 1.6l.4 11.3"/><path d="M8.4 17.5c0-3 1.3-4.6 3.9-4.7"/></g></symbol>
+<symbol id="ic-shirt" viewBox="0 0 24 24"><g class="hd"><path d="M8.6 2.9 3.2 5.6c-.5.2-.7.8-.5 1.3l1.6 3.6c.2.5.8.7 1.3.5l1.5-.7v9.5c0 .7.5 1.2 1.2 1.2h7.5c.7 0 1.2-.5 1.2-1.2v-9.5l1.5.7c.5.2 1.1 0 1.3-.5l1.6-3.6c.2-.5 0-1.1-.5-1.3l-5.4-2.7"/><path d="M8.6 2.9c0 1.9 1.5 3.4 3.4 3.4s3.4-1.5 3.4-3.4"/></g></symbol>
+<symbol id="ic-laptop" viewBox="0 0 24 24"><g class="hd"><path d="M4.6 5.4c0-.8.6-1.4 1.4-1.4h12c.8 0 1.4.6 1.4 1.4v10.1H4.6z"/><path d="M2.4 15.4h19.2l-1.3 2.9c-.2.5-.7.8-1.2.8H4.9c-.5 0-1-.3-1.2-.8z"/><path d="M10.3 17.2h3.4"/></g></symbol>
+<symbol id="ic-cart" viewBox="0 0 24 24"><g class="hd"><path d="M2.4 3.4h2.4c.6 0 1.1.4 1.2 1l2.2 10.2c.1.6.6 1 1.2 1h8.7c.6 0 1.1-.4 1.2-1l1.6-7.2c.1-.6-.3-1.1-.9-1.1H6.2"/><circle cx="9.6" cy="19.7" r="1.7"/><circle cx="17.4" cy="19.7" r="1.7"/></g></symbol>
+<symbol id="ic-tv" viewBox="0 0 24 24"><g class="hd"><rect x="2.6" y="6.3" width="18.8" height="12.4" rx="1.8"/><path d="M8.1 2.7 12 6.2l3.9-3.5"/><path d="M17.4 21.3H6.6"/></g></symbol>
+<symbol id="ic-robot" viewBox="0 0 24 24"><g class="hd"><rect x="3.6" y="7.4" width="16.8" height="12.1" rx="2.4"/><path d="M12 7.3V4.4"/><circle cx="12" cy="3.2" r="1.4"/><circle cx="8.6" cy="12.4" r="1.4"/><circle cx="15.4" cy="12.4" r="1.4"/><path d="M9.2 16.2h5.6"/><path d="M1.4 11.6v3.6"/><path d="M22.6 11.6v3.6"/></g></symbol>
+<symbol id="ic-lungs" viewBox="0 0 24 24"><g class="hd"><path d="M12 2.8v9.4"/><path d="M9.4 8.4c0-1.2-1.1-2.1-2.2-1.8-1.5.4-2.6 1.9-3 4.1-.4 2.3-.4 4.9.1 7 .2 1 1.1 1.6 2.1 1.4l2.2-.5c.9-.2 1.5-1 1.5-1.9z"/><path d="M14.6 8.4c0-1.2 1.1-2.1 2.2-1.8 1.5.4 2.6 1.9 3 4.1.4 2.3.4 4.9-.1 7-.2 1-1.1 1.6-2.1 1.4l-2.2-.5c-.9-.2-1.5-1-1.5-1.9z"/></g></symbol>
+<symbol id="ic-wave" viewBox="0 0 24 24"><g class="hd"><path d="M2.4 8.1c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1"/><path d="M2.4 13.2c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1"/><path d="M2.4 18.3c1.7-1.6 3.4-1.6 5.1 0 1.7 1.6 3.4 1.6 5.1 0 1.7-1.6 3.4-1.6 5.1 0 1 .9 1.9 1.3 2.9 1.1"/></g></symbol>
+<symbol id="ic-drop" viewBox="0 0 24 24"><g class="hd"><path d="M12.1 2.6c3.6 4.6 6.1 8.2 6.1 11.4 0 3.6-2.8 6.4-6.2 6.4s-6.1-2.8-6.1-6.3c0-3.2 2.5-6.8 6.2-11.5z"/><path d="M8.9 14.3c0 1.9 1.3 3.4 3.1 3.7"/></g></symbol>
+<symbol id="ic-wheat" viewBox="0 0 24 24"><g class="hd"><path d="M12 21.3V9.4"/><path d="M12 9.6c-1.6-1.1-2.3-2.7-1.9-4.4.2-.6.9-.8 1.4-.4 1.4 1.1 1.9 2.8 1.4 4.4"/><path d="M11.9 12.9c-1.9-.3-3.1-1.5-3.4-3.3-.1-.6.4-1.1 1-1 1.8.3 3 1.6 3.2 3.4"/><path d="M12.2 12.9c1.9-.3 3.1-1.5 3.4-3.3.1-.6-.4-1.1-1-1-1.8.3-3 1.6-3.2 3.4"/><path d="M11.9 17.2c-1.9-.3-3.1-1.5-3.4-3.3-.1-.6.4-1.1 1-1 1.8.3 3 1.6 3.2 3.4"/><path d="M12.2 17.2c1.9-.3 3.1-1.5 3.4-3.3.1-.6-.4-1.1-1-1-1.8.3-3 1.6-3.2 3.4"/></g></symbol>
+<symbol id="ic-worker" viewBox="0 0 24 24"><g class="hd"><path d="M7.5 8.3c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"/><path d="M5.7 8.4h12.6"/><path d="M12 3.9V8.2"/><path d="M9.1 8.5v1.3c0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9V8.5"/><path d="M5.2 21.1c.4-2.7 3.2-4.6 6.8-4.6s6.4 1.9 6.8 4.6"/></g></symbol>
+<symbol id="ic-recycle" viewBox="0 0 24 24"><g class="hd"><path d="M9.1 3.9c.9-1.5 3-1.5 3.9 0l2.3 3.9"/><path d="M13.4 6.3l2 1.4-.1-2.5"/><path d="M20.4 13.6c.9 1.5-.2 3.4-1.9 3.4h-4.6"/><path d="M15.7 15.2l-1.9 1.7 2 1.6"/><path d="M5.4 17H3.6c-1.8 0-2.9-1.9-2-3.4l2.3-4"/><path d="M6.1 12.1l-2.2.5 1.6 1.9"/><path d="M8.4 17h6.7"/></g></symbol>
+<symbol id="ic-traffic" viewBox="0 0 24 24"><g class="hd"><rect x="7.1" y="2.6" width="9.8" height="16.1" rx="2.6"/><circle cx="12" cy="6.6" r="1.6"/><circle cx="12" cy="10.7" r="1.6"/><circle cx="12" cy="14.8" r="1.6"/><path d="M12 18.7v2.6"/><path d="M8.6 21.3h6.8"/></g></symbol>
+<symbol id="ic-road" viewBox="0 0 24 24"><g class="hd"><path d="M7.6 2.8 3.4 21.2"/><path d="M16.4 2.8l4.2 18.4"/><path d="M12 3.4v2.9"/><path d="M12 10.1v3.4"/><path d="M12 17.3v3.4"/></g></symbol>
+<symbol id="ic-speaker" viewBox="0 0 24 24"><g class="hd"><path d="M11.4 4.2 6.6 8.4H3.4c-.6 0-1 .4-1 1v5.2c0 .6.4 1 1 1h3.2l4.8 4.2c.6.5 1.4.1 1.4-.7V4.9c0-.8-.8-1.2-1.4-.7z"/><path d="M16.4 8.8c1.7 1.8 1.7 4.6 0 6.4"/><path d="M19.2 6.2c3 3.2 3 8.4 0 11.6"/></g></symbol>
+<symbol id="ic-hospital" viewBox="0 0 24 24"><g class="hd"><path d="M4.1 8.6 12 2.9l7.9 5.7v11.2c0 .7-.6 1.3-1.3 1.3H5.4c-.7 0-1.3-.6-1.3-1.3z"/><path d="M12 8.9v7.2"/><path d="M8.4 12.5h7.2"/></g></symbol>
+<symbol id="ic-shield" viewBox="0 0 24 24"><g class="hd"><path d="M12 2.7 4.4 5.9v6.2c0 4.2 3.1 8 7.6 9.2 4.5-1.2 7.6-5 7.6-9.2V5.9z"/><path d="M8.8 11.9l2.3 2.4 4.2-4.6"/></g></symbol>
+<symbol id="ic-bulb" viewBox="0 0 24 24"><g class="hd"><path d="M12 2.8c-3.5 0-6.3 2.8-6.3 6.2 0 2.2 1.1 3.8 2.2 5 .6.7 1 1.5 1 2.4v.4h6.2v-.4c0-.9.4-1.7 1-2.4 1.1-1.2 2.2-2.8 2.2-5 0-3.4-2.8-6.2-6.3-6.2z"/><path d="M9.4 19.4h5.2"/><path d="M10.2 21.3h3.6"/></g></symbol>
+</defs></svg>
 <script>if(new URLSearchParams(location.search).has('embed'))document.body.classList.add('embed');</script>
 
 <header>
@@ -201,23 +271,23 @@ body.embed header{display:none}
 
 <div class="wrap">
   <!-- ══ DISCLAIMER ══ -->
-  <div class="disclaimer sans">⚠️ <strong>This tool is for educational purposes only.</strong> The values shown — while based on the academic sources cited — are estimates, not precise measurements of any individual's actual impact.</div>
+  <div class="disclaimer sans"><svg class="ico" aria-hidden="true"><use href="#ic-warning"/></svg> <strong>This tool is for educational purposes only.</strong> The values shown — while based on the academic sources cited — are estimates, not precise measurements of any individual's actual impact.</div>
 
   <!-- ══ CONTROLS ══ -->
   <div class="ctrl-col">
 
     <!-- TRANSPORT -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">🚗</span><span class="ph-title">Transportation</span><span class="ph-chevron">▾</span></div>
+      <div class="ph"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-car"/></svg></span><span class="ph-title">Transportation</span><span class="ph-chevron">▾</span></div>
       <div class="panel-body-wrap"><div class="pb">
         <div class="cat">Vehicle</div>
         <div class="cr">
           <div class="cl"><span class="cn">Primary vehicle type</span></div>
           <div class="seg" id="sg-vehicle">
-            <button class="seg-btn on" onclick="setSeg('vehicle','ev',this)">⚡ EV</button>
-            <button class="seg-btn" onclick="setSeg('vehicle','hybrid',this)">🔋 Hybrid</button>
-            <button class="seg-btn" onclick="setSeg('vehicle','gas',this)">⛽ Gas</button>
-            <button class="seg-btn" onclick="setSeg('vehicle','none',this)">🚶 No Car</button>
+            <button class="seg-btn on" onclick="setSeg('vehicle','ev',this)"><svg class="ico" aria-hidden="true"><use href="#ic-plug"/></svg>EV</button>
+            <button class="seg-btn" onclick="setSeg('vehicle','hybrid',this)"><svg class="ico" aria-hidden="true"><use href="#ic-battery"/></svg>Hybrid</button>
+            <button class="seg-btn" onclick="setSeg('vehicle','gas',this)"><svg class="ico" aria-hidden="true"><use href="#ic-fuel"/></svg>Gas</button>
+            <button class="seg-btn" onclick="setSeg('vehicle','none',this)"><svg class="ico" aria-hidden="true"><use href="#ic-walk"/></svg>No Car</button>
           </div>
         </div>
         <div class="cr">
@@ -246,16 +316,16 @@ body.embed header{display:none}
 
     <!-- FOOD -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">🌿</span><span class="ph-title">Food &amp; Diet</span><span class="ph-chevron">▾</span></div>
+      <div class="ph"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-leaf"/></svg></span><span class="ph-title">Food &amp; Diet</span><span class="ph-chevron">▾</span></div>
       <div class="panel-body-wrap"><div class="pb">
         <div class="cat">Diet Pattern</div>
         <div class="cr">
           <div class="cl"><span class="cn">Primary diet type</span></div>
           <div class="seg" id="sg-diet">
-            <button class="seg-btn" onclick="setSeg('diet','vegan',this)">🌱 Vegan</button>
-            <button class="seg-btn" onclick="setSeg('diet','veggie',this)">🥦 Veggie</button>
-            <button class="seg-btn on" onclick="setSeg('diet','mixed',this)">🍽️ Mixed</button>
-            <button class="seg-btn" onclick="setSeg('diet','meat',this)">🥩 Meat-heavy</button>
+            <button class="seg-btn" onclick="setSeg('diet','vegan',this)"><svg class="ico" aria-hidden="true"><use href="#ic-sprout"/></svg>Vegan</button>
+            <button class="seg-btn" onclick="setSeg('diet','veggie',this)"><svg class="ico" aria-hidden="true"><use href="#ic-broccoli"/></svg>Veggie</button>
+            <button class="seg-btn on" onclick="setSeg('diet','mixed',this)"><svg class="ico" aria-hidden="true"><use href="#ic-plate"/></svg>Mixed</button>
+            <button class="seg-btn" onclick="setSeg('diet','meat',this)"><svg class="ico" aria-hidden="true"><use href="#ic-steak"/></svg>Meat-heavy</button>
           </div>
         </div>
         <div class="cr" style="margin-top:.8rem">
@@ -278,7 +348,7 @@ body.embed header{display:none}
 
     <!-- ENERGY -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">⚡</span><span class="ph-title">Home Energy</span><span class="ph-chevron">▾</span></div>
+      <div class="ph"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-bolt"/></svg></span><span class="ph-title">Home Energy</span><span class="ph-chevron">▾</span></div>
       <div class="panel-body-wrap"><div class="pb">
         <div class="cat">Electricity</div>
         <div class="cr">
@@ -301,10 +371,10 @@ body.embed header{display:none}
         <div class="cr">
           <div class="cl"><span class="cn">Home heating source</span></div>
           <div class="seg" id="sg-heat">
-            <button class="seg-btn on" onclick="setSeg('heat','natgas',this)">🔥 Gas</button>
-            <button class="seg-btn" onclick="setSeg('heat','heatpump',this)">🌡️ Heat Pump</button>
-            <button class="seg-btn" onclick="setSeg('heat','electric',this)">⚡ Electric</button>
-            <button class="seg-btn" onclick="setSeg('heat','minimal',this)">☀️ Minimal</button>
+            <button class="seg-btn on" onclick="setSeg('heat','natgas',this)"><svg class="ico" aria-hidden="true"><use href="#ic-flame"/></svg>Gas</button>
+            <button class="seg-btn" onclick="setSeg('heat','heatpump',this)"><svg class="ico" aria-hidden="true"><use href="#ic-thermo"/></svg>Heat Pump</button>
+            <button class="seg-btn" onclick="setSeg('heat','electric',this)"><svg class="ico" aria-hidden="true"><use href="#ic-bolt"/></svg>Electric</button>
+            <button class="seg-btn" onclick="setSeg('heat','minimal',this)"><svg class="ico" aria-hidden="true"><use href="#ic-sun"/></svg>Minimal</button>
           </div>
         </div>
         <div class="cr">
@@ -317,7 +387,7 @@ body.embed header{display:none}
 
     <!-- CONSUMER -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">🛍️</span><span class="ph-title">Consumer Choices</span><span class="ph-chevron">▾</span></div>
+      <div class="ph"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-bag"/></svg></span><span class="ph-title">Consumer Choices</span><span class="ph-chevron">▾</span></div>
       <div class="panel-body-wrap"><div class="pb">
         <div class="cat">Clothing &amp; Electronics</div>
         <div class="cr">
@@ -371,14 +441,14 @@ body.embed header{display:none}
 
 
     <div class="insight sans" id="insight-box">
-      <strong>💡 Insight:</strong> <span id="insight-text"></span>
+      <strong><svg class="ico" aria-hidden="true"><use href="#ic-bulb"/></svg> Insight:</strong> <span id="insight-text"></span>
     </div>
 
     <!-- CARDS -->
     <div class="cards">
       <div class="card">
         <div class="card-bar" id="cb-transport" style="background:var(--sage)"></div>
-        <span class="card-ico">🚗</span>
+        <span class="card-ico"><svg class="ico" aria-hidden="true"><use href="#ic-car"/></svg></span>
         <div class="card-lbl">Transportation</div>
         <div class="card-val" id="cv-transport">$—</div>
         <div class="card-unit">per year</div>
@@ -386,7 +456,7 @@ body.embed header{display:none}
       </div>
       <div class="card">
         <div class="card-bar" id="cb-food" style="background:var(--gold)"></div>
-        <span class="card-ico">🌿</span>
+        <span class="card-ico"><svg class="ico" aria-hidden="true"><use href="#ic-leaf"/></svg></span>
         <div class="card-lbl">Food</div>
         <div class="card-val" id="cv-food">$—</div>
         <div class="card-unit">per year</div>
@@ -394,7 +464,7 @@ body.embed header{display:none}
       </div>
       <div class="card">
         <div class="card-bar" id="cb-energy" style="background:var(--blue)"></div>
-        <span class="card-ico">⚡</span>
+        <span class="card-ico"><svg class="ico" aria-hidden="true"><use href="#ic-bolt"/></svg></span>
         <div class="card-lbl">Energy</div>
         <div class="card-val" id="cv-energy">$—</div>
         <div class="card-unit">per year</div>
@@ -402,7 +472,7 @@ body.embed header{display:none}
       </div>
       <div class="card">
         <div class="card-bar" id="cb-consumer" style="background:var(--purple)"></div>
-        <span class="card-ico">🛍️</span>
+        <span class="card-ico"><svg class="ico" aria-hidden="true"><use href="#ic-bag"/></svg></span>
         <div class="card-lbl">Consumer</div>
         <div class="card-val" id="cv-consumer">$—</div>
         <div class="card-unit">per year</div>
@@ -412,7 +482,7 @@ body.embed header{display:none}
 
     <!-- CHARTS -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">📊</span><span class="ph-title">Externality Breakdown</span><span class="ph-chevron">▾</span></div>
+      <div class="ph"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-chart"/></svg></span><span class="ph-title">Externality Breakdown</span><span class="ph-chevron">▾</span></div>
       <div class="pb">
         <div class="chart-tabs">
           <button class="ctab on" onclick="switchTab('bar',this)">By Category</button>
@@ -443,7 +513,7 @@ body.embed header{display:none}
 
     <!-- HARM TYPE SECTION -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">⚠️</span><span class="ph-title">What Type of Harm Do These Externalities Cause?</span><span class="ph-chevron">▾</span></div>
+      <div class="ph"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-warning"/></svg></span><span class="ph-title">What Type of Harm Do These Externalities Cause?</span><span class="ph-chevron">▾</span></div>
       <div class="pb">
         <div class="harm-tabs">
           <button class="htab on" onclick="switchHarm('cards',this)">Harm Categories</button>
@@ -500,7 +570,7 @@ body.embed header{display:none}
 
     <!-- BREAKDOWN TABLE -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">📋</span><span class="ph-title">Line-Item Breakdown</span><span class="ph-chevron">▾</span></div>
+      <div class="ph"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-clipboard"/></svg></span><span class="ph-title">Line-Item Breakdown</span><span class="ph-chevron">▾</span></div>
       <div class="table-scroll"><table class="bk-table">
         <thead>
           <tr>
@@ -518,7 +588,7 @@ body.embed header{display:none}
 
     <!-- SOURCES -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">📚</span><span class="ph-title">Academic Sources &amp; Methodology</span><span class="ph-chevron">▾</span></div>
+      <div class="ph" data-start-collapsed="1"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-books"/></svg></span><span class="ph-title">Academic Sources &amp; Methodology</span><span class="ph-chevron">▾</span></div>
       <div class="pb">
         <div class="src-item"><div class="src-n">[1]</div><div class="src-t">U.S. EPA. (2023). <em>Report on the social cost of greenhouse gases: Estimates incorporating recent scientific advances.</em> Central estimate: $190/tCO₂e at a 2.0% near-term Ramsey discount rate (range: $120 at 2.5% to $340 at 1.5%). Applied to all carbon emissions throughout this calculator.</div></div>
         <div class="src-item"><div class="src-n">[2]</div><div class="src-t">National Academies of Sciences. (2010). <em>Hidden Costs of Energy: Unpriced Consequences of Energy Production and Use.</em> National Academies Press. Source for vehicle air-quality externalities ($0.007–$0.014/mile) and natural gas health costs.</div></div>
@@ -550,7 +620,7 @@ body.embed header{display:none}
 
     <!-- METHODOLOGY TABS -->
     <div class="panel">
-      <div class="ph"><span class="ph-icon">🔬</span><span class="ph-title">Methodology — How This Calculator Works</span><span class="ph-chevron">▾</span></div>
+      <div class="ph" data-start-collapsed="1"><span class="ph-icon"><svg class="ico" aria-hidden="true"><use href="#ic-microscope"/></svg></span><span class="ph-title">Methodology — How This Calculator Works</span><span class="ph-chevron">▾</span></div>
       <div class="pb">
         <div class="chart-tabs" id="meth-tabs">
           <button class="ctab on" onclick="switchMeth('notincluded',this)">What's Not Included</button>
@@ -569,11 +639,11 @@ body.embed header{display:none}
           <table class="bk-table">
             <thead><tr><th>Excluded Category</th><th>Est. $/person/yr</th><th>Source</th></tr></thead>
             <tbody>
-              <tr><td><div class="td-cat">🛣️ Road infrastructure</div></td><td class="td-desc">~$1,200</td><td class="td-desc">NAS (2010) Ch. 5 [2]</td></tr>
-              <tr><td><div class="td-cat">🔊 Noise pollution</div></td><td class="td-desc">~$800</td><td class="td-desc">NAS (2010) [2]; WHO Environmental Noise Guidelines (2018)</td></tr>
-              <tr><td><div class="td-cat">💧 Water &amp; sewer infrastructure</div></td><td class="td-desc">~$600</td><td class="td-desc">Trucost / TEEB (2013) [11]</td></tr>
-              <tr><td><div class="td-cat">🏥 Healthcare system burden</div></td><td class="td-desc">~$1,500</td><td class="td-desc">NAS (2010) [2]; Epstein et al. (2011) [3]</td></tr>
-              <tr><td><div class="td-cat">🛡️ Military fuel-security</div></td><td class="td-desc">~$2,000+</td><td class="td-desc">Stern, R.J. (2010). United States cost of military force projection in the Persian Gulf. <em>Energy Policy, 38</em>(6), 2816–2825</td></tr>
+              <tr><td><div class="td-cat"><svg class="ico" aria-hidden="true"><use href="#ic-road"/></svg>Road infrastructure</div></td><td class="td-desc">~$1,200</td><td class="td-desc">NAS (2010) Ch. 5 [2]</td></tr>
+              <tr><td><div class="td-cat"><svg class="ico" aria-hidden="true"><use href="#ic-speaker"/></svg>Noise pollution</div></td><td class="td-desc">~$800</td><td class="td-desc">NAS (2010) [2]; WHO Environmental Noise Guidelines (2018)</td></tr>
+              <tr><td><div class="td-cat"><svg class="ico" aria-hidden="true"><use href="#ic-drop"/></svg>Water &amp; sewer infrastructure</div></td><td class="td-desc">~$600</td><td class="td-desc">Trucost / TEEB (2013) [11]</td></tr>
+              <tr><td><div class="td-cat"><svg class="ico" aria-hidden="true"><use href="#ic-hospital"/></svg>Healthcare system burden</div></td><td class="td-desc">~$1,500</td><td class="td-desc">NAS (2010) [2]; Epstein et al. (2011) [3]</td></tr>
+              <tr><td><div class="td-cat"><svg class="ico" aria-hidden="true"><use href="#ic-shield"/></svg>Military fuel-security</div></td><td class="td-desc">~$2,000+</td><td class="td-desc">Stern, R.J. (2010). United States cost of military force projection in the Persian Gulf. <em>Energy Policy, 38</em>(6), 2816–2825</td></tr>
               <tr><td><div class="td-cat"><strong>Total excluded</strong></div></td><td class="td-desc"><strong>~$6,100–$8,100</strong></td><td class="td-desc">NAS (2010) [2]; Trucost / TEEB (2013) [11]</td></tr>
             </tbody>
           </table>
@@ -952,20 +1022,20 @@ function go() {
 
   // Breakdown table
   const rows=[
-    {ico:'🚗',name:'Vehicle Driving',  cat:'transport',desc:`${s.miles.toLocaleString()} mi/yr · ${s.vehicle==='none'?'No car':s.vehicle.toUpperCase()}`,val:d.vCost},
-    {ico:'✈️',name:'Flights (short)',  cat:'transport',desc:`${s.fshort} flights/yr · ~500 mi · RF×1.9`,val:d.fSh},
-    {ico:'✈️',name:'Flights (long)',   cat:'transport',desc:`${s.flong} flights/yr · ~3,500 mi · RF×1.9`,val:d.fLo},
-    {ico:'🚌',name:'Public Transit',   cat:'transport',desc:`${s.transit.toLocaleString()} mi/yr · 204g CO₂/pax-mi FTA avg`,val:d.trCo},
-    {ico:'🌱',name:'Diet (all costs)', cat:'food',desc:`${s.diet} · ${wasteStr[s.waste].toLowerCase()} waste · ${localStr[s.local].toLowerCase()}`,val:d.fCl+d.fW+d.fLa+d.fH},
-    {ico:'🗑️',name:'Food Waste',      cat:'food',desc:`Waste mult ×${wasteMul[s.waste]} ${wasteMul[s.waste]<1?'below baseline (credit)':wasteMul[s.waste]>1?'above baseline':'(baseline)'}`,val:d.fWa},
-    {ico:'🛵',name:'Takeout & Delivery',cat:'food',desc:`${s.takeout} meals/wk · packaging + delivery`,val:d.fTk},
-    {ico:'⚡',name:'Grid Electricity', cat:'energy',desc:`${s.kwh.toLocaleString()} kWh/yr · ${s.grid} grid`,val:d.gCl+d.gAir+d.gEc},
-    {ico:'🔥',name:'Home Heating',     cat:'energy',desc:`${s.heat} · ${s.sqft.toLocaleString()} sq ft`,val:d.hCl+d.hAir},
-    {ico:'👕',name:'Clothing',         cat:'consumer',desc:`${s.clothes} items/mo × 12 = ${s.clothes*12} items/yr · $${clothExt}/item ext.`,val:d.cCl},
-    {ico:'💻',name:'Electronics',      cat:'consumer',desc:`${s.elec} devices/yr · ~$${elecExt}/device`,val:d.cEl},
-    {ico:'🛒',name:'General Shopping', cat:'consumer',desc:`${s.spend} spending level`,val:d.cSh},
-    {ico:'📺',name:'Streaming',        cat:'consumer',desc:`${s.stream} hrs/day · 18g CO₂/hr · data center + network only`,val:d.cSt},
-    {ico:'🤖',name:'AI Chatbot Use',   cat:'consumer',desc:`${s.ai} prompts/day · ~0.3 Wh/prompt · US-avg grid`,val:d.cAI}
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-car"/></svg>',name:'Vehicle Driving',  cat:'transport',desc:`${s.miles.toLocaleString()} mi/yr · ${s.vehicle==='none'?'No car':s.vehicle.toUpperCase()}`,val:d.vCost},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-plane"/></svg>',name:'Flights (short)',  cat:'transport',desc:`${s.fshort} flights/yr · ~500 mi · RF×1.9`,val:d.fSh},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-plane"/></svg>',name:'Flights (long)',   cat:'transport',desc:`${s.flong} flights/yr · ~3,500 mi · RF×1.9`,val:d.fLo},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-bus"/></svg>',name:'Public Transit',   cat:'transport',desc:`${s.transit.toLocaleString()} mi/yr · 204g CO₂/pax-mi FTA avg`,val:d.trCo},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-sprout"/></svg>',name:'Diet (all costs)', cat:'food',desc:`${s.diet} · ${wasteStr[s.waste].toLowerCase()} waste · ${localStr[s.local].toLowerCase()}`,val:d.fCl+d.fW+d.fLa+d.fH},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-trash"/></svg>',name:'Food Waste',      cat:'food',desc:`Waste mult ×${wasteMul[s.waste]} ${wasteMul[s.waste]<1?'below baseline (credit)':wasteMul[s.waste]>1?'above baseline':'(baseline)'}`,val:d.fWa},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-scooter"/></svg>',name:'Takeout & Delivery',cat:'food',desc:`${s.takeout} meals/wk · packaging + delivery`,val:d.fTk},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-bolt"/></svg>',name:'Grid Electricity', cat:'energy',desc:`${s.kwh.toLocaleString()} kWh/yr · ${s.grid} grid`,val:d.gCl+d.gAir+d.gEc},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-flame"/></svg>',name:'Home Heating',     cat:'energy',desc:`${s.heat} · ${s.sqft.toLocaleString()} sq ft`,val:d.hCl+d.hAir},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-shirt"/></svg>',name:'Clothing',         cat:'consumer',desc:`${s.clothes} items/mo × 12 = ${s.clothes*12} items/yr · $${clothExt}/item ext.`,val:d.cCl},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-laptop"/></svg>',name:'Electronics',      cat:'consumer',desc:`${s.elec} devices/yr · ~$${elecExt}/device`,val:d.cEl},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-cart"/></svg>',name:'General Shopping', cat:'consumer',desc:`${s.spend} spending level`,val:d.cSh},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-tv"/></svg>',name:'Streaming',        cat:'consumer',desc:`${s.stream} hrs/day · 18g CO₂/hr · data center + network only`,val:d.cSt},
+    {ico:'<svg class="ico" aria-hidden="true"><use href="#ic-robot"/></svg>',name:'AI Chatbot Use',   cat:'consumer',desc:`${s.ai} prompts/day · ~0.3 Wh/prompt · US-avg grid`,val:d.cAI}
   ];
   const maxRow=Math.max(...rows.map(rw=>rw.val),1);
   document.getElementById('bk-body').innerHTML=rows.map(rw=>{
@@ -1312,7 +1382,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 // Methodology start collapsed (long reference content).
 // ═══════════════════════════════════════════════
 function initPanels() {
-  const collapseByDefault = ['📚', '🔬'];
   document.querySelectorAll('.panel').forEach(panel => {
     const ph = panel.querySelector('.ph');
     if (!ph) return;
@@ -1326,8 +1395,7 @@ function initPanels() {
       panel.appendChild(wrap);
     }
 
-    const icon = ph.querySelector('.ph-icon');
-    if (icon && collapseByDefault.includes(icon.textContent.trim())) {
+    if (ph.dataset.startCollapsed === '1') {
       wrap.style.maxHeight = '0px';
       wrap.classList.add('collapsed');
       ph.classList.add('collapsed');
@@ -1367,49 +1435,49 @@ function initPanels() {
 // Harm category definitions with colors and descriptions
 const HARM_DEFS = {
   climate: {
-    icon:'🌡️', name:'Climate Change Damage',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-thermo"/></svg>', name:'Climate Change Damage',
     color:'#c94040',
     desc:'Costs of rising temperatures, extreme weather events, sea-level rise, and ecosystem disruption. Valued using the EPA Social Cost of Carbon ($190/tCO₂e).',
     sources:'[1] EPA SCC 2023; [6] IPCC AR6 2022'
   },
   health: {
-    icon:'🫁', name:'Human Health Costs',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-lungs"/></svg>', name:'Human Health Costs',
     color:'#e07b39',
     desc:'Premature mortality, respiratory illness, cardiovascular disease, and lost productivity from air pollutants (PM2.5, NOₓ, SOₓ, ozone). Largest single cost category for fossil fuels.',
     sources:'[2] NAS 2010; [3] Epstein et al. 2011'
   },
   ecosystem: {
-    icon:'🌊', name:'Ecosystem & Biodiversity Loss',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-wave"/></svg>', name:'Ecosystem & Biodiversity Loss',
     color:'#4a7c59',
     desc:'Damage to forests, wetlands, fisheries, and biodiversity from pollution, land-use change, and water extraction. Includes deforestation costs and aquatic ecosystem degradation.',
     sources:'[3] Epstein 2011; [4] FAO 2021; [5] True Price 2022'
   },
   water: {
-    icon:'💧', name:'Water Depletion & Pollution',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-drop"/></svg>', name:'Water Depletion & Pollution',
     color:'#5b9bd5',
     desc:'Groundwater depletion, surface water contamination, and water quality degradation. Especially significant in food production — beef requires ~1,800 gallons per pound.',
     sources:'[4] FAO True Cost 2021; [5] True Price 2022'
   },
   land: {
-    icon:'🌾', name:'Land Use & Soil Degradation',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-wheat"/></svg>', name:'Land Use & Soil Degradation',
     color:'#8fba6e',
     desc:'Costs of converting natural habitat to agricultural or industrial use, soil erosion, desertification, and loss of carbon stored in soils and vegetation.',
     sources:'[4] FAO 2021; [5] True Price 2022'
   },
   social: {
-    icon:'👷', name:'Labor & Social Costs',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-worker"/></svg>', name:'Labor & Social Costs',
     color:'#a07cc5',
     desc:'Supply-chain labor exploitation, occupational health risks, community displacement, and "sacrifice zone" costs borne by communities near extraction and production sites.',
     sources:'[5] True Price 2022; [8] Ellen MacArthur 2017; [9] Xu 2020'
   },
   waste: {
-    icon:'♻️', name:'Waste & Pollution Costs',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-recycle"/></svg>', name:'Waste & Pollution Costs',
     color:'#7aab8a',
     desc:'End-of-life disposal, landfill leachate, e-waste toxicity, plastic pollution, and chemical contamination from manufacturing and packaging.',
     sources:'[8] Ellen MacArthur 2017; [9] Xu 2020'
   },
   congestion: {
-    icon:'🚦', name:'Congestion & Accident Costs',
+    icon:'<svg class="ico" aria-hidden="true"><use href="#ic-traffic"/></svg>', name:'Congestion & Accident Costs',
     color:'#c8963e',
     desc:'Road congestion imposes time costs on other drivers (~$87B/yr in US). Traffic accidents impose medical, legal, and productivity costs beyond what insurance covers.',
     sources:'[2] NAS 2010; Texas Transportation Institute 2023'

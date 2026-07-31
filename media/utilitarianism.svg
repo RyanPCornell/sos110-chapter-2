@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 320" role="img"
+     aria-label="A hand-drawn balance scale: a pan holding four people outweighs a pan holding one, illustrating the greatest good for the greatest number.">
+  <!-- Roughening filter: fractal-noise displacement so every stroke wobbles
+       like a drawn line rather than a plotted one. -->
+  <defs>
+    <filter id="u-rough" x="-6%" y="-6%" width="112%" height="112%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.019" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.0" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#u-rough)" fill="none" stroke="#33303a" stroke-width="2.4"
+     stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- base + post -->
+    <ellipse cx="170" cy="292" rx="52" ry="9" fill="#e7d3ac"/>
+    <path d="M150 288 L154 258 h32 l4 30 Z" fill="#d9b96a"/>
+    <rect x="163" y="96" width="14" height="164" rx="6" fill="#d9b96a"/>
+    <circle cx="170" cy="92" r="7.5" fill="#c9a24a"/>
+
+    <!-- pivot + tilted beam (left pan hangs lower = heavier) -->
+    <path d="M162 96 L178 96 L170 82 Z" fill="#c9a24a"/>
+    <path d="M74 112 L266 74" stroke="#c9a24a" stroke-width="7"/>
+    <path d="M74 112 L266 74"/>
+
+    <!-- hanging strings -->
+    <path d="M74 112 L74 158"/>
+    <path d="M266 74 L266 128"/>
+
+    <!-- LEFT pan (down, heavier) holding the many -->
+    <path d="M44 158 L104 158" stroke="#8a6f2a" stroke-width="2.6"/>
+    <path d="M46 158 Q74 196 102 158" fill="#f4ecdb"/>
+
+    <!-- RIGHT pan (up, lighter) holding one -->
+    <path d="M238 128 L294 128" stroke="#8a6f2a" stroke-width="2.6"/>
+    <path d="M240 128 Q266 162 292 128" fill="#f4ecdb"/>
+
+    <!-- the "greatest number": four small figures in the left pan -->
+    <g>
+      <circle cx="58" cy="140" r="6" fill="#6d597a"/>
+      <path d="M49 160 Q49 148 58 147 Q67 148 67 160 Z" fill="#6d597a"/>
+    </g>
+    <g>
+      <circle cx="74" cy="135" r="6" fill="#40916c"/>
+      <path d="M65 156 Q65 143 74 142 Q83 143 83 156 Z" fill="#40916c"/>
+    </g>
+    <g>
+      <circle cx="90" cy="140" r="6" fill="#1c7293"/>
+      <path d="M81 160 Q81 148 90 147 Q99 148 99 160 Z" fill="#1c7293"/>
+    </g>
+    <g>
+      <circle cx="74" cy="150" r="6" fill="#bc8a2e"/>
+      <path d="M65 168 Q65 157 74 156 Q83 157 83 168 Z" fill="#bc8a2e"/>
+    </g>
+
+    <!-- the one: a single figure in the right pan -->
+    <g>
+      <circle cx="266" cy="110" r="6" fill="#a4737d"/>
+      <path d="M257 130 Q257 118 266 117 Q275 118 275 130 Z" fill="#a4737d"/>
+    </g>
+  </g>
+</svg>

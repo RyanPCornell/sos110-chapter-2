@@ -647,6 +647,37 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   .cm-body{grid-template-columns:1fr; overflow:auto;}
   .cm-pond{min-height:30vh;}
 }
+
+
+/* a note callout that opens a video clip (content_slide note_video=) */
+.note.note-video{display:block; width:100%; text-align:left; cursor:pointer;
+  font-family:inherit; font-size:clamp(.8rem,1.25vw,.92rem); font-style:italic;
+  color:#3a4a43; border:1px solid var(--line); border-left:3px solid var(--accent,var(--green));
+  transition:box-shadow .15s, border-color .15s, transform .08s;}
+.note.note-video:hover{box-shadow:0 6px 18px rgba(20,40,30,.14); border-left-color:var(--accent,var(--green));}
+.note.note-video:active{transform:translateY(1px);}
+.note.note-video:focus-visible{outline:3px solid var(--accent,var(--green)); outline-offset:2px;}
+.note-cue{display:inline-flex; align-items:center; gap:.4em; margin-left:.55em;
+  font-style:normal; font-weight:700; color:var(--accent,var(--green)); white-space:nowrap;}
+.note-play{display:inline-flex; align-items:center; justify-content:center;
+  width:1.35em; height:1.35em; border-radius:50%; background:var(--accent,var(--green));
+  color:#fff; font-size:.62em; padding-left:.12em;}
+
+/* the dialog itself, appended to <body> so it covers any slide */
+.nv-modal{position:fixed; inset:0; z-index:120; display:flex; align-items:center;
+  justify-content:center; padding:clamp(1rem,4vh,3rem);
+  background:rgba(8,16,12,.82); backdrop-filter:blur(6px);}
+.nv-modal[hidden]{display:none;}
+.nv-box{position:relative; width:min(1180px,94vw);}
+.nv-frame{position:relative; width:100%; aspect-ratio:16/9; background:#000;
+  border-radius:14px; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.55);}
+.nv-frame iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+.nv-close{position:absolute; top:-.6rem; right:-.6rem; z-index:2; width:2.4rem; height:2.4rem;
+  border-radius:50%; border:none; background:#fff; color:#15201b; font-size:1.35rem;
+  line-height:1; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.35);}
+.nv-close:hover{background:#eaf3ee;}
+.nv-hint{margin-top:.7rem; text-align:center; color:#cfe3d7; font-size:.8rem;}
+@media (max-width:820px){ .nv-close{top:-.4rem; right:-.4rem;} }
 </style>
 </head>
 <body>
@@ -909,7 +940,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 <h2 class="heading">Utilitarianism</h2>
 <p class="lead">An ethical framework that defines “right” as whichever action produces the most benefit (or usefulness to humans) for the greatest number of people. The outcome carries more moral weight than the means.</p>
 <div class="pairs"><div class="pair"><div class="pair-head">Calculation</div><div class="pair-desc">Total benefits and harms experienced by all affected parties are weighed; the option with the highest net benefit is pursued. Utilitarian value is value based on usefulness to humans.</div></div><div class="pair"><div class="pair-head">Trade-off Example</div><div class="pair-desc">A hydroelectric dam may power underserved regions but flood local homes. Utilitarianism asks: does the total benefit justify the harm?</div></div><div class="pair"><div class="pair-head">Environmental Use</div><div class="pair-desc">Governments use utilitarian thinking for cost-benefit analyses of regulations, infrastructure, and resource management decisions.</div></div></div>
-<p class="note">Key tension: utilitarianism can justify harming a minority for majority benefit. Environmental justice advocates argue that distributional fairness must also be weighed — not just aggregate outcomes.</p>
+<button class="note note-video" type="button" data-nv-src="https://www.youtube-nocookie.com/embed/YuVreCbQOwc?start=127&amp;end=208&amp;rel=0&amp;modestbranding=1&amp;playsinline=1&amp;autoplay=1" aria-haspopup="dialog">Key tension: utilitarianism can justify harming a minority for majority benefit. Environmental justice advocates argue that distributional fairness must also be weighed — not just aggregate outcomes.<span class="note-cue"><span class="note-play" aria-hidden="true">&#9654;</span>Watch the clip</span></button>
     </div>
     <div class="bleed-media contain"><img src="media/utilitarianism.svg" alt=""></div>
   </div>
@@ -4418,6 +4449,62 @@ show(start);
   });
 
   if(status!=='live') console.info('[interactive] backend =',status,'— add real values to firebase-config.js for cross-device sync.');
+})();
+</script>
+<script>
+// Clickable note -> video-clip dialog. The iframe gets its src only when opened
+// and has it cleared on close, so nothing preloads and audio can't keep playing
+// behind the slide.
+(function(){
+  var buttons = Array.prototype.slice.call(document.querySelectorAll('.note-video'));
+  if(!buttons.length) return;
+
+  var modal = document.createElement('div');
+  modal.className = 'nv-modal';
+  modal.hidden = true;
+  modal.innerHTML =
+    '<div class="nv-box">' +
+      '<button class="nv-close" type="button" aria-label="Close video">&times;</button>' +
+      '<div class="nv-frame"><iframe allow="autoplay; encrypted-media; picture-in-picture; fullscreen" ' +
+      'allowfullscreen title="Video clip"></iframe></div>' +
+      '<div class="nv-hint">Press Esc or click outside to close</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+
+  var frame = modal.querySelector('iframe');
+  var closeBtn = modal.querySelector('.nv-close');
+  var opener = null;
+
+  function open(src, btn){
+    opener = btn || null;
+    frame.src = src;
+    modal.hidden = false;
+    closeBtn.focus();
+  }
+  function close(){
+    if(modal.hidden) return;
+    modal.hidden = true;
+    // about:blank, not '': an empty src resolves against the page URL, which
+    // would load the whole deck recursively inside this hidden iframe.
+    frame.src = 'about:blank';      // tears down the player, stopping audio
+    if(opener) { opener.focus(); opener = null; }
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){ open(b.dataset.nvSrc, b); });
+  });
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', function(e){ if(e.target === modal) close(); });
+
+  // While the dialog is open, swallow the deck's arrow/space navigation so the
+  // slide underneath can't change out from under the video.
+  document.addEventListener('keydown', function(e){
+    if(modal.hidden) return;
+    if(e.key === 'Escape'){ close(); e.stopPropagation(); return; }
+    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','PageUp','PageDown','Home','End'].indexOf(e.key) > -1){
+      e.stopPropagation();
+    }
+  }, true);
 })();
 </script>
 </body>

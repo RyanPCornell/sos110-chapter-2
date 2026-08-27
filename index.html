@@ -56,6 +56,12 @@ h1,h2,h3,.heading{font-family:'Merriweather',Georgia,serif;}
 .bullets li::before{content:""; position:absolute; left:0; top:.5em; width:.5rem; height:.5rem;
   border-radius:50%; background:var(--accent,var(--green-light));}
 .bullets li strong{color:var(--forest);}
+/* sub-bullet (authored as "- text"): indented under its parent, a shade smaller,
+   hollow marker so the hierarchy reads at projector distance */
+.bullets li.sub{padding-left:3rem; font-size:clamp(.82rem,1.32vw,.95rem); color:#48594f;
+  margin-top:-.25rem;}
+.bullets li.sub::before{left:1.55rem; top:.55em; width:.42rem; height:.42rem;
+  background:transparent; border:2px solid var(--accent,var(--green-light));}
 .note{margin-top:.85rem; padding:.62rem .95rem; background:var(--pale); border-left:3px solid var(--green);
   border-radius:0 8px 8px 0; font-size:clamp(.8rem,1.25vw,.92rem); color:#3a4a43; font-style:italic;}
 .col-media{height:100%; display:flex; align-items:center;}
@@ -335,6 +341,44 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 .at-close{margin-top:1rem; font-family:inherit; font-weight:700; color:var(--muted); background:#fff;
   border:1.5px solid var(--line); border-radius:11px; padding:.5rem 1.2rem; cursor:pointer;}
 .at-close:hover{border-color:var(--accent); color:var(--accent);}
+
+
+/* media step-through: one slide, several videos/stills, clicker-advanced */
+.slide[data-type="msteps"]{background:linear-gradient(160deg,#f7f9fb,#eceff3);}
+.ms-root{position:absolute; inset:0; display:flex; flex-direction:column;
+  padding:clamp(.9rem,2.3vh,1.5rem) clamp(1.4rem,3.2vw,3rem) clamp(.7rem,1.8vh,1.2rem);}
+.ms-head{margin-bottom:clamp(.35rem,1vh,.7rem);}
+.ms-head .heading{margin-bottom:.25rem;}
+.ms-sub{font-size:clamp(.8rem,1.28vw,.97rem); color:var(--muted); max-width:92ch; line-height:1.45;}
+.ms-stage{flex:1; min-height:0; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; position:relative;}
+.ms-item{width:100%; height:100%; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:.5rem; min-height:0;}
+.ms-item[hidden]{display:none;}
+.ms-media{max-width:100%; max-height:100%; min-height:0; width:auto; height:auto;
+  border-radius:12px; border:1px solid var(--line); background:#fff;
+  box-shadow:0 8px 26px rgba(20,40,30,.16); animation:ms-in .32s ease;}
+@keyframes ms-in{from{opacity:0; transform:translateY(6px) scale(.995);}}
+.ms-cap{flex:none; font-size:clamp(.82rem,1.32vw,1.02rem); color:#33453d; text-align:center;
+  max-width:80ch; line-height:1.4;}
+.ms-cap strong{color:var(--forest);}
+.ms-foot{flex:none; display:flex; align-items:center; gap:.9rem;
+  margin-top:clamp(.4rem,1.1vh,.7rem);}
+.ms-dots{display:flex; gap:.4rem;}
+.ms-dot{width:1.75rem; height:1.75rem; border-radius:50%; cursor:pointer;
+  border:1.5px solid var(--line); background:#fff; color:var(--muted);
+  font-family:inherit; font-weight:800; font-size:.78rem; line-height:1;
+  display:flex; align-items:center; justify-content:center; padding:0;
+  transition:background .18s, color .18s, border-color .18s, transform .18s;}
+.ms-dot:hover{border-color:var(--accent); color:var(--accent);}
+.ms-dot.on{background:var(--accent); border-color:var(--accent); color:#fff; transform:scale(1.1);}
+.ms-hint{font-size:clamp(.72rem,1.12vw,.85rem); color:var(--muted); font-style:italic;}
+.ms-hint b{font-style:normal; font-family:'Merriweather',serif; color:var(--forest);
+  font-variant-numeric:tabular-nums;}
+@media (max-width:820px){
+  .ms-stage{min-height:34vh;}
+  .ms-foot{flex-wrap:wrap;}
+}
 
 
 .slide.poll{background:linear-gradient(160deg,#f4f8f6,#e8f1ec);}
@@ -626,6 +670,88 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   </div>
   <div class="footer">© 2023 W. W. Norton &amp; Company, Inc.</div>
 </section>
+<section class="slide mediasteps" data-type="msteps" id="ms1" style="--accent:#2D6A4F">
+  <div class="ms-root">
+    <div class="ms-head">
+      <div class="eyebrow">Announcements  ·  Getting Started</div>
+      <h2 class="heading">Where to find Module 1 Assignments</h2>
+      
+    </div>
+    <div class="ms-stage"><figure class="ms-item" data-ms-item="0"><img class="ms-media" src="media/m1-step1.png" alt="Canvas Modules page for Module 1, with arrows pointing to the InQuizitive quizzes, Introduce Yourself in Video, and Short Survey 1"><figcaption class="ms-cap">In <strong>Canvas</strong>, open <strong>Modules</strong> and scroll to <strong>Module 1</strong>. Everything is here: the <strong>InQuizitive</strong> quizzes under Quiz, <strong>Introduce Yourself in Video</strong> under Discussion, the <strong>Practice</strong> review exercise, and <strong>Short Survey 1</strong>.</figcaption></figure><figure class="ms-item" data-ms-item="1" hidden><img class="ms-media" src="media/m1-step2.png" alt="The Short Survey 1: Course Preparation assignment page, with an arrow pointing to the Take this short survey button above a QR code"><figcaption class="ms-cap"><strong>Short Survey 1</strong> — press <strong>Take this short survey</strong>, or scan the QR code with your phone. Then upload a <strong>screenshot</strong> of the completion page to get credit.</figcaption></figure><figure class="ms-item" data-ms-item="2" hidden><img class="ms-media" src="media/m1-step3.png" alt="The Introduce Yourself in Video assignment page, with an arrow pointing to the button that loads the tool in a new window"><figcaption class="ms-cap">For <strong>Introduce Yourself in Video</strong>, read Part 1 and Part 2, then press <strong>Load Introduce Yourself in Video in a new window</strong> — that opens <strong>Harmonize</strong>.</figcaption></figure><figure class="ms-item" data-ms-item="3" hidden><img class="ms-media" src="media/m1-step4.png" alt="The Harmonize discussion board showing the post and comment requirements, with an arrow pointing to Create new post"><figcaption class="ms-cap">Harmonize asks for <strong>1 post</strong> and <strong>2 comments</strong> — check Canvas for each deadline. Press <strong>+ Create new post</strong> to start yours.</figcaption></figure><figure class="ms-item" data-ms-item="4" hidden><img class="ms-media" src="media/m1-step5.png" alt="The Harmonize create-post form, with an arrow pointing to the drop files area for attaching a video"><figcaption class="ms-cap">Give it a <strong>Subject</strong>, then use <strong>Drop files or click to browse</strong> to attach your video. Press <strong>Publish</strong> when you're done.</figcaption></figure></div>
+    <div class="ms-foot">
+      <div class="ms-dots"><button class="ms-dot on" type="button" data-ms-dot="0" aria-label="Step 1 of 5"><span>1</span></button><button class="ms-dot" type="button" data-ms-dot="1" aria-label="Step 2 of 5"><span>2</span></button><button class="ms-dot" type="button" data-ms-dot="2" aria-label="Step 3 of 5"><span>3</span></button><button class="ms-dot" type="button" data-ms-dot="3" aria-label="Step 4 of 5"><span>4</span></button><button class="ms-dot" type="button" data-ms-dot="4" aria-label="Step 5 of 5"><span>5</span></button></div>
+      <span class="ms-hint">Click to advance <b data-ms-count>1 / 5</b></span>
+    </div>
+  </div>
+  <div class="footer">© 2023 W. W. Norton &amp; Company, Inc.</div>
+  <script>
+  (function(){
+    var sec = document.getElementById("ms1");
+    if(!sec) return;
+    var N = 5;
+    var items = sec.querySelectorAll("[data-ms-item]");
+    var dots  = sec.querySelectorAll("[data-ms-dot]");
+    var count = sec.querySelector("[data-ms-count]");
+    var step = 0, backwards = false;
+
+    var FWD  = ["ArrowRight","PageDown"," ","Spacebar"];
+    var BACK = ["ArrowLeft","PageUp"];
+
+    function show(i){
+      step = Math.max(0, Math.min(N-1, i));
+      for(var k=0;k<items.length;k++){
+        var on = (k===step);
+        items[k].hidden = !on;
+        dots[k].classList.toggle("on", on);
+        var v = items[k].querySelector("[data-ms-video]");
+        if(v){
+          if(on){ try{ v.currentTime = 0;
+            // play() rejects if the browser power-pauses or we pause straight
+            // after; harmless, but it litters the console if left unhandled
+            var pr = v.play(); if(pr && pr.catch) pr.catch(function(){});
+          }catch(e){} }
+          else  { try{ v.pause(); }catch(e){} }
+        }
+      }
+      count.textContent = (step+1) + " / " + N;
+    }
+    function pauseAll(){
+      sec.querySelectorAll("[data-ms-video]").forEach(function(v){ try{ v.pause(); }catch(e){} });
+    }
+
+    for(var d=0; d<dots.length; d++){
+      (function(i){ dots[i].addEventListener("click", function(){ show(i); }); })(d);
+    }
+    // tapping the picture also advances, for presenting without a clicker
+    sec.querySelector(".ms-stage").addEventListener("click", function(e){
+      if(e.target.closest("[data-ms-video]")) return;   // let video controls work
+      if(step < N-1) show(step+1);
+    });
+
+    // Capture phase on document: this runs BEFORE the deck's own bubble-phase key
+    // handler, so we can swallow the keypress while there are steps left and let
+    // it through to change slides once we run out.
+    document.addEventListener("keydown", function(e){
+      if(FWD.indexOf(e.key) > -1) backwards = false;
+      else if(BACK.indexOf(e.key) > -1) backwards = true;
+      if(!sec.classList.contains("active")) return;
+      if(FWD.indexOf(e.key) > -1 && step < N-1){
+        e.preventDefault(); e.stopPropagation(); show(step+1);
+      } else if(BACK.indexOf(e.key) > -1 && step > 0){
+        e.preventDefault(); e.stopPropagation(); show(step-1);
+      }
+    }, true);
+
+    // reset when the slide is shown; entering from the right lands on the last step
+    new MutationObserver(function(){
+      if(sec.classList.contains("active")) show(backwards ? N-1 : 0);
+      else pauseAll();
+    }).observe(sec, {attributes:true, attributeFilter:["class"]});
+
+    if(sec.classList.contains("active")) show(0);
+  })();
+  </script>
+</section>
 <section class="slide" data-type="photo" style="background:linear-gradient(155deg,#eef6f1,#dfeee6)">
   <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:clamp(1rem,3vh,2rem) clamp(1.2rem,3vw,2.4rem)">
     <img src="media/image2.jpeg" alt="" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:14px;box-shadow:0 12px 34px rgba(20,40,30,.2)">
@@ -869,7 +995,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 <div class="eyebrow">2.3 · Tragedy of the Commons</div>
 <h2 class="heading">What Is the Tragedy of the Commons?</h2>
 <p class="lead">When a shared resource is used by individuals acting in their own short-term self-interest, overexploitation degrades or destroys the resource for everyone.</p>
-<ul class="bullets"><li>Each user gains full benefit from additional use but shares the cost of degradation with all others.</li><li>Benefits are internalized, while costs are externalized.</li><li>It is a <strong>collective action</strong> problem.</li><li>Without coordination among commons users, the rational individual choice leads to collective ruin.</li><li><strong>Examples:</strong> overfishing, groundwater depletion, atmospheric CO₂ emissions.</li><li>Solutions include regulation, privatization of the resource, coordination, or community-based governance (Ostrom, 1990).</li></ul>
+<ul class="bullets"><li>Each user gains full benefit from additional use but shares the cost of degradation with all others.</li><li>Benefits are internalized, while costs are externalized.</li><li>It is a <strong>collective action</strong> problem.</li><li class="sub">Collective action is the coordinated efforts of groups to achieve common goals.</li><li>Without coordination among commons users, the rational individual choice leads to collective ruin.</li><li><strong>Examples:</strong> overfishing, groundwater depletion, atmospheric CO₂ emissions.</li><li>Solutions include regulation, privatization of the resource, coordination, or community-based governance (Ostrom, 1990).</li></ul>
     </div>
     <div class="bleed-media cover"><img src="media/image14.jpg" alt=""></div>
   </div>
@@ -1000,7 +1126,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 
 <div class="hud">
   <button onclick="prev()" title="Previous (left arrow)">&#8249;</button>
-  <span class="counter" id="counter">1 / 24</span>
+  <span class="counter" id="counter">1 / 25</span>
   <button onclick="next()" title="Next (right arrow)">&#8250;</button>
   <button onclick="toggleMenu()" title="Slide menu (O)">&#9776;</button>
   <button onclick="toggleFs()" title="Fullscreen (F)">&#9974;</button>
@@ -1009,7 +1135,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 <div class="menu" id="menu">
   <button class="menu-close" onclick="toggleMenu(false)" aria-label="Close menu">&times;</button>
   <h3>Chapter 2 &mdash; Jump to a slide</h3>
-  <div class="menu-grid"><button class="menu-item" data-go="0"><span class="menu-num">1</span>Title</button><button class="menu-item" data-go="1"><span class="menu-num">2</span>Outline</button><button class="menu-item" data-go="2"><span class="menu-num">3</span>Announcements</button><button class="menu-item" data-go="3"><span class="menu-num">4</span>Intro · How Do We Decide?</button><button class="menu-item" data-go="4"><span class="menu-num">5</span>2 ▶ Poll: Walk (any harm)</button><button class="menu-item" data-go="5"><span class="menu-num">6</span>2 ▶ Poll: $1 (any harm)</button><button class="menu-item" data-go="6"><span class="menu-num">7</span>2 ▶ Poll: Walk (20%)</button><button class="menu-item" data-go="7"><span class="menu-num">8</span>2 ▶ Poll: $1 (20%)</button><button class="menu-item" data-go="8"><span class="menu-num">9</span>2 ▶ Poll: $10 (20%)</button><button class="menu-item" data-go="9"><span class="menu-num">10</span>2.1 Personal Ethics</button><button class="menu-item" data-go="10"><span class="menu-num">11</span>2.1 Deontological Ethics</button><button class="menu-item" data-go="11"><span class="menu-num">12</span>2.1 Utilitarianism</button><button class="menu-item" data-go="12"><span class="menu-num">13</span>2.2 Supply &amp; Demand</button><button class="menu-item" data-go="13"><span class="menu-num">14</span>2.2 Jevons Paradox</button><button class="menu-item" data-go="14"><span class="menu-num">15</span>2.3 Externalities</button><button class="menu-item" data-go="15"><span class="menu-num">16</span>2.3 ▶ Externality Graphs</button><button class="menu-item" data-go="16"><span class="menu-num">17</span>2.3 ▶ True Cost Calculator</button><button class="menu-item" data-go="17"><span class="menu-num">18</span>2.3 Policy Approaches</button><button class="menu-item" data-go="18"><span class="menu-num">19</span>2.3 Tragedy of the Commons</button><button class="menu-item" data-go="19"><span class="menu-num">20</span>2.3 ▶ Commons Game</button><button class="menu-item" data-go="20"><span class="menu-num">21</span>2.3 Public Goods</button><button class="menu-item" data-go="21"><span class="menu-num">22</span>2.4 Why Policy?</button><button class="menu-item" data-go="22"><span class="menu-num">23</span>2.4 Global Politics</button><button class="menu-item" data-go="23"><span class="menu-num">24</span>Key Concepts</button></div>
+  <div class="menu-grid"><button class="menu-item" data-go="0"><span class="menu-num">1</span>Title</button><button class="menu-item" data-go="1"><span class="menu-num">2</span>Outline</button><button class="menu-item" data-go="2"><span class="menu-num">3</span>Announcements</button><button class="menu-item" data-go="3"><span class="menu-num">4</span>Where to find Module 1</button><button class="menu-item" data-go="4"><span class="menu-num">5</span>Intro · How Do We Decide?</button><button class="menu-item" data-go="5"><span class="menu-num">6</span>2 ▶ Poll: Walk (any harm)</button><button class="menu-item" data-go="6"><span class="menu-num">7</span>2 ▶ Poll: $1 (any harm)</button><button class="menu-item" data-go="7"><span class="menu-num">8</span>2 ▶ Poll: Walk (20%)</button><button class="menu-item" data-go="8"><span class="menu-num">9</span>2 ▶ Poll: $1 (20%)</button><button class="menu-item" data-go="9"><span class="menu-num">10</span>2 ▶ Poll: $10 (20%)</button><button class="menu-item" data-go="10"><span class="menu-num">11</span>2.1 Personal Ethics</button><button class="menu-item" data-go="11"><span class="menu-num">12</span>2.1 Deontological Ethics</button><button class="menu-item" data-go="12"><span class="menu-num">13</span>2.1 Utilitarianism</button><button class="menu-item" data-go="13"><span class="menu-num">14</span>2.2 Supply &amp; Demand</button><button class="menu-item" data-go="14"><span class="menu-num">15</span>2.2 Jevons Paradox</button><button class="menu-item" data-go="15"><span class="menu-num">16</span>2.3 Externalities</button><button class="menu-item" data-go="16"><span class="menu-num">17</span>2.3 ▶ Externality Graphs</button><button class="menu-item" data-go="17"><span class="menu-num">18</span>2.3 ▶ True Cost Calculator</button><button class="menu-item" data-go="18"><span class="menu-num">19</span>2.3 Policy Approaches</button><button class="menu-item" data-go="19"><span class="menu-num">20</span>2.3 Tragedy of the Commons</button><button class="menu-item" data-go="20"><span class="menu-num">21</span>2.3 ▶ Commons Game</button><button class="menu-item" data-go="21"><span class="menu-num">22</span>2.3 Public Goods</button><button class="menu-item" data-go="22"><span class="menu-num">23</span>2.4 Why Policy?</button><button class="menu-item" data-go="23"><span class="menu-num">24</span>2.4 Global Politics</button><button class="menu-item" data-go="24"><span class="menu-num">25</span>Key Concepts</button></div>
 </div>
 
 <script>

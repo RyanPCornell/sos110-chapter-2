@@ -75,6 +75,12 @@ h1,h2,h3,.heading{font-family:'Merriweather',Georgia,serif;}
   margin-top:-.25rem;}
 .bullets li.sub::before{left:1.55rem; top:.55em; width:.42rem; height:.42rem;
   background:transparent; border:2px solid var(--accent,var(--green-light));}
+/* staged reveal (content_slide staged=True): fade each item in on a clicker
+   press. Opacity, not display, so the space is reserved up front and nothing
+   reflows as items appear. */
+.stage-item{opacity:0; transition:opacity .3s ease;}
+.stage-item.shown{opacity:1;}
+@media (prefers-reduced-motion:reduce){ .stage-item{transition:none;} }
 .note{margin-top:.85rem; padding:.62rem .95rem; background:var(--pale); border-left:3px solid var(--green);
   border-radius:0 8px 8px 0; font-size:clamp(.8rem,1.25vw,.92rem); color:#3a4a43; font-style:italic;}
 .col-media{height:100%; display:flex; align-items:center;}
@@ -649,19 +655,29 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 }
 
 
-/* a note callout that opens a video clip (content_slide note_video=) */
-.note.note-video{display:block; width:100%; text-align:left; cursor:pointer;
-  font-family:inherit; font-size:clamp(.8rem,1.25vw,.92rem); font-style:italic;
-  color:#3a4a43; border:1px solid var(--line); border-left:3px solid var(--accent,var(--green));
+/* play link that opens a video clip (content_slide note_video=) — sits on its
+   own line under the note callout, a step up in size from the body text */
+.nv-link{display:inline-flex; align-items:center; gap:.55em; margin-top:.75rem;
+  padding:.5rem .95rem .5rem .6rem; cursor:pointer; font-family:inherit;
+  font-size:clamp(.95rem,1.55vw,1.14rem); font-weight:700;
+  color:var(--accent,var(--green)); background:#fff;
+  border:1.5px solid var(--line); border-radius:999px;
   transition:box-shadow .15s, border-color .15s, transform .08s;}
-.note.note-video:hover{box-shadow:0 6px 18px rgba(20,40,30,.14); border-left-color:var(--accent,var(--green));}
-.note.note-video:active{transform:translateY(1px);}
-.note.note-video:focus-visible{outline:3px solid var(--accent,var(--green)); outline-offset:2px;}
-.note-cue{display:inline-flex; align-items:center; gap:.4em; margin-left:.55em;
-  font-style:normal; font-weight:700; color:var(--accent,var(--green)); white-space:nowrap;}
-.note-play{display:inline-flex; align-items:center; justify-content:center;
-  width:1.35em; height:1.35em; border-radius:50%; background:var(--accent,var(--green));
-  color:#fff; font-size:.62em; padding-left:.12em;}
+.nv-link:hover{border-color:var(--accent,var(--green));
+  box-shadow:0 6px 18px rgba(20,40,30,.16);}
+.nv-link:active{transform:translateY(1px);}
+.nv-link:focus-visible{outline:3px solid var(--accent,var(--green)); outline-offset:2px;}
+.nv-play{display:inline-flex; align-items:center; justify-content:center; flex:none;
+  width:1.6em; height:1.6em; border-radius:50%; background:var(--accent,var(--green));
+  color:#fff; font-size:.66em; padding-left:.14em;}
+/* the play link is an extra block on an already-full slide — tighten the rhythm
+   so it stays clear of the bottom edge at 16:9 */
+.slide.has-nv .heading{margin-bottom:.7rem;}
+.slide.has-nv .lead{margin-bottom:.7rem;}
+.slide.has-nv .pairs{gap:.42rem;}
+.slide.has-nv .pair{padding:.58rem .95rem;}
+.slide.has-nv .note{margin-top:.6rem;}
+.slide.has-nv .nv-link{margin-top:.55rem;}
 
 /* the dialog itself, appended to <body> so it covers any slide */
 .nv-modal{position:fixed; inset:0; z-index:120; display:flex; align-items:center;
@@ -928,19 +944,20 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
     <div class="col-text">
 <div class="eyebrow">2.1 · Duties and Rights</div>
 <h2 class="heading">Ethics</h2>
-<div class="pairs"><div class="pair"><div class="pair-head">Duties &amp; Rights</div><div class="pair-desc">Ethical systems rooted in obligations (duty to care) and entitlements (right to a healthy environment). Example: humans have a moral and legal duty to care for dependents; children have a right to adequate care.</div></div><div class="pair"><div class="pair-head">Intrinsic Value</div><div class="pair-desc">The worth of something in and of itself — independent of human utility. Used in deontological ethical reasoning; basis for the 1970 Environmental Policy Act.</div></div><div class="pair"><div class="pair-head">UN Earth Charter (2000)</div><div class="pair-desc">Outlines global environmental duties, including the protection and restoration of Earth's ecological systems — a landmark deontological document in international environmental ethics.</div></div><div class="pair"><div class="pair-head">Environmental Ethics</div><div class="pair-desc">How should we examine the moral relationships between humans and the environment?</div></div></div>
+<div class="pairs"><div class="pair"><div class="pair-head">Duties &amp; Rights</div><div class="pair-desc stage-item">Ethical systems rooted in obligations (duty to care) and entitlements (right to a healthy environment). Example: humans have a moral and legal duty to care for dependents; children have a right to adequate care.</div></div><div class="pair"><div class="pair-head">Intrinsic Value</div><div class="pair-desc stage-item">The worth of something in and of itself — independent of human utility. Used in deontological ethical reasoning; basis for the 1970 Environmental Policy Act.</div></div><div class="pair"><div class="pair-head">UN Earth Charter (2000)</div><div class="pair-desc stage-item">Outlines global environmental duties, including the protection and restoration of Earth's ecological systems — a landmark deontological document in international environmental ethics.</div></div><div class="pair"><div class="pair-head">Environmental Ethics</div><div class="pair-desc stage-item">How should we examine the moral relationships between humans and the environment?</div></div></div>
     </div>
   </div>
   <div class="footer">© 2023 W. W. Norton &amp; Company, Inc.</div>
 </section>
-<section class="slide" data-type="content" style="--accent:#6D597A">
+<section class="slide has-nv" data-type="content" style="--accent:#6D597A">
   <div class="bleed-grid">
     <div class="bleed-text">
 <div class="eyebrow">2.1 · The Greatest Good for the Greatest Number</div>
 <h2 class="heading">Utilitarianism</h2>
 <p class="lead">An ethical framework that defines “right” as whichever action produces the most benefit (or usefulness to humans) for the greatest number of people. The outcome carries more moral weight than the means.</p>
 <div class="pairs"><div class="pair"><div class="pair-head">Calculation</div><div class="pair-desc">Total benefits and harms experienced by all affected parties are weighed; the option with the highest net benefit is pursued. Utilitarian value is value based on usefulness to humans.</div></div><div class="pair"><div class="pair-head">Trade-off Example</div><div class="pair-desc">A hydroelectric dam may power underserved regions but flood local homes. Utilitarianism asks: does the total benefit justify the harm?</div></div><div class="pair"><div class="pair-head">Environmental Use</div><div class="pair-desc">Governments use utilitarian thinking for cost-benefit analyses of regulations, infrastructure, and resource management decisions.</div></div></div>
-<button class="note note-video" type="button" data-nv-src="https://www.youtube-nocookie.com/embed/YuVreCbQOwc?start=127&amp;end=208&amp;rel=0&amp;modestbranding=1&amp;playsinline=1&amp;autoplay=1" aria-haspopup="dialog">Key tension: utilitarianism can justify harming a minority for majority benefit. Environmental justice advocates argue that distributional fairness must also be weighed — not just aggregate outcomes.<span class="note-cue"><span class="note-play" aria-hidden="true">&#9654;</span>Watch the clip</span></button>
+<p class="note">Key tension: utilitarianism can justify harming a minority for majority benefit. Environmental justice advocates argue that distributional fairness must also be weighed — not just aggregate outcomes.</p>
+<button class="nv-link" type="button" data-nv-src="https://www.youtube-nocookie.com/embed/YuVreCbQOwc?start=127&amp;end=208&amp;rel=0&amp;modestbranding=1&amp;playsinline=1&amp;autoplay=1" aria-haspopup="dialog"><span class="nv-play" aria-hidden="true">&#9654;</span><span class="nv-label">Utilitarianism Video Example</span></button>
     </div>
     <div class="bleed-media contain"><img src="media/utilitarianism.svg" alt=""></div>
   </div>
@@ -1189,7 +1206,14 @@ const progress = document.getElementById('progress');
 const counter  = document.getElementById('counter');
 const menu = document.getElementById('menu');
 
-function show(i){
+// ── staged reveals ─────────────────────────────────────────────────────────
+// A slide can hold .stage-item elements that the clicker uncovers one at a
+// time before moving on. Slides without them are unaffected.
+function stageItems(s){ return Array.prototype.slice.call(s.querySelectorAll('.stage-item')); }
+function stageShown(s){ return stageItems(s).filter(function(e){ return e.classList.contains('shown'); }).length; }
+function setStage(s, n){ stageItems(s).forEach(function(e, i){ e.classList.toggle('shown', i < n); }); }
+
+function show(i, back){
   i = Math.max(0, Math.min(slides.length-1, i));
   slides[cur].classList.remove('active');
   cur = i;
@@ -1197,14 +1221,26 @@ function show(i){
   s.classList.add('active');
   const f = s.querySelector('iframe[data-src]');
   if(f && !f.src){ f.src = f.getAttribute('data-src'); }
+  // arriving forward starts a staged slide covered; stepping back into one
+  // shows everything, so you don't have to click through it again
+  const st = stageItems(s);
+  if(st.length){ setStage(s, back ? st.length : 0); }
   progress.style.width = ((cur+1)/slides.length*100)+'%';
   var ac = (getComputedStyle(s).getPropertyValue('--accent') || '').trim();
   progress.style.background = ac || 'var(--green-light)';
   counter.textContent = (cur+1)+' / '+slides.length;
   location.hash = 'slide-'+(cur+1);
 }
-function next(){ show(cur+1); }
-function prev(){ show(cur-1); }
+function next(){
+  const s = slides[cur], n = stageItems(s).length;
+  if(n){ const k = stageShown(s); if(k < n){ setStage(s, k + 1); return; } }
+  show(cur+1);
+}
+function prev(){
+  const s = slides[cur];
+  if(stageItems(s).length){ const k = stageShown(s); if(k > 0){ setStage(s, k - 1); return; } }
+  show(cur-1, true);
+}
 
 document.addEventListener('keydown', e=>{
   if(menu.classList.contains('open')){ if(e.key==='Escape') toggleMenu(false); return; }
@@ -4456,7 +4492,7 @@ show(start);
 // and has it cleared on close, so nothing preloads and audio can't keep playing
 // behind the slide.
 (function(){
-  var buttons = Array.prototype.slice.call(document.querySelectorAll('.note-video'));
+  var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-nv-src]'));
   if(!buttons.length) return;
 
   var modal = document.createElement('div');

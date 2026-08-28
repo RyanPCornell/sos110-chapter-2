@@ -1432,6 +1432,18 @@
     updateExtMeter(m);
     updatePigouMeter(m);
     updateInfoText(m);
+
+    // Open on a specific tab when the URL names one (#market / #social / #policy).
+    // The slideshow uses this to embed the same tool twice — once on the market
+    // view, once already showing social cost. Runs after init so setTab's
+    // updateChart() draws the right view; no effect when there is no hash.
+    const TABS = ['market', 'social', 'policy'];
+    const fromHash = () => {
+      const t = (location.hash || '').replace('#', '');
+      if (TABS.includes(t) && t !== state.tab) setTab(t);
+    };
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
   });
 </script>
 </body>

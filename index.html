@@ -257,6 +257,124 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 }
 
 
+.slide.pvc{background:linear-gradient(158deg,#faf7f0,#f1ebdd);}
+.pvc-root{position:absolute; inset:0; display:flex; flex-direction:column;
+  padding:clamp(.9rem,2.4vh,1.6rem) clamp(1.3rem,3vw,2.8rem) clamp(.7rem,1.8vh,1.2rem);}
+.pvc-head .heading{margin-bottom:.35rem;}
+.pvc-tabs{display:inline-flex; gap:.35rem; padding:.28rem; border-radius:999px;
+  background:rgba(138,106,47,.10); align-self:flex-start; margin-bottom:.7rem;}
+.pvc-tab{font-family:'Merriweather',Georgia,serif; font-size:clamp(.82rem,1.3vw,.96rem);
+  font-weight:700; letter-spacing:.01em; padding:.42rem 1.15rem; border:none; border-radius:999px;
+  background:transparent; color:#7a6437; cursor:pointer; transition:background .15s, color .15s;}
+.pvc-tab:hover{color:#4a3c1d;}
+.pvc-tab.on{background:#fffdf8; color:#3b3222; box-shadow:0 2px 8px rgba(80,60,20,.16);}
+.pvc-body{flex:1; min-height:0; display:grid; grid-template-columns:minmax(300px,36%) 1fr;
+  gap:clamp(1rem,2.4vw,2rem); align-items:start;}
+
+.pvc-premise{font-size:clamp(.82rem,1.3vw,.95rem); line-height:1.45; color:#4a4436; margin-bottom:.55rem;}
+.pvc-premise strong{color:#3b3222;}
+.pvc-ctl{display:block; margin-bottom:.7rem;}
+.pvc-ctl[hidden]{display:none;}
+.pvc-ctl-top{display:flex; justify-content:space-between; align-items:baseline;
+  font-size:clamp(.74rem,1.15vw,.86rem); color:#6b6350; margin-bottom:.2rem;}
+.pvc-ctl-top b{font-family:'Merriweather',serif; font-size:1.35em; color:#3b3222;}
+.pvc-ctl input[type=range]{width:100%; accent-color:#8a6a2f;}
+
+/* internalised / externalised donuts — the headline infographic, so they get
+   real size and a card of their own */
+.pvc-splits{display:flex; gap:.5rem; margin:.25rem 0 .6rem;}
+.pvc-donut{margin:0; flex:1 1 0; min-width:0; display:flex; align-items:center; gap:.45rem;
+  background:#fffdf8; border:1px solid rgba(120,100,60,.22); border-radius:9px;
+  padding:.4rem .45rem;}
+.pvc-donut svg{width:clamp(54px,5.4vw,70px); height:auto; flex:none;}
+.pvc-donut figcaption{min-width:0;}
+.pvc-dring{fill:none; stroke:rgba(120,100,60,.2); stroke-width:9;}
+.pvc-dfill{fill:none; stroke-width:9; stroke-linecap:butt;}
+.pvc-dfill.ben{stroke:#2f6b4f;} .pvc-dfill.cost{stroke:#9c3d3d;}
+/* must clear the ring: inner diameter is ~44 user units, so "100%" has to sit
+   under that or the leading digit disappears behind the stroke */
+.pvc-dpct{font-family:'Merriweather',serif; font-weight:900; font-size:13px;
+  fill:#3b3222; text-anchor:middle;}
+.pvc-donut b{display:block; font-size:clamp(.7rem,1.12vw,.82rem); color:#3b3222; line-height:1.25;}
+.pvc-donut span{display:block; font-size:clamp(.62rem,.98vw,.73rem); color:#7a7260; line-height:1.3;}
+
+  border-top:3px solid; border-radius:6px; padding:.4rem .55rem; min-width:0;}
+.pvc-stop span{display:block; font-size:clamp(.64rem,1vw,.74rem); color:#6b6350; line-height:1.2;}
+.pvc-stop b{font-family:'Merriweather',serif; font-size:clamp(1.15rem,2vw,1.5rem); color:#3b3222;}
+.pvc-stop.you{border-top-color:#b8860b;} .pvc-stop.land{border-top-color:#6b6350;}
+
+/* view toggle above the chart */
+.pvc-charthead{display:flex; align-items:baseline; justify-content:space-between;
+  gap:.8rem; margin-bottom:.15rem;}
+.pvc-viewname{font-family:'Merriweather',serif; font-size:clamp(.78rem,1.2vw,.9rem); color:#6b6350;}
+.pvc-viewname em{color:#3b3222; font-style:italic;}
+.pvc-toggle{font-family:'Inter',sans-serif; font-size:clamp(.66rem,1.02vw,.76rem); font-weight:700;
+  letter-spacing:.03em; padding:.28rem .7rem; border-radius:999px; cursor:pointer;
+  color:#7a6437; background:#fffdf8; border:1px solid rgba(120,100,60,.35); white-space:nowrap;}
+.pvc-toggle:hover{border-color:#8a6a2f; color:#4a3c1d;}
+.pvc-cross{fill:none; stroke:#b8860b; stroke-width:2.4;}
+/* curve labels: bigger, and haloed in the slide's own cream so they stay
+   readable where they cross a gridline or another curve */
+.pvc-cl{font-family:'Inter',sans-serif; font-size:13px; font-weight:700;
+  paint-order:stroke fill; stroke:#f7f2e6; stroke-width:3.5px; stroke-linejoin:round;}
+.pvc-cl.ben{fill:#2f6b4f;} .pvc-cl.cost{fill:#9c3d3d;}
+.pvc-cl.true{fill:#8a4040; font-style:italic;}
+.pvc-grid.zero{stroke:rgba(120,100,60,.45);}
+
+.pvc-ledger{width:100%; border-collapse:collapse; margin:.2rem 0 .7rem;
+  font-size:clamp(.78rem,1.2vw,.9rem);}
+.pvc-ledger td{padding:.22rem 0; border-bottom:1px solid rgba(120,100,60,.16); color:#57503f;}
+.pvc-ledger tr:last-child td{border-bottom:none;}
+.pvc-num{text-align:right; font-family:'Merriweather',serif; font-variant-numeric:tabular-nums;}
+.pvc-num.pos{color:#2f6b4f;} .pvc-num.neg{color:#9c3d3d;}
+.pvc-net td{border-top:2px solid rgba(120,100,60,.4); font-weight:700; color:#3b3222;}
+.pvc-net .pvc-num{font-size:1.25em;}
+.pvc-true td{font-style:italic; opacity:.9;}
+.pvc-true[hidden]{display:none;}
+.pvc-ledger[hidden]{display:none;}
+.pvc-lhead td{font-family:'Inter',sans-serif; font-size:.66em; letter-spacing:.08em;
+  text-transform:uppercase; color:#8a8069; padding-bottom:.15rem; border-bottom:none;}
+/* running total — the bridge from "one more animal" back to the whole herd */
+.pvc-run td{border-top:1px dashed rgba(120,100,60,.45); padding-top:.35rem; color:#6b6350;}
+.pvc-run .pvc-num{color:#3b3222; font-weight:700;}
+
+.pvc-verdict{font-size:clamp(.76rem,1.2vw,.88rem); line-height:1.45; padding:.48rem .7rem;
+  border-radius:0 6px 6px 0; border-left:3px solid; background:#fffdf8;}
+.pvc-verdict.ok{border-color:#2f6b4f; color:#33473c;}
+.pvc-verdict.warn{border-color:#b8860b; color:#4a4028;}
+.pvc-verdict.bad{border-color:#9c3d3d; color:#4d2f2f; background:#fdf4f2;}
+.pvc-verdict b{color:#3b3222;}
+
+.pvc-right{display:flex; flex-direction:column; min-width:0; height:100%;}
+.pvc-svg{width:100%; flex:1; min-height:0;}
+.pvc-axis{fill:none; stroke:#3b3222; stroke-width:2; stroke-linecap:round;}
+.pvc-grid{fill:none; stroke:rgba(120,100,60,.18); stroke-width:1;}
+.pvc-curve{fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round;}
+.pvc-curve.ben{stroke:#2f6b4f;}
+.pvc-curve.cost{stroke:#9c3d3d;}
+.pvc-curve.true{stroke:#9c3d3d; stroke-width:2; stroke-dasharray:7 6; opacity:.5;}
+.pvc-vline{fill:none; stroke:#3b3222; stroke-width:1.4; stroke-dasharray:3 4; opacity:.55;}
+.pvc-dot{stroke:#fffdf8; stroke-width:2;}
+.pvc-dot.ben{fill:#2f6b4f;} .pvc-dot.cost{fill:#9c3d3d;}
+.pvc-opt{fill:none; stroke:#b8860b; stroke-width:2; stroke-dasharray:6 5;}
+.pvc-cap{fill:none; stroke:#6b6350; stroke-width:1.6; stroke-dasharray:2 5;}
+.pvc-tick{font-family:'Inter',sans-serif; font-size:11px; fill:#7b7360; text-anchor:end;}
+.pvc-tick.mid{text-anchor:middle;}
+.pvc-axlbl{font-family:'Inter',sans-serif; font-size:12px; fill:#6b6350; text-anchor:middle;
+  letter-spacing:.06em; text-transform:uppercase;}
+.pvc-mk{font-family:'Merriweather',serif; font-size:12.5px; font-weight:700;}
+.pvc-mk.opt{fill:#8a6a2f;} .pvc-mk.cap{fill:#6b6350;}
+
+.pvc-herd{display:flex; flex-wrap:wrap; gap:.2rem .34rem; align-content:flex-start;
+  min-height:4.6rem; padding-top:.4rem;}
+.pvc-cowbox{width:clamp(23px,2.2vw,29px); height:auto; flex:none;}
+.pvc-cow{fill:none; stroke:#3b3222; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round;}
+.pvc-cow .pvc-cow-b{fill:#efe6d2;}
+.pvc-cow .pvc-spot{fill:#d8c8a6; stroke:none;}
+.slide.pvc.is-commons .pvc-cow .pvc-cow-b{fill:#f7e3d5;}
+.slide.pvc.is-commons .pvc-cow .pvc-spot{fill:#e8c5ae;}
+@media (max-width:900px){ .pvc-body{grid-template-columns:1fr; overflow:auto;} }
+
 
 /* announcements / upcoming assignments */
 .slide[data-type="announce"]{background:linear-gradient(160deg,#f7faf8,#eaf1ed);}
@@ -1075,6 +1193,339 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   </div>
   <div class="footer">© 2023 W. W. Norton &amp; Company, Inc.</div>
 </section>
+<section class="slide pvc" data-type="pvc" style="--accent:#8a6a2f">
+  <div class="pvc-root">
+    <div class="pvc-head">
+      <div class="eyebrow">2.3 &nbsp;·&nbsp; Tragedy of the Commons</div>
+      <h2 class="heading">Private vs. Commons: Who Pays for the Cost/Damage?</h2>
+    </div>
+
+    <div class="pvc-tabs" role="tablist" aria-label="Ownership scenario">
+      <button class="pvc-tab on" type="button" data-pvc="private" role="tab" aria-selected="true">Private Land</button>
+      <button class="pvc-tab" type="button" data-pvc="commons" role="tab" aria-selected="false">Shared Commons</button>
+    </div>
+
+    <div class="pvc-body">
+      <div class="pvc-left">
+        <p class="pvc-premise" data-premise></p>
+
+        <label class="pvc-ctl">
+          <span class="pvc-ctl-top"><span>Animals you graze</span><b data-n-val>5</b></span>
+          <input type="range" min="1" max="60" value="5" data-n>
+        </label>
+
+        <div class="pvc-splits" data-splits></div>
+
+        <table class="pvc-ledger" data-mledger>
+          <tr class="pvc-lhead"><td colspan="2">One more animal, at this herd size</td></tr>
+          <tr><td>Earns you</td><td class="pvc-num pos" data-mb></td></tr>
+          <tr class="pvc-true" data-mtruerow hidden>
+            <td>Costs the pasture</td><td class="pvc-num neg" data-mtrue></td>
+          </tr>
+          <tr><td data-mclbl>Costs you</td><td class="pvc-num neg" data-mc></td></tr>
+          <tr class="pvc-net"><td>Net gain</td><td class="pvc-num" data-mnet></td></tr>
+          <tr class="pvc-run"><td data-runlbl></td><td class="pvc-num" data-run></td></tr>
+        </table>
+
+        <table class="pvc-ledger" data-ledger hidden>
+          <tr><td>Your benefit</td><td class="pvc-num pos" data-benefit></td></tr>
+          <tr><td data-costlbl>Cost/Damage you pay</td><td class="pvc-num neg" data-cost></td></tr>
+          <tr class="pvc-net"><td>Your net</td><td class="pvc-num" data-net></td></tr>
+          <tr class="pvc-true" data-truerow hidden>
+            <td>Cost/Damage to the pasture</td><td class="pvc-num neg" data-truecost></td>
+          </tr>
+        </table>
+
+        <div class="pvc-verdict" data-verdict></div>
+      </div>
+
+      <div class="pvc-right">
+        <div class="pvc-charthead">
+          <span class="pvc-viewname" data-viewname>Cost &amp; benefit of <em>one more</em> animal</span>
+          <button class="pvc-toggle" type="button" data-toggle aria-pressed="false">Show totals</button>
+        </div>
+        <svg class="pvc-svg" viewBox="0 0 660 348" role="img" aria-label="Marginal cost and benefit against herd size">
+          <defs>
+            <filter id="pvcRough" x="-4%" y="-4%" width="108%" height="108%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="2" seed="23" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="1.7" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <clipPath id="pvcClip"><rect x="66" y="12" width="572" height="278"/></clipPath>
+          </defs>
+          <g filter="url(#pvcRough)">
+            <g data-grid></g>
+            <path data-xaxis class="pvc-axis" d=""/>
+            <path class="pvc-axis" d="M66 290 V12"/>
+            <g clip-path="url(#pvcClip)">
+              <path data-true class="pvc-curve true" d=""/>
+              <path data-cost-curve class="pvc-curve cost" d=""/>
+              <path data-ben class="pvc-curve ben" d=""/>
+              <g data-marks></g>
+            </g>
+          </g>
+          <g data-labels></g>
+          <text x="352" y="334" class="pvc-axlbl">Animals grazed</text>
+        </svg>
+        <div class="pvc-herd" data-herd aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var sec = document.currentScript.closest('.pvc');
+    var B = 100, C = 10, PEOPLE = 10;   // $/animal ; damage C*n^2 ; commons is shared 10 ways
+    var XMAX = 60;
+    var X0 = 66, X1 = 638, Y0 = 290, Y1 = 12;
+    var mode = 'private', view = 'marginal';
+
+    var el = function(s){ return sec.querySelector(s); };
+    var nIn = el('[data-n]');
+    var money = function(v){
+      return (v < 0 ? '−$' : '$') + Math.round(Math.abs(v)).toLocaleString();
+    };
+    var P = function(){ return mode === 'commons' ? PEOPLE : 1; };
+
+    var navKeys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','PageUp','PageDown','Home','End'];
+    sec.addEventListener('keydown', function(e){
+      if(navKeys.indexOf(e.key) > -1) e.stopPropagation();
+    });
+
+    // ── scales differ per view, so they are computed fresh each draw ────────
+    function scales(){
+      return (view === 'marginal')
+        ? { lo: 0, hi: 400, step: 100, fmt: function(v){ return '$' + v; } }
+        : { lo: -3000, hi: 3000, step: 1500, fmt: function(v){ return (v<0?'−$':'$') + Math.abs(v).toLocaleString(); } };
+    }
+    var sx = function(n){ return X0 + (n / XMAX) * (X1 - X0); };
+    function sy(v){ var s = scales(); return Y0 - ((v - s.lo) / (s.hi - s.lo)) * (Y0 - Y1); }
+
+    function path(fn){
+      var d = '', i;
+      for(i = 0; i <= XMAX * 2; i++){
+        var n = i / 2;
+        d += (i ? ' L' : 'M') + sx(n).toFixed(1) + ' ' + sy(fn(n)).toFixed(1);
+      }
+      return d;
+    }
+
+    // A small ink-drawn cow. Kept chunky on purpose: fine detail disappears at
+    // herd size, so it is body + head + ears + legs + one spot, nothing more.
+    var COW =
+        '<g class="pvc-cow">'
+      +   '<path class="pvc-cow-b" d="M4 5.5 h11.5 a4.2 4.2 0 0 1 4.2 4.2 v2.6 a2.8 2.8 0 0 1 -2.8 2.8 H4.8'
+      +     ' a2.8 2.8 0 0 1 -2.8 -2.8 V8.3 A2.8 2.8 0 0 1 4 5.5z"/>'
+      +   '<path class="pvc-cow-b" d="M19.4 7.4 h4.1 a2.4 2.4 0 0 1 2.4 2.4 v1.9 a2.4 2.4 0 0 1 -2.4 2.4 h-4.1z"/>'
+      +   '<path d="M20.6 7.5 c-.7-1.1-1.5-1.7-2.4-1.9 c.2 1 .6 1.7 1.2 2.2"/>'
+      +   '<path d="M24.4 7.5 c.6-1.1 1.4-1.8 2.3-2 c-.1 1-.5 1.7-1.1 2.2"/>'
+      +   '<path d="M5.6 15 v3.6"/><path d="M9.2 15 v3.6"/><path d="M13.4 15 v3.6"/><path d="M17 15 v3.6"/>'
+      +   '<path d="M2.2 7.6 c-1.7.8-1.8 2.6 0 3.4"/>'
+      +   '<ellipse class="pvc-spot" cx="10.6" cy="9.4" rx="2.5" ry="1.8"/>'
+      + '</g>';
+
+    // donut showing how much of a flow lands on you vs everyone else. The ring
+    // is roughened; the percentage inside is left crisp so it stays legible.
+    function donut(frac, cls, label, sub){
+      var r = 27, c = 2 * Math.PI * r;
+      return '<figure class="pvc-donut">'
+        + '<svg viewBox="0 0 72 72">'
+        +   '<g filter="url(#pvcRough)">'
+        +     '<circle class="pvc-dring" cx="36" cy="36" r="' + r + '"/>'
+        +     '<circle class="pvc-dfill ' + cls + '" cx="36" cy="36" r="' + r + '"'
+        +       ' stroke-dasharray="' + (frac * c).toFixed(1) + ' ' + c.toFixed(1) + '"'
+        +       ' transform="rotate(-90 36 36)"/>'
+        +   '</g>'
+        +   '<text class="pvc-dpct" x="36" y="41">' + Math.round(frac * 100) + '%</text>'
+        + '</svg>'
+        + '<figcaption><b>' + label + '</b><span>' + sub + '</span></figcaption></figure>';
+    }
+
+    // Put a label on a curve at its highest on-chart point. That peak is exactly
+    // what the totals view is about — where the running total stops growing —
+    // and it keeps the label off the axes and away from the marker captions.
+    function peakLabel(fn, cls, txt){
+      var s = scales(), nBest = null, best = -Infinity;
+      for(var k = 0; k <= XMAX * 2; k++){
+        var nn = k / 2, v = fn(nn);
+        if(v >= s.lo && v <= s.hi && v > best){ best = v; nBest = nn; }
+      }
+      if(nBest === null) return '';
+      var yv = sy(best);
+      var dy = (yv - Y1 > 46) ? -12 : 20;                 // flip below if tight on top
+      var end = nBest > XMAX * 0.72;
+      return '<text class="pvc-cl ' + cls + '" x="' + (sx(nBest) + (end ? -8 : 8)).toFixed(1)
+        + '" y="' + (yv + dy).toFixed(1) + '"'
+        + (end ? ' text-anchor="end"' : '') + '>' + txt + '</text>';
+    }
+
+    function draw(){
+      var n = +nIn.value, p = P(), s = scales();
+      var mbFn   = function(){ return B; };            // one more animal always earns $100
+      var mcTrue = function(k){ return 2 * C * k; };   // what it costs the pasture
+      var mcYou  = function(k){ return 2 * C * k / p; };
+      var netYou = function(k){ return B * k - C * k * k / p; };
+      var netAll = function(k){ return B * k - C * k * k; };
+
+      var stopYou  = B * p / (2 * C);   // where MB meets the cost YOU feel
+      var stopLand = B / (2 * C);       // where MB meets the true cost — always 5
+
+      if(view === 'marginal'){
+        el('[data-ben]').setAttribute('d', path(mbFn));
+        el('[data-cost-curve]').setAttribute('d', path(mcYou));
+        el('[data-true]').setAttribute('d', mode === 'commons' ? path(mcTrue) : '');
+      } else {
+        el('[data-ben]').setAttribute('d', path(netYou));
+        el('[data-cost-curve]').setAttribute('d', '');
+        el('[data-true]').setAttribute('d', mode === 'commons' ? path(netAll) : '');
+      }
+      el('[data-true]').style.display = (mode === 'commons') ? '' : 'none';
+
+      // grid + ticks
+      var g = '', lab = '', v;
+      for(v = s.lo; v <= s.hi; v += s.step){
+        var yy = sy(v).toFixed(1);
+        g += '<path class="pvc-grid' + (v === 0 ? ' zero' : '') + '" d="M' + X0 + ' ' + yy + ' H' + X1 + '"/>';
+        lab += '<text class="pvc-tick" x="' + (X0 - 9) + '" y="' + (sy(v) + 4).toFixed(1) + '">' + s.fmt(v) + '</text>';
+      }
+      for(v = 0; v <= XMAX; v += 10){
+        lab += '<text class="pvc-tick mid" x="' + sx(v).toFixed(1) + '" y="' + (Y0 + 21) + '">' + v + '</text>';
+      }
+      el('[data-grid]').innerHTML = g;
+      el('[data-xaxis]').setAttribute('d', 'M' + X0 + ' ' + sy(Math.max(s.lo, 0)).toFixed(1) + ' H' + X1);
+
+      // markers: where you stop, and where the land says stop
+      var m = '';
+      m += '<path class="pvc-vline" d="M' + sx(n).toFixed(1) + ' ' + Y0 + ' V' + Y1 + '"/>';
+      if(stopLand <= XMAX) m += '<path class="pvc-cap" d="M' + sx(stopLand).toFixed(1) + ' ' + Y0 + ' V' + Y1 + '"/>';
+      if(stopYou <= XMAX)  m += '<path class="pvc-opt" d="M' + sx(stopYou).toFixed(1) + ' ' + Y0 + ' V' + Y1 + '"/>';
+      if(view === 'marginal'){
+        m += '<circle class="pvc-dot ben" cx="' + sx(n).toFixed(1) + '" cy="' + sy(B).toFixed(1) + '" r="5"/>';
+        m += '<circle class="pvc-dot cost" cx="' + sx(n).toFixed(1) + '" cy="' + sy(mcYou(n)).toFixed(1) + '" r="5"/>';
+        if(stopYou <= XMAX){
+          m += '<circle class="pvc-cross" cx="' + sx(stopYou).toFixed(1) + '" cy="' + sy(B).toFixed(1) + '" r="7.5"/>';
+        }
+      } else {
+        m += '<circle class="pvc-dot ben" cx="' + sx(n).toFixed(1) + '" cy="' + sy(netYou(n)).toFixed(1) + '" r="5"/>';
+      }
+      el('[data-marks]').innerHTML = m;
+
+      var L = lab;
+      L += '<text class="pvc-mk cap" x="' + (sx(stopLand) + 7).toFixed(1) + '" y="' + (Y1 + 16) + '">pasture’s limit: ' + stopLand + '</text>';
+      if(stopYou <= XMAX && mode === 'commons'){
+        L += '<text class="pvc-mk opt" x="' + (sx(stopYou) - 7).toFixed(1) + '" y="' + (Y1 + 16) + '" text-anchor="end">you stop: ' + stopYou + '</text>';
+      }
+      if(view === 'marginal'){
+        // Each label sits in open space rather than at the crowded right edge
+        // where the lines converge: the benefit line is labelled mid-chart above
+        // itself, and each cost line is labelled against its own slope.
+        L += '<text class="pvc-cl ben" x="' + sx(34).toFixed(1) + '" y="' + (sy(B) - 12).toFixed(1)
+          + '" text-anchor="middle">what it earns you</text>';
+        var steep = mcYou(XMAX) > s.hi;
+        if(steep){                                   // private: leaves the top early
+          var nC = XMAX; while(nC > 1 && mcYou(nC) > s.hi * 0.5) nC -= 0.5;
+          L += '<text class="pvc-cl cost" x="' + (sx(nC) + 11).toFixed(1) + '" y="' + (sy(mcYou(nC)) + 5).toFixed(1)
+            + '">what it costs you</text>';
+        } else {                                     // commons: shallow, label it low-left
+          L += '<text class="pvc-cl cost" x="' + sx(17).toFixed(1) + '" y="' + (sy(mcYou(17)) - 12).toFixed(1)
+            + '" text-anchor="middle">what it costs you</text>';
+        }
+        // the steep dashed line is the pasture's own cost — label it on the curve,
+        // otherwise it is the one line on the chart with no explanation
+        if(mode === 'commons'){
+          var nT = XMAX, capT = s.hi * 0.6;
+          while(nT > 1 && mcTrue(nT) > capT) nT -= 0.5;
+          L += '<text class="pvc-cl true" x="' + (sx(nT) + 11).toFixed(1) + '" y="' + (sy(mcTrue(nT)) + 5).toFixed(1)
+            + '">what it costs the pasture</text>';
+        }
+      } else {
+        // totals view — pin each label to its curve's peak, which is also the
+        // point the curve is about: where the running total stops growing
+        L += peakLabel(netYou, 'ben', 'your net');
+        if(mode === 'commons') L += peakLabel(netAll, 'true', 'net after the full cost');
+      }
+      el('[data-labels]').innerHTML = L;
+
+      // ledger (only shown alongside the totals view)
+      var ben = B * n, mine = C * n * n / p, all = C * n * n, net = ben - mine;
+      el('[data-benefit]').textContent = money(ben);
+      el('[data-cost]').textContent = money(-mine);
+      var netEl = el('[data-net]');
+      netEl.textContent = money(net);
+      netEl.className = 'pvc-num ' + (net >= 0 ? 'pos' : 'neg');
+      el('[data-truecost]').textContent = money(-all);
+      el('[data-truerow]').hidden = (mode !== 'commons');
+      el('[data-costlbl]').textContent = (mode === 'commons') ? 'Cost/Damage you pay (1/10)' : 'Cost/Damage you pay';
+
+      // marginal ledger — the same three numbers the chart is drawing, plus the
+      // running total, so the link between "one more" and "so far" is visible
+      var mb = B, mc = 2 * C * n / p, mnet = mb - mc, mtrue = 2 * C * n;
+      el('[data-mb]').textContent = '+' + money(mb);
+      el('[data-mc]').textContent = money(-mc);
+      var mnetEl = el('[data-mnet]');
+      mnetEl.textContent = (mnet >= 0 ? '+' : '') + money(mnet);
+      mnetEl.className = 'pvc-num ' + (mnet >= 0 ? 'pos' : 'neg');
+      el('[data-mtrue]').textContent = money(-mtrue);
+      el('[data-mtruerow]').hidden = (mode !== 'commons');
+      el('[data-mclbl]').textContent = (mode === 'commons') ? 'Costs you (1/10 of it)' : 'Costs you';
+      el('[data-runlbl]').textContent = 'Your total at ' + n + (n === 1 ? ' animal' : ' animals');
+      el('[data-run]').textContent = money(net);
+
+      // internalised / externalised donuts
+      el('[data-splits]').innerHTML =
+          donut(1, 'ben', 'of the benefit', 'is yours')
+        + donut(1 / p, 'cost', 'of the cost', mode === 'commons' ? 'is yours — the rest falls on everyone else' : 'is yours');
+
+      // herd
+      var cows = '', i;
+      for(i = 0; i < n; i++) cows += '<svg class="pvc-cowbox" viewBox="0 0 29 20">' + COW + '</svg>';
+      el('[data-herd]').innerHTML = cows;
+
+      // words
+      if(mode === 'private'){
+        el('[data-premise]').innerHTML = 'The pasture is <strong>yours</strong>. Each animal earns $100 — and <strong>you are also responsible for all costs/damage</strong>.';
+        el('[data-verdict]').innerHTML = '<b>Costs and benefits are internalised.</b> You stop at <b>5</b>, where one more animal would cost you more than it earns — which is also the best herd for the land.';
+        el('[data-verdict]').className = 'pvc-verdict ok';
+      } else {
+        el('[data-premise]').innerHTML = 'Shared by <strong>10 people</strong>. You keep the whole $100 an animal, but the cost/damage splits ten ways — so you feel a <strong>tenth</strong> of it.';
+        var mineNow = 2 * C * n / p;
+        el('[data-verdict]').innerHTML = '<b>Benefits internalised, costs externalised.</b> '
+          + (n < stopYou
+              ? 'One more earns you $100 and costs you ' + money(mineNow) + ' — so you add it, though the land exceeded its limit at <b>5</b>.'
+              : n === stopYou
+                ? 'At <b>' + stopYou + '</b> the next one finally costs you $100 too — ' + (stopYou / stopLand) + '× the herd the land can carry.'
+                : 'Past <b>' + stopYou + '</b> even you would stop — ' + (stopYou / stopLand) + '× beyond what the land can carry.')
+          + ' Every individual reasons the same way, and the pasture is ruined even though each individual was doing the rational thing.';
+        el('[data-verdict]').className = 'pvc-verdict bad';
+      }
+    }
+
+    sec.querySelectorAll('.pvc-tab').forEach(function(b){
+      b.addEventListener('click', function(){
+        mode = b.dataset.pvc;
+        sec.querySelectorAll('.pvc-tab').forEach(function(x){
+          var on = x === b;
+          x.classList.toggle('on', on);
+          x.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        sec.classList.toggle('is-commons', mode === 'commons');
+        draw();
+      });
+    });
+    el('[data-toggle]').addEventListener('click', function(){
+      view = (view === 'marginal') ? 'totals' : 'marginal';
+      var t = (view === 'totals');
+      this.textContent = t ? 'Show one more animal' : 'Show totals';
+      this.setAttribute('aria-pressed', t ? 'true' : 'false');
+      el('[data-viewname]').innerHTML = t ? 'Total net over the whole herd' : 'Cost &amp; benefit of <em>one more</em> animal';
+      el('[data-ledger]').hidden = !t;
+      el('[data-mledger]').hidden = t;
+      draw();
+    });
+    nIn.addEventListener('input', function(){ el('[data-n-val]').textContent = nIn.value; draw(); });
+    draw();
+  })();
+  </script>
+</section>
 <section class="slide commons" data-type="commons" data-cm-id="ch2-commons-fishery" style="--accent:#BC8A2E">
   <div class="cm-root">
     <div class="cm-head">
@@ -1200,7 +1651,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 
 <div class="hud">
   <button onclick="prev()" title="Previous (left arrow)">&#8249;</button>
-  <span class="counter" id="counter">1 / 26</span>
+  <span class="counter" id="counter">1 / 27</span>
   <button onclick="next()" title="Next (right arrow)">&#8250;</button>
   <button onclick="toggleMenu()" title="Slide menu (O)">&#9776;</button>
   <button onclick="toggleFs()" title="Fullscreen (F)">&#9974;</button>
@@ -1209,7 +1660,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 <div class="menu" id="menu">
   <button class="menu-close" onclick="toggleMenu(false)" aria-label="Close menu">&times;</button>
   <h3>Chapter 2 &mdash; Jump to a slide</h3>
-  <div class="menu-grid"><button class="menu-item" data-go="0"><span class="menu-num">1</span>Title</button><button class="menu-item" data-go="1"><span class="menu-num">2</span>Outline</button><button class="menu-item" data-go="2"><span class="menu-num">3</span>Announcements</button><button class="menu-item" data-go="3"><span class="menu-num">4</span>Where to find Module 1</button><button class="menu-item" data-go="4"><span class="menu-num">5</span>Intro · How Do We Decide?</button><button class="menu-item" data-go="5"><span class="menu-num">6</span>2 ▶ Poll: Walk (any harm)</button><button class="menu-item" data-go="6"><span class="menu-num">7</span>2 ▶ Poll: $1 (any harm)</button><button class="menu-item" data-go="7"><span class="menu-num">8</span>2 ▶ Poll: Walk (20%)</button><button class="menu-item" data-go="8"><span class="menu-num">9</span>2 ▶ Poll: $1 (20%)</button><button class="menu-item" data-go="9"><span class="menu-num">10</span>2 ▶ Poll: $10 (20%)</button><button class="menu-item" data-go="10"><span class="menu-num">11</span>2.1 Personal Ethics</button><button class="menu-item" data-go="11"><span class="menu-num">12</span>2.1 Deontological Ethics</button><button class="menu-item" data-go="12"><span class="menu-num">13</span>2.1 Utilitarianism</button><button class="menu-item" data-go="13"><span class="menu-num">14</span>2.2 Supply &amp; Demand</button><button class="menu-item" data-go="14"><span class="menu-num">15</span>2.2 ▶ Supply &amp; Demand Graph</button><button class="menu-item" data-go="15"><span class="menu-num">16</span>2.2 Jevons Paradox</button><button class="menu-item" data-go="16"><span class="menu-num">17</span>2.3 Externalities</button><button class="menu-item" data-go="17"><span class="menu-num">18</span>2.3 ▶ Externality Graphs</button><button class="menu-item" data-go="18"><span class="menu-num">19</span>2.3 ▶ True Cost Calculator</button><button class="menu-item" data-go="19"><span class="menu-num">20</span>2.3 Policy Approaches</button><button class="menu-item" data-go="20"><span class="menu-num">21</span>2.3 Tragedy of the Commons</button><button class="menu-item" data-go="21"><span class="menu-num">22</span>2.3 ▶ Commons Game</button><button class="menu-item" data-go="22"><span class="menu-num">23</span>2.3 Public Goods</button><button class="menu-item" data-go="23"><span class="menu-num">24</span>2.4 Why Policy?</button><button class="menu-item" data-go="24"><span class="menu-num">25</span>2.4 Global Politics</button><button class="menu-item" data-go="25"><span class="menu-num">26</span>Key Concepts</button></div>
+  <div class="menu-grid"><button class="menu-item" data-go="0"><span class="menu-num">1</span>Title</button><button class="menu-item" data-go="1"><span class="menu-num">2</span>Outline</button><button class="menu-item" data-go="2"><span class="menu-num">3</span>Announcements</button><button class="menu-item" data-go="3"><span class="menu-num">4</span>Where to find Module 1</button><button class="menu-item" data-go="4"><span class="menu-num">5</span>Intro · How Do We Decide?</button><button class="menu-item" data-go="5"><span class="menu-num">6</span>2 ▶ Poll: Walk (any harm)</button><button class="menu-item" data-go="6"><span class="menu-num">7</span>2 ▶ Poll: $1 (any harm)</button><button class="menu-item" data-go="7"><span class="menu-num">8</span>2 ▶ Poll: Walk (20%)</button><button class="menu-item" data-go="8"><span class="menu-num">9</span>2 ▶ Poll: $1 (20%)</button><button class="menu-item" data-go="9"><span class="menu-num">10</span>2 ▶ Poll: $10 (20%)</button><button class="menu-item" data-go="10"><span class="menu-num">11</span>2.1 Personal Ethics</button><button class="menu-item" data-go="11"><span class="menu-num">12</span>2.1 Deontological Ethics</button><button class="menu-item" data-go="12"><span class="menu-num">13</span>2.1 Utilitarianism</button><button class="menu-item" data-go="13"><span class="menu-num">14</span>2.2 Supply &amp; Demand</button><button class="menu-item" data-go="14"><span class="menu-num">15</span>2.2 ▶ Supply &amp; Demand Graph</button><button class="menu-item" data-go="15"><span class="menu-num">16</span>2.2 Jevons Paradox</button><button class="menu-item" data-go="16"><span class="menu-num">17</span>2.3 Externalities</button><button class="menu-item" data-go="17"><span class="menu-num">18</span>2.3 ▶ Externality Graphs</button><button class="menu-item" data-go="18"><span class="menu-num">19</span>2.3 ▶ True Cost Calculator</button><button class="menu-item" data-go="19"><span class="menu-num">20</span>2.3 Policy Approaches</button><button class="menu-item" data-go="20"><span class="menu-num">21</span>2.3 Tragedy of the Commons</button><button class="menu-item" data-go="21"><span class="menu-num">22</span>2.3 ▶ Private vs Commons</button><button class="menu-item" data-go="22"><span class="menu-num">23</span>2.3 ▶ Commons Game</button><button class="menu-item" data-go="23"><span class="menu-num">24</span>2.3 Public Goods</button><button class="menu-item" data-go="24"><span class="menu-num">25</span>2.4 Why Policy?</button><button class="menu-item" data-go="25"><span class="menu-num">26</span>2.4 Global Politics</button><button class="menu-item" data-go="26"><span class="menu-num">27</span>Key Concepts</button></div>
 </div>
 
 <script>

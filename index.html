@@ -257,6 +257,111 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 }
 
 
+/* ── discussion prompt ──────────────────────────────────────────────────── */
+.slide.susq{background:linear-gradient(158deg,#faf7f0,#f1ebdd);}
+.susq-root{position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  padding:clamp(1.5rem,5vh,3rem) clamp(2rem,6vw,5rem);}
+.susq-root .eyebrow{color:#8a6a2f; margin-bottom:1.1rem;}
+.susq-root .eyebrow::before{background:#8a6a2f;}
+.susq-q{font-family:'Merriweather',serif; font-weight:900; color:#3b3222;
+  font-size:clamp(2.1rem,5.6vw,4.1rem); line-height:1.18; letter-spacing:-.01em; margin:0;}
+.susq-rule{width:clamp(190px,26vw,320px); height:auto; margin-top:1.5rem;
+  fill:none; stroke:#b8860b; stroke-width:2.6; stroke-linecap:round;}
+
+/* ── the same trap in two commons ───────────────────────────────────────── */
+.slide.tcs{background:linear-gradient(158deg,#faf7f0,#f1ebdd);}
+.tcs-root{position:absolute; inset:0; display:flex; flex-direction:column;
+  padding:clamp(.9rem,2.4vh,1.6rem) clamp(1.3rem,3vw,2.8rem) clamp(.7rem,1.8vh,1.1rem);}
+.tcs-head{margin-bottom:.35rem;}
+.tcs-head .eyebrow{color:#8a6a2f;} .tcs-head .eyebrow::before{background:#8a6a2f;}
+.tcs-head .heading{font-family:'Merriweather',serif; color:#3b3222; margin-bottom:0;}
+.tcs-tabs{display:inline-flex; gap:.25rem; padding:.22rem; border-radius:999px;
+  background:rgba(120,100,60,.1); align-self:flex-start; margin-bottom:.55rem;}
+.tcs-tab{font-family:'Merriweather',serif; font-size:clamp(.85rem,1.35vw,1rem);
+  padding:.36rem 1rem; border:none; border-radius:999px; background:transparent;
+  color:#7a6437; cursor:pointer;}
+.tcs-tab.on{background:#fffdf8; color:#3b3222; box-shadow:0 2px 8px rgba(80,60,20,.16);}
+.tcs-body{flex:1 1 0; min-height:0; display:grid; grid-template-columns:minmax(290px,35%) 1fr;
+  gap:clamp(1rem,2.4vw,2rem); align-items:stretch;}
+.tcs-left{display:flex; flex-direction:column; gap:.3rem; min-width:0; justify-content:center;}
+.tcs-scens{display:flex; flex-direction:column; gap:.26rem;}
+.tcs-scen{font-family:inherit; font-size:clamp(.85rem,1.32vw,.98rem); font-weight:600;
+  text-align:left; padding:.34rem .65rem; border-radius:8px; cursor:pointer;
+  background:#fffdf8; border:1.5px solid rgba(120,100,60,.25); color:#4a4436;
+  transition:border-color .15s, box-shadow .15s;}
+.tcs-scen:hover{border-color:#b8860b;}
+.tcs-scen.on{border-color:#8a6a2f; background:#fdf4e2; color:#3b3222;
+  box-shadow:0 3px 10px rgba(120,90,30,.14);}
+.tcs-scen b{display:block; font-weight:700; line-height:1.2;}
+.tcs-scen.on b{font-weight:800;}
+.tcs-scen em{display:block; font-style:normal; font-size:clamp(.66rem,1.03vw,.77rem);
+  color:#8a8069; line-height:1.25; margin-top:.06rem;}
+.tcs-scen.on em{color:#7a6437;}
+
+/* disclaimer + works cited, small print across the foot of the slide */
+.tcs-disc{margin:.32rem 0 0; padding-top:.3rem; border-top:1px solid rgba(120,100,60,.28);
+  font-size:clamp(.61rem,.97vw,.73rem); line-height:1.4; color:#7a7260;}
+.tcs-disc b{color:#5e5340;}
+.tcs-disc em{font-style:italic;}
+.tcs-refs{display:block; margin-top:.12rem; color:#8f8672; font-size:.94em;}
+/* the two anchor quantities: the group-optimal share, and what is actually
+   being taken — the comparison the whole slide rests on */
+.tcs-takes{display:flex; gap:.45rem;}
+.tcs-take{flex:1 1 0; min-width:0; background:#fffdf8; border:1px solid rgba(120,100,60,.22);
+  border-left:3px solid #5f7a6a; border-radius:8px; padding:.22rem .5rem .26rem;}
+.tcs-take.now{border-left-color:#b8860b;}
+.tcs-take span{display:block; font-size:clamp(.6rem,.96vw,.71rem); color:#7a7260;
+  text-transform:uppercase; letter-spacing:.05em;}
+.tcs-take b{display:block; font-family:'Merriweather',serif; line-height:1.15;
+  font-size:clamp(1rem,1.74vw,1.28rem); color:#3b3222;}
+.tcs-take em{display:block; font-style:normal; font-size:clamp(.58rem,.93vw,.69rem);
+  color:#8a8069; line-height:1.25; margin-top:.06rem;}
+.tcs-narr{font-size:clamp(.83rem,1.3vw,.96rem); line-height:1.42; color:#4a4436; margin:.1rem 0 0;}
+.tcs-narr b{color:#3b3222;}
+.tcs-stats{display:flex; gap:.45rem;}
+.tcs-stat{flex:1 1 0; min-width:0; background:#fdf8ec; border:1px solid rgba(120,100,60,.22);
+  border-top:3px solid #b8860b; border-radius:8px; padding:.35rem .5rem .4rem;}
+.tcs-stat.cond{border-top-color:#5f7a6a;}
+.tcs-stat span{display:block; font-size:clamp(.63rem,1vw,.74rem); color:#7a7260;
+  text-transform:uppercase; letter-spacing:.05em;}
+.tcs-stat b{font-family:'Merriweather',serif; font-size:clamp(1.14rem,2.05vw,1.52rem); color:#3b3222;
+  display:block; line-height:1.15;}
+.tcs-stat em{display:block; font-style:normal; font-size:clamp(.6rem,.96vw,.72rem);
+  color:#8a8069; line-height:1.25; margin-top:.1rem;}
+.tcs-compare{background:#fffdf8; border:1px solid rgba(120,100,60,.22); border-radius:8px;
+  padding:.28rem .55rem .3rem; margin-top:.25rem;}
+.tcs-cmp-title{font-family:'Inter',sans-serif; font-size:clamp(.63rem,1vw,.74rem);
+  text-transform:uppercase; letter-spacing:.05em; color:#7a6437; margin-bottom:.28rem;}
+.tcs-cmp-row{display:flex; align-items:center; gap:.45rem; font-size:clamp(.7rem,1.09vw,.81rem);
+  color:#6b6350; margin-bottom:.18rem;}
+.tcs-cmp-row:last-child{margin-bottom:0;}
+.tcs-cmp-row.on{color:#3b3222; font-weight:700;}
+.tcs-cmp-row .nm{flex:none; width:9.6em;}
+.tcs-cmp-row .bar{flex:1; height:9px; background:rgba(120,100,60,.13); border-radius:5px; overflow:hidden;}
+.tcs-cmp-row .bar i{display:block; height:100%; background:#c9a24a; border-radius:5px;}
+.tcs-cmp-row.on .bar i{background:#8a6a2f;}
+.tcs-cmp-row .vv{flex:none; width:4.6em; text-align:right; font-variant-numeric:tabular-nums;}
+.tcs-right{display:flex; flex-direction:column; min-height:0;}
+.tcs-charttitle{font-family:'Merriweather',serif; font-size:clamp(.83rem,1.3vw,.98rem);
+  color:#6b6350; margin-bottom:.2rem;}
+.tcs-svg{flex:1; min-height:0; width:100%;}
+.tcs-grid{stroke:rgba(120,100,60,.2); stroke-width:1; fill:none;}
+.tcs-axis{stroke:#8a7748; stroke-width:1.6; fill:none;}
+.tcs-ref{stroke:#2f6b4f; stroke-width:1.8; stroke-dasharray:6 5; fill:none; opacity:.85;}
+.tcs-reflbl{font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:#2f6b4f;
+  paint-order:stroke fill; stroke:#f7f2e6; stroke-width:3.2px; stroke-linejoin:round;}
+.tcs-bar{fill:#cbdcd0; stroke:#4a7a5e; stroke-width:1.4;}
+.tcs-bar.defector{fill:#e8b86d; stroke:#8a5f1c; stroke-width:2;}
+.slide.tcs.is-air .tcs-bar{fill:#cddbe6; stroke:#3d6a86;}
+.slide.tcs.is-air .tcs-bar.defector{fill:#e8b86d; stroke:#8a5f1c;}
+.tcs-val{font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700; fill:#5a6f61;}
+.tcs-val.defector{fill:#8a5f1c; font-size:13.5px;}
+.slide.tcs.is-air .tcs-val{fill:#3d6a86;}
+.tcs-tick{font-family:'Inter',sans-serif; font-size:11px; fill:#8a8069; text-anchor:end;}
+.tcs-mk{font-family:'Inter',sans-serif; font-size:12px; font-weight:800; fill:#8a5f1c;}
+.tcs-axlbl{font-family:'Inter',sans-serif; font-size:12px; fill:#8a8069; letter-spacing:.04em;}
+
 .slide.pvc{background:linear-gradient(158deg,#faf7f0,#f1ebdd);}
 .pvc-root{position:absolute; inset:0; display:flex; flex-direction:column;
   padding:clamp(.9rem,2.4vh,1.6rem) clamp(1.3rem,3vw,2.8rem) clamp(.7rem,1.8vh,1.2rem);}
@@ -631,8 +736,70 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 .dp-verdict-sub{margin-top:.35rem; font-size:clamp(.82rem,1.4vw,1rem); color:var(--muted); font-weight:600;}
 
 
-/* tragedy-of-the-commons live game (v2 — scenarios, earnings, leaderboard) */
+/* tragedy-of-the-commons live game (v2 — scenarios, earnings, distribution) */
 .slide.commons{background:linear-gradient(160deg,#f2f7f8,#e2eef1);}
+
+/* ── parchment skin ─────────────────────────────────────────────────────────
+   Matches the hand-drawn "Private vs. Commons" slide that introduces this game,
+   so the two read as one exhibit. Palette only — no layout changes. */
+.slide.commons{background:linear-gradient(158deg,#faf7f0,#f1ebdd);}
+.slide.commons .heading{font-family:'Merriweather',serif; color:#3b3222;}
+.slide.commons .eyebrow{color:#8a6a2f;}
+.slide.commons .eyebrow::before{background:#8a6a2f;}
+.slide.commons .cm-sub{color:#6b6350;}
+.slide.commons .cm-status,
+.slide.commons .cm-scencard,
+.slide.commons .cm-board,
+.slide.commons .cm-hist,
+.slide.commons .cm-me,
+.slide.commons .cm-reveal{background:#fffdf8; border-color:rgba(120,100,60,.22); color:#4a4436;}
+.slide.commons .cm-status{color:#3b3222;}
+.slide.commons .cm-board-title,
+.slide.commons .cm-hist-title,
+.slide.commons .cm-scencard-name{color:#7a6437;}
+.slide.commons .cm-scen,
+.slide.commons .cm-rounds{background:#fffdf8; border-color:rgba(120,100,60,.3); color:#3b3222;}
+.slide.commons .cm-hbtn{background:#8a6a2f;}
+.slide.commons .cm-hbtn.harvest{background:#b8860b;}
+.slide.commons .cm-hbtn.finish{background:#7a7260;}
+.slide.commons .cm-hostbar{background:rgba(140,90,40,.06); border-color:rgba(140,90,40,.38);}
+.slide.commons .cm-hlabel{color:#7a6437;}
+.slide.commons .cm-foot{color:#8a8069;}
+.slide.commons .cm-range{accent-color:#8a6a2f;}
+
+/* your value vs the class, and how the class is spread */
+.cm-dist[hidden]{display:none;}
+.cm-stats{display:flex; gap:.45rem; margin-bottom:.35rem;}
+.cm-stat{flex:1 1 0; min-width:0; background:#fdf8ec; border:1px solid rgba(120,100,60,.22);
+  border-top:3px solid #b8860b; border-radius:8px; padding:.38rem .5rem .42rem;}
+.cm-stat.avg{border-top-color:#7a7260;}
+.cm-stat span{display:block; font-size:clamp(.6rem,.95vw,.7rem); color:#7a7260;
+  text-transform:uppercase; letter-spacing:.05em;}
+.cm-stat b{font-family:'Merriweather',serif; font-size:clamp(1.05rem,1.9vw,1.4rem); color:#3b3222;}
+.cm-histwrap{margin-top:0;}
+/* the cap belongs on the roster list, not the panel: the distribution needs its
+   full height, while a long lobby list should still scroll inside the card */
+.slide.commons .cm-board{flex:none; max-height:none; overflow:visible;}
+.slide.commons .cm-board-rows{max-height:clamp(100px,20vh,190px); overflow:auto;}
+/* .cm-board-rows sets display:flex, which beats the hidden attribute's
+   display:none — without this the hidden roster still takes up its full height */
+.cm-board-rows[hidden]{display:none;}
+/* the distribution panel is taller than the list it replaced — tighten the
+   column's rhythm so the whole thing clears the bottom of the slide */
+.slide.commons .cm-left{gap:.4rem;}
+.slide.commons .cm-scencard{padding:.45rem .7rem;}
+.slide.commons .cm-status{padding:.45rem .7rem;}
+.slide.commons .cm-hist-title{margin-bottom:.2rem;}
+.slide.commons .cm-reveal{padding:.45rem .7rem;}
+.cm-histo{width:100%; height:auto; display:block;}
+.cm-hbar2{fill:#d9cdb0; stroke:#8a7748; stroke-width:1.2;}
+.cm-hbar2.me{fill:#e8b86d; stroke:#8a5f1c; stroke-width:1.8;}
+.cm-hcount{font-family:'Inter',sans-serif; font-size:9px; font-weight:700; fill:#7a7260; text-anchor:middle;}
+.cm-haxis{stroke:#8a7748; stroke-width:1.4; fill:none;}
+.cm-havg{stroke:#3b3222; stroke-width:1.6; stroke-dasharray:4 4; fill:none; opacity:.75;}
+.cm-havglbl{font-family:'Inter',sans-serif; font-size:9.5px; font-weight:700; fill:#3b3222;}
+.cm-hyou{font-family:'Inter',sans-serif; font-size:9.5px; font-weight:800; fill:#8a5f1c;}
+.cm-hend{font-family:'Inter',sans-serif; font-size:9.5px; fill:#8a8069;}
 .cm-root{position:absolute; inset:0; display:flex; flex-direction:column;
   padding:clamp(1rem,2.6vh,1.8rem) clamp(1.4rem,3.2vw,3rem) clamp(.8rem,2vh,1.3rem);}
 .cm-head{margin-bottom:clamp(.4rem,1.2vh,.8rem);}
@@ -1165,21 +1332,6 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
     <iframe class="embed-frame" data-src="true-costs/index.html?embed=1" title="Interactive: The True Cost Calculator" loading="lazy"></iframe>
   </div>
 </section>
-<section class="slide" data-type="content" style="--accent:#BC8A2E">
-  <div class="stack-grid">
-    <div class="stack-top">
-      <div class="stack-head">
-<div class="eyebrow">2.3 · How Governments Address Negative Externalities</div>
-<h2 class="heading">Three Policy Approaches</h2>
-      </div>
-      <div class="stack-body">
-<div class="pairs"><div class="pair"><div class="pair-head">Limits / Standards</div><div class="pair-desc">Government-mandated caps on emissions or pollution levels.</div></div><div class="pair"><div class="pair-head">Taxes / Fees</div><div class="pair-desc">A tax on each unit of pollution makes negative externalities visible in market prices, incentivizing producers to reduce harm.</div></div><div class="pair"><div class="pair-head">Cap-and-Trade</div><div class="pair-desc">Permits can be bought, sold, traded, or banked — harnessing market forces to achieve environmental goals.</div></div></div>
-      </div>
-    </div>
-    <div class="stack-media contain"><img src="media/image13.jpg" alt=""></div>
-  </div>
-  <div class="footer">© 2023 W. W. Norton &amp; Company, Inc.</div>
-</section>
 <section class="slide has-refs" data-type="content" style="--accent:#BC8A2E">
   <div class="bleed-grid">
     <div class="bleed-text">
@@ -1526,6 +1678,248 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   })();
   </script>
 </section>
+<section class="slide susq" data-type="susq">
+  <div class="susq-root">
+    <div class="eyebrow">2.3 &nbsp;·&nbsp; Tragedy of the Commons</div>
+    <h2 class="susq-q">How does this relate to<br>sustainability?</h2>
+    <svg class="susq-rule" viewBox="0 0 320 12" aria-hidden="true">
+      <defs>
+        <filter id="susqRough" x="-6%" y="-30%" width="112%" height="160%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+      <path d="M6 7 H314" filter="url(#susqRough)"/>
+    </svg>
+  </div>
+</section>
+<section class="slide tcs" data-type="tcs">
+  <div class="tcs-root">
+    <div class="tcs-head">
+      <div class="eyebrow">2.3 &nbsp;·&nbsp; Tragedy of the Commons</div>
+      <h2 class="heading">The Same Trap, Two Commons</h2>
+    </div>
+
+    <div class="tcs-tabs" role="tablist" aria-label="Which commons">
+      <button class="tcs-tab on" type="button" data-dom="pasture" role="tab" aria-selected="true">Herders &amp; a Pasture</button>
+      <button class="tcs-tab" type="button" data-dom="air" role="tab" aria-selected="false">Countries &amp; the Atmosphere</button>
+    </div>
+
+    <div class="tcs-body">
+      <div class="tcs-left">
+        <div class="tcs-scens" role="group" aria-label="Scenario">
+          <button class="tcs-scen" type="button" data-scen="all">
+            <b>Everyone over-uses</b><em>each takes the amount that is best for them alone</em></button>
+          <button class="tcs-scen on" type="button" data-scen="one">
+            <b>All restrain but one</b><em>nine hold to the sustainable share; one does not</em></button>
+          <button class="tcs-scen" type="button" data-scen="none">
+            <b>Everyone restrains</b><em>all ten hold to the share that is best for the group</em></button>
+        </div>
+        <div class="tcs-takes">
+          <div class="tcs-take opt"><span>Sustainable share</span><b data-tkopt>—</b>
+            <em>best for the group</em></div>
+          <div class="tcs-take now"><span data-tknowlbl>Each is taking</span><b data-tknow>—</b>
+            <em data-tknowsub></em></div>
+        </div>
+        <p class="tcs-narr" data-narr></p>
+        <div class="tcs-stats">
+          <div class="tcs-stat avg"><span>Average benefit</span><b data-avg>—</b></div>
+          <div class="tcs-stat cond"><span data-condlbl>Total taken</span><b data-cond>—</b>
+            <em data-condsub></em></div>
+        </div>
+      </div>
+
+      <div class="tcs-right">
+        <div class="tcs-charttitle" data-charttitle></div>
+        <svg class="tcs-svg" viewBox="0 0 640 316" role="img" data-svg
+             aria-label="What each user earns under the selected scenario"></svg>
+        <div class="tcs-compare">
+          <div class="tcs-cmp-title">Average benefit, all three scenarios</div>
+          <div class="tcs-cmp-rows" data-cmp></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="tcs-disc"><b>Disclaimer:</b> a hypothetical example — the dollar
+      figures are invented to keep the arithmetic legible. The <em>structure</em> is the
+      standard open-access commons model, in which each user keeps the full gain from
+      one more unit while the resulting damage is shared by all, so the individually
+      rational level of use exceeds the socially optimal one.
+      <span class="tcs-refs">Hardin, G. (1968). The tragedy of the commons. <em>Science, 162</em>(3859), 1243–1248. &nbsp;·&nbsp;
+      Gordon, H. S. (1954). The economic theory of a common-property resource: The fishery. <em>Journal of Political Economy, 62</em>(2), 124–142. &nbsp;·&nbsp;
+      Ostrom, E. (1990). <em>Governing the commons.</em> Cambridge University Press. &nbsp;·&nbsp;
+      Nordhaus, W. (2015). Climate clubs: Overcoming free-riding in international climate policy. <em>American Economic Review, 105</em>(4), 1339–1370.</span></p>
+  </div>
+
+  <script>
+  (function(){
+    var sec = document.currentScript.closest('.tcs');
+    var V = 100, k = 1, P = 10;                 // unit value, congestion, users
+    var Q_OPT = V/(2*k), q_c = Q_OPT/P;         // 50 total, 5 each
+    var q_n = V/(k*(P+1));                      // 9.09 each  (everyone exploits)
+    var q_d = (V - k*q_c*(P-1))/(2*k);          // 27.5       (the lone free-rider)
+    var unit = function(Q){ return V - k*Q; };
+
+    var DOMS = {
+      pasture: {
+        who:'herder', whoPl:'herders', unitName:'animals', condName:'Total grazed',
+        money:function(v){ return '$'+Math.round(v).toLocaleString(); },
+        chart:'What each herder earns',
+        blurb:'Ten herders share one pasture. Every extra animal eats grass the others needed, so each animal is worth less as the herd grows.'
+      },
+      air: {
+        who:'country', whoPl:'countries', unitName:'units', condName:'Total emitted',
+        money:function(v){ return '$'+Math.round(v).toLocaleString()+'B'; },
+        chart:'What each country gains',
+        blurb:'Ten countries share one atmosphere. Every extra tonne emitted adds warming everyone absorbs, so each tonne of output is worth less as emissions grow.'
+      }
+    };
+    var SCEN = {
+      all:  {name:'Everyone over-uses'},
+      one:  {name:'All restrain but one'},
+      none: {name:'Everyone restrains'}
+    };
+    var dom='pasture', scen='one';
+    var el=function(s){ return sec.querySelector(s); };
+
+    var navKeys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','PageUp','PageDown','Home','End'];
+    sec.addEventListener('keydown', function(e){ if(navKeys.indexOf(e.key)>-1) e.stopPropagation(); });
+
+    // takes[] per user for a scenario -> payoffs, average, condition
+    function model(s){
+      var takes;
+      if(s==='none')      takes = Array(P).fill(q_c);
+      else if(s==='all')  takes = Array(P).fill(q_n);
+      else { takes = Array(P).fill(q_c); takes[0]=q_d; }
+      var Q = takes.reduce(function(a,b){ return a+b; }, 0);
+      var u = unit(Q);
+      var pays = takes.map(function(q){ return q*u; });
+      var avg = pays.reduce(function(a,b){ return a+b; },0)/P;
+      return {takes:takes, Q:Q, u:u, pays:pays, avg:avg, cond:u/V};
+    }
+    var ALL = {all:model('all'), one:model('one'), none:model('none')};
+    var YMAX = Math.max.apply(null, ALL.one.pays.concat(ALL.none.pays, ALL.all.pays));
+
+    function draw(){
+      var D=DOMS[dom], m=ALL[scen];
+      var X0=54, X1=624, Y0=250, Y1=18;
+      var n=P, slot=(X1-X0)/n, bw=slot*0.6;
+      var sy=function(v){ return Y0 - (v/YMAX)*(Y0-Y1); };
+
+      var sv='<defs><filter id="tcsRough" x="-3%" y="-3%" width="106%" height="106%">'
+        +'<feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="17" result="n"/>'
+        +'<feDisplacementMap in="SourceGraphic" in2="n" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>'
+        +'</filter></defs><g filter="url(#tcsRough)">';
+      // gridlines
+      [0,250,500,750].forEach(function(v){
+        if(v>YMAX) return;
+        sv+='<path class="tcs-grid" d="M'+X0+' '+sy(v).toFixed(1)+' H'+X1+'"/>'
+          + '<text class="tcs-tick" x="'+(X0-8)+'" y="'+(sy(v)+4).toFixed(1)+'">'+D.money(v)+'</text>';
+      });
+      // the cooperative payoff, as a reference everyone can be measured against
+      sv+='<path class="tcs-ref" d="M'+X0+' '+sy(ALL.none.avg).toFixed(1)+' H'+X1+'"/>';
+      // one bar per user
+      m.pays.forEach(function(p,i){
+        var isD = (scen==='one' && i===0);
+        var x=X0+i*slot+(slot-bw)/2, y=sy(p), h=Y0-y;
+        sv+='<rect class="tcs-bar'+(isD?' defector':'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)
+          +'" width="'+bw.toFixed(1)+'" height="'+Math.max(h,1.5).toFixed(1)+'" rx="3"/>';
+        // label the first bar of each run of equal values: the free-rider gets
+        // its own figure, and a row of identical bars is labelled once
+        if(i===0 || Math.abs(p-m.pays[i-1])>0.01){
+          sv+='<text class="tcs-val'+(isD?' defector':'')+'" x="'+(x+bw/2).toFixed(1)+'" y="'+(y-6).toFixed(1)
+            +'" text-anchor="middle">'+D.money(p)+'</text>';
+        }
+      });
+      sv+='<path class="tcs-axis" d="M'+X0+' '+Y0+' H'+X1+'"/></g>';
+      sv+='<text class="tcs-reflbl" x="'+(X1-4)+'" y="'+(sy(ALL.none.avg)-7).toFixed(1)
+        +'" text-anchor="end">what each would get if all restrained</text>';
+      if(scen==='one'){
+        sv+='<text class="tcs-mk" x="'+(X0+slot/2).toFixed(1)+'" y="'+(Y0+20)+'" text-anchor="middle">the free-rider</text>';
+      }
+      sv+='<text class="tcs-axlbl" x="'+((X0+X1)/2)+'" y="'+(Y0+44)+'" text-anchor="middle">'
+        + 'the ten '+D.whoPl+'</text>';
+      el('[data-svg]').innerHTML=sv;
+
+      el('[data-charttitle]').textContent = D.chart + ' — ' + SCEN[scen].name.toLowerCase();
+      el('[data-avg]').textContent = D.money(m.avg);
+      // Overshoot against the sustainable level, NOT a "% health" figure: in this
+      // model the optimum necessarily halves the marginal value, so a percentage
+      // would read as "50% stability" at precisely the best available outcome.
+      el('[data-condlbl]').textContent = D.condName;
+      el('[data-cond]').textContent = (Math.round(m.Q*10)/10) + ' ' + D.unitName;
+      var over = m.Q/Q_OPT;
+      el('[data-condsub]').textContent = (over<1.005)
+        ? 'right at the sustainable level'
+        : over.toFixed(2).replace(/0$/,'') + '× the sustainable level (' + Q_OPT + ')';
+
+      // the two quantities the whole slide turns on, stated plainly: the share
+      // that is best for the group, and the share each user is actually taking
+      var un=D.unitName;
+      el('[data-tkopt]').textContent = q_c + ' ' + un;
+      if(scen==='none'){
+        el('[data-tknowlbl]').textContent='Each is taking';
+        el('[data-tknow]').textContent = q_c + ' ' + un;
+        el('[data-tknowsub]').textContent='the same — nobody is over-using';
+      } else if(scen==='one'){
+        el('[data-tknowlbl]').textContent='The free-rider takes';
+        el('[data-tknow]').textContent = q_d + ' ' + un;
+        el('[data-tknowsub]').textContent = (q_d/q_c).toFixed(1)+'× the sustainable share (the others still take '+q_c+')';
+      } else {
+        el('[data-tknowlbl]').textContent='Each is taking';
+        el('[data-tknow]').textContent = (Math.round(q_n*10)/10) + ' ' + un;
+        el('[data-tknowsub]').textContent = (q_n/q_c).toFixed(1)+'× the sustainable share — everyone at once';
+      }
+
+      // narrative
+      var each=D.money(m.pays[1]!==undefined?m.pays[1]:m.pays[0]);
+      var txt;
+      if(scen==='none'){
+        txt = D.blurb+' With everyone holding to the group-best share, each earns <b>'
+            + D.money(m.pays[0])+'</b> — more than in either other scenario.';
+      } else if(scen==='one'){
+        txt = 'Restraint is punished and free-riding rewarded: the one who breaks ranks earns <b>'
+            + D.money(m.pays[0])+'</b>, about <b>'+(m.pays[0]/ALL.none.avg).toFixed(0)
+            + '×</b> what restraint pays, while the other nine drop to <b>'+D.money(m.pays[1])+'</b>.';
+      } else {
+        txt = 'Everyone reasons like the free-rider, and each ends up with <b>'+D.money(m.pays[0])
+            + '</b> — barely a third of the <b>'+D.money(ALL.none.avg)+'</b> restraint would have paid. '
+            + 'Every one of them acted rationally; together they impoverished themselves.';
+      }
+      el('[data-narr]').innerHTML = txt;
+
+      // the three averages, always on screen
+      var order=['none','one','all'], best=ALL.none.avg;
+      el('[data-cmp]').innerHTML = order.map(function(s){
+        var a=ALL[s].avg, w=(a/best)*100;
+        return '<div class="tcs-cmp-row'+(s===scen?' on':'')+'">'
+          + '<span class="nm">'+SCEN[s].name+'</span>'
+          + '<span class="bar"><i style="width:'+w.toFixed(1)+'%"></i></span>'
+          + '<span class="vv">'+DOMS[dom].money(a)+'</span></div>';
+      }).join('');
+    }
+
+    sec.querySelectorAll('.tcs-tab').forEach(function(b){
+      b.addEventListener('click', function(){
+        dom=b.dataset.dom;
+        sec.querySelectorAll('.tcs-tab').forEach(function(x){
+          var on=x===b; x.classList.toggle('on',on); x.setAttribute('aria-selected',on?'true':'false');
+        });
+        sec.classList.toggle('is-air', dom==='air');
+        draw();
+      });
+    });
+    sec.querySelectorAll('.tcs-scen').forEach(function(b){
+      b.addEventListener('click', function(){
+        scen=b.dataset.scen;
+        sec.querySelectorAll('.tcs-scen').forEach(function(x){ x.classList.toggle('on', x===b); });
+        draw();
+      });
+    });
+    draw();
+  })();
+  </script>
+</section>
 <section class="slide commons" data-type="commons" data-cm-id="ch2-commons-fishery" style="--accent:#BC8A2E">
   <div class="cm-root">
     <div class="cm-head">
@@ -1581,6 +1975,17 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
         <div class="cm-board" data-cm-board hidden>
           <div class="cm-board-title" data-cm-boardtitle>Leaderboard</div>
           <div class="cm-board-rows" data-cm-boardrows></div>
+          <div class="cm-dist" data-cm-dist hidden>
+            <div class="cm-stats">
+              <div class="cm-stat you"><span data-cm-youlbl>You earned</span><b data-cm-youval>—</b></div>
+              <div class="cm-stat avg"><span>Class average</span><b data-cm-avgval>—</b></div>
+            </div>
+            <div class="cm-histwrap">
+              <div class="cm-hist-title">How the class's earnings are spread</div>
+              <svg class="cm-histo" data-cm-histo viewBox="0 0 520 84" preserveAspectRatio="xMidYMid meet" role="img"
+                   aria-label="Distribution of student earnings across the class"></svg>
+            </div>
+          </div>
         </div>
       </div>
       <div class="cm-right">
@@ -1609,6 +2014,21 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 <div class="pairs"><div class="pair"><div class="pair-head">Positive Externalities</div><div class="pair-desc">Benefits of economic activity not captured in market prices. Functioning ecosystems provide clean water, air, soil fertility, and aesthetic value — without compensation.</div></div><div class="pair"><div class="pair-head">Ecosystem Valuation</div><div class="pair-desc">Assigns dollar values to the range of benefits that ecosystem services provide people/society. Markets underproduce these because producers cannot capture the value.</div></div><div class="pair"><div class="pair-head">Public Goods</div><div class="pair-desc">Things that cannot be produced profitably because non-paying users also benefit (non-excludable, non-rival). Roads and parks are examples of public goods the government provides through tax revenue.</div></div></div>
     </div>
     <div class="bleed-media contain"><img src="media/image15.jpg" alt=""></div>
+  </div>
+  <div class="footer">© 2023 W. W. Norton &amp; Company, Inc.</div>
+</section>
+<section class="slide" data-type="content" style="--accent:#BC8A2E">
+  <div class="stack-grid">
+    <div class="stack-top">
+      <div class="stack-head">
+<div class="eyebrow">2.3 · How Governments Address Negative Externalities</div>
+<h2 class="heading">Three Policy Approaches</h2>
+      </div>
+      <div class="stack-body">
+<div class="pairs"><div class="pair"><div class="pair-head">Limits / Standards</div><div class="pair-desc">Government-mandated caps on emissions or pollution levels.</div></div><div class="pair"><div class="pair-head">Taxes / Fees</div><div class="pair-desc">A tax on each unit of pollution makes negative externalities visible in market prices, incentivizing producers to reduce harm.</div></div><div class="pair"><div class="pair-head">Cap-and-Trade</div><div class="pair-desc">Permits can be bought, sold, traded, or banked — harnessing market forces to achieve environmental goals.</div></div></div>
+      </div>
+    </div>
+    <div class="stack-media contain"><img src="media/image13.jpg" alt=""></div>
   </div>
   <div class="footer">© 2023 W. W. Norton &amp; Company, Inc.</div>
 </section>
@@ -1651,7 +2071,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 
 <div class="hud">
   <button onclick="prev()" title="Previous (left arrow)">&#8249;</button>
-  <span class="counter" id="counter">1 / 27</span>
+  <span class="counter" id="counter">1 / 29</span>
   <button onclick="next()" title="Next (right arrow)">&#8250;</button>
   <button onclick="toggleMenu()" title="Slide menu (O)">&#9776;</button>
   <button onclick="toggleFs()" title="Fullscreen (F)">&#9974;</button>
@@ -1660,7 +2080,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 <div class="menu" id="menu">
   <button class="menu-close" onclick="toggleMenu(false)" aria-label="Close menu">&times;</button>
   <h3>Chapter 2 &mdash; Jump to a slide</h3>
-  <div class="menu-grid"><button class="menu-item" data-go="0"><span class="menu-num">1</span>Title</button><button class="menu-item" data-go="1"><span class="menu-num">2</span>Outline</button><button class="menu-item" data-go="2"><span class="menu-num">3</span>Announcements</button><button class="menu-item" data-go="3"><span class="menu-num">4</span>Where to find Module 1</button><button class="menu-item" data-go="4"><span class="menu-num">5</span>Intro · How Do We Decide?</button><button class="menu-item" data-go="5"><span class="menu-num">6</span>2 ▶ Poll: Walk (any harm)</button><button class="menu-item" data-go="6"><span class="menu-num">7</span>2 ▶ Poll: $1 (any harm)</button><button class="menu-item" data-go="7"><span class="menu-num">8</span>2 ▶ Poll: Walk (20%)</button><button class="menu-item" data-go="8"><span class="menu-num">9</span>2 ▶ Poll: $1 (20%)</button><button class="menu-item" data-go="9"><span class="menu-num">10</span>2 ▶ Poll: $10 (20%)</button><button class="menu-item" data-go="10"><span class="menu-num">11</span>2.1 Personal Ethics</button><button class="menu-item" data-go="11"><span class="menu-num">12</span>2.1 Deontological Ethics</button><button class="menu-item" data-go="12"><span class="menu-num">13</span>2.1 Utilitarianism</button><button class="menu-item" data-go="13"><span class="menu-num">14</span>2.2 Supply &amp; Demand</button><button class="menu-item" data-go="14"><span class="menu-num">15</span>2.2 ▶ Supply &amp; Demand Graph</button><button class="menu-item" data-go="15"><span class="menu-num">16</span>2.2 Jevons Paradox</button><button class="menu-item" data-go="16"><span class="menu-num">17</span>2.3 Externalities</button><button class="menu-item" data-go="17"><span class="menu-num">18</span>2.3 ▶ Externality Graphs</button><button class="menu-item" data-go="18"><span class="menu-num">19</span>2.3 ▶ True Cost Calculator</button><button class="menu-item" data-go="19"><span class="menu-num">20</span>2.3 Policy Approaches</button><button class="menu-item" data-go="20"><span class="menu-num">21</span>2.3 Tragedy of the Commons</button><button class="menu-item" data-go="21"><span class="menu-num">22</span>2.3 ▶ Private vs Commons</button><button class="menu-item" data-go="22"><span class="menu-num">23</span>2.3 ▶ Commons Game</button><button class="menu-item" data-go="23"><span class="menu-num">24</span>2.3 Public Goods</button><button class="menu-item" data-go="24"><span class="menu-num">25</span>2.4 Why Policy?</button><button class="menu-item" data-go="25"><span class="menu-num">26</span>2.4 Global Politics</button><button class="menu-item" data-go="26"><span class="menu-num">27</span>Key Concepts</button></div>
+  <div class="menu-grid"><button class="menu-item" data-go="0"><span class="menu-num">1</span>Title</button><button class="menu-item" data-go="1"><span class="menu-num">2</span>Outline</button><button class="menu-item" data-go="2"><span class="menu-num">3</span>Announcements</button><button class="menu-item" data-go="3"><span class="menu-num">4</span>Where to find Module 1</button><button class="menu-item" data-go="4"><span class="menu-num">5</span>Intro · How Do We Decide?</button><button class="menu-item" data-go="5"><span class="menu-num">6</span>2 ▶ Poll: Walk (any harm)</button><button class="menu-item" data-go="6"><span class="menu-num">7</span>2 ▶ Poll: $1 (any harm)</button><button class="menu-item" data-go="7"><span class="menu-num">8</span>2 ▶ Poll: Walk (20%)</button><button class="menu-item" data-go="8"><span class="menu-num">9</span>2 ▶ Poll: $1 (20%)</button><button class="menu-item" data-go="9"><span class="menu-num">10</span>2 ▶ Poll: $10 (20%)</button><button class="menu-item" data-go="10"><span class="menu-num">11</span>2.1 Personal Ethics</button><button class="menu-item" data-go="11"><span class="menu-num">12</span>2.1 Deontological Ethics</button><button class="menu-item" data-go="12"><span class="menu-num">13</span>2.1 Utilitarianism</button><button class="menu-item" data-go="13"><span class="menu-num">14</span>2.2 Supply &amp; Demand</button><button class="menu-item" data-go="14"><span class="menu-num">15</span>2.2 ▶ Supply &amp; Demand Graph</button><button class="menu-item" data-go="15"><span class="menu-num">16</span>2.2 Jevons Paradox</button><button class="menu-item" data-go="16"><span class="menu-num">17</span>2.3 Externalities</button><button class="menu-item" data-go="17"><span class="menu-num">18</span>2.3 ▶ Externality Graphs</button><button class="menu-item" data-go="18"><span class="menu-num">19</span>2.3 ▶ True Cost Calculator</button><button class="menu-item" data-go="19"><span class="menu-num">20</span>2.3 Tragedy of the Commons</button><button class="menu-item" data-go="20"><span class="menu-num">21</span>2.3 ▶ Private vs Commons</button><button class="menu-item" data-go="21"><span class="menu-num">22</span>2.3 ▶ Discussion</button><button class="menu-item" data-go="22"><span class="menu-num">23</span>2.3 ▶ Two Commons, Three Ways</button><button class="menu-item" data-go="23"><span class="menu-num">24</span>2.3 ▶ Commons Game</button><button class="menu-item" data-go="24"><span class="menu-num">25</span>2.3 Public Goods</button><button class="menu-item" data-go="25"><span class="menu-num">26</span>2.3 Policy Approaches</button><button class="menu-item" data-go="26"><span class="menu-num">27</span>2.4 Why Policy?</button><button class="menu-item" data-go="27"><span class="menu-num">28</span>2.4 Global Politics</button><button class="menu-item" data-go="28"><span class="menu-num">29</span>Key Concepts</button></div>
 </div>
 
 <script>
@@ -2384,6 +2804,8 @@ show(start);
       submitBtn=el('[data-cm-submit]'), revealBox=el('[data-cm-reveal]'),
       zoneEl=el('[data-cm-zone]'), revLines=el('[data-cm-revlines]'),
       meEl=el('[data-cm-me]'), board=el('[data-cm-board]'),
+      dist=el('[data-cm-dist]'), youLbl=el('[data-cm-youlbl]'), youVal=el('[data-cm-youval]'),
+      avgVal=el('[data-cm-avgval]'), histo=el('[data-cm-histo]'),
       boardTitle=el('[data-cm-boardtitle]'), boardRows=el('[data-cm-boardrows]'),
       water=el('[data-cm-water]'), fishBox=el('[data-cm-fish]'),
       poolNum=el('[data-cm-poolnum]'), poolLbl=el('[data-cm-poollbl]'), capEl=el('[data-cm-cap]'),
@@ -2462,29 +2884,63 @@ show(start);
           +nameOf(k)+'</span></div>').join('');
         if(ks.length>14) roster+='<div class="cm-brow"><span class="nm" style="color:var(--muted)">…and '+(ks.length-14)+' more</span></div>';
         boardRows.innerHTML = roster || '<div class="cm-brow"><span class="nm" style="color:var(--muted)">No one yet…</span></div>';
+        boardRows.hidden=false; dist.hidden=true;
         return;
       }
-      boardTitle.textContent = ph==='final' ? '🏆 Final standings' : 'Leaderboard — total earnings';
-      const lastDone = histEntry(state.round||0) ? (state.round||0)
-        : Math.max(0,(state.round||0)-1);
-      const rows=Object.keys(players()).map(k=>({k:k, name:nameOf(k), tot:totalEarned(k),
-        take:histEntry(lastDone)? roundChoices(lastDone)[k] : undefined}));
-      rows.sort((a,b)=> b.tot-a.tot || a.name.localeCompare(b.name));
-      // big classes: top 10 + your own row (with true rank) + a "+N more" line
-      const rowHtml=(r,i)=>'<div class="cm-brow'+(r.k===pk?' me':'')+'">'
-        +'<span class="rk">'+(i+1)+'.</span><span class="nm">'+r.name+'</span>'
-        +(r.take!==undefined?'<span class="tk">took '+r.take+'</span>':'')
-        +'<span class="er">'+CM_FMT(r.tot)+'</span></div>';
-      let html;
-      if(rows.length<=12){ html=rows.map(rowHtml).join(''); }
-      else {
-        html=rows.slice(0,10).map(rowHtml).join('');
-        const meIdx=rows.findIndex(r=>r.k===pk);
-        if(meIdx>=10) html+=rowHtml(rows[meIdx], meIdx);
-        const others=rows.length-10-(meIdx>=10?1:0);
-        if(others>0) html+='<div class="cm-brow"><span class="nm" style="color:var(--muted)">…and '+others+' more players</span></div>';
+      // No ranking table: a leaderboard invites "who won", when the point is that
+      // the class as a whole did worse than it could have. Show where YOU sit
+      // against the class average, and how the whole class is spread.
+      boardTitle.textContent = ph==='final' ? 'Final results' : 'Where the class stands';
+      boardRows.hidden=true; dist.hidden=false;
+      // Count only students who actually submitted a choice in a played round.
+      // Someone sitting in the roster without ever playing would otherwise sit at
+      // $0 and drag the class average down — and it keeps the figure honest if a
+      // stale entry ever lingers in the roster.
+      const playedSet={};
+      for(let rr=1; rr<=(state.round||0); rr++){
+        const c=roundChoices(rr); Object.keys(c).forEach(function(k){ playedSet[k]=1; });
       }
-      boardRows.innerHTML=html;
+      let ks=Object.keys(players()).filter(function(k){ return playedSet[k]; });
+      if(!ks.length) ks=Object.keys(players());
+      const vals=ks.map(function(k){ return totalEarned(k); });
+      const nP=vals.length;
+      const sum=vals.reduce((a,b)=>a+b,0);
+      const avg=nP? sum/nP : 0;
+      const mine=(!HOST && pk && players()[pk]!==undefined) ? totalEarned(pk) : null;
+      youLbl.textContent = (mine===null) ? 'Class total' : 'You earned';
+      youVal.textContent = (mine===null) ? CM_FMT(sum) : CM_FMT(mine);
+      avgVal.textContent = CM_FMT(avg);
+
+      // histogram of earnings — a pie can't show a spread, so this buckets the
+      // class into columns, tints your own bucket, and marks the average
+      const W=520, H=84, PADL=10, PADR=10, BASE=60, TOP=7, BINS=6;
+      const hi=Math.max.apply(null, vals.concat([1]));
+      const step=hi/BINS;
+      const counts=new Array(BINS).fill(0);
+      vals.forEach(function(v){ counts[Math.min(BINS-1, Math.floor(v/step))]++; });
+      const myBin = (mine===null) ? -1 : Math.min(BINS-1, Math.floor(mine/step));
+      const peak=Math.max.apply(null, counts.concat([1]));
+      const plotW=W-PADL-PADR, bw=plotW/BINS;
+      let sv='<defs><filter id="cmRough-'+id+'" x="-6%" y="-6%" width="112%" height="112%">'
+        +'<feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="n"/>'
+        +'<feDisplacementMap in="SourceGraphic" in2="n" scale="1.3" xChannelSelector="R" yChannelSelector="G"/>'
+        +'</filter></defs><g filter="url(#cmRough-'+id+')">';
+      counts.forEach(function(c,i){
+        const h=(c/peak)*(BASE-TOP), x=PADL+i*bw+2, y=BASE-h;
+        sv+='<rect class="cm-hbar2'+(i===myBin?' me':'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)
+          +'" width="'+(bw-4).toFixed(1)+'" height="'+Math.max(h,c?2:0).toFixed(1)+'" rx="2"/>';
+        if(c) sv+='<text class="cm-hcount" x="'+(x+(bw-4)/2).toFixed(1)+'" y="'+(y-3).toFixed(1)+'">'+c+'</text>';
+      });
+      sv+='<path class="cm-haxis" d="M'+PADL+' '+BASE+' H'+(W-PADR)+'"/></g>';
+      // average marker
+      const ax=PADL+(hi? avg/hi : 0)*plotW;
+      sv+='<path class="cm-havg" d="M'+ax.toFixed(1)+' '+TOP+' V'+BASE+'"/>'
+        + '<text class="cm-havglbl" x="'+Math.min(W-PADR, Math.max(PADL+26, ax)).toFixed(1)
+        + '" y="'+(BASE+13)+'" text-anchor="middle">avg</text>';
+      sv+='<text class="cm-hend" x="'+PADL+'" y="'+(BASE+27)+'">'+CM_FMT(0)+'</text>'
+        + '<text class="cm-hend" x="'+(W-PADR)+'" y="'+(BASE+27)+'" text-anchor="end">'+CM_FMT(hi)+'</text>';
+      if(myBin>=0) sv+='<text class="cm-hyou" x="'+(PADL+myBin*bw+bw/2).toFixed(1)+'" y="'+(BASE+13)+'" text-anchor="middle">you</text>';
+      histo.innerHTML=sv;
     }
     function renderReveal(){
       const ph=state.phase||'idle', r=state.round||0, e=histEntry(r);

@@ -752,6 +752,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 .slide.commons .cm-board,
 .slide.commons .cm-hist,
 .slide.commons .cm-picks,
+.slide.commons .cm-summary,
 .slide.commons .cm-me,
 .slide.commons .cm-reveal{background:#fffdf8; border-color:rgba(120,100,60,.22); color:#4a4436;}
 .slide.commons .cm-status{color:#3b3222;}
@@ -766,6 +767,11 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 .slide.commons .cm-hostbar{background:rgba(140,90,40,.06); border-color:rgba(140,90,40,.38);}
 .slide.commons .cm-hlabel{color:#7a6437;}
 .slide.commons .cm-foot{color:#8a8069;}
+/* At the end of the game the host bar already says "Start a new game", so the
+   status line under it is pure duplication — and dropping it is what keeps the
+   host's column (which carries the extra host chrome) clear of the slide edge.
+   Students keep it: it is the only thing telling them the game is over. */
+.slide.commons.host.is-final .cm-status{display:none;}
 .slide.commons .cm-range{accent-color:#8a6a2f;}
 
 /* your value vs the class, and how the class is spread */
@@ -954,6 +960,34 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
   padding:.6rem .8rem .5rem;}
 .cm-hist[hidden]{display:none;}
+
+/* end-of-game debrief — takes the whole row once there is nothing left to play,
+   because the trend across rounds supersedes any single round's chart */
+.cm-summary{flex:1 1 100%; min-width:0; background:#fff; border:1px solid var(--line);
+  border-radius:14px; box-shadow:var(--shadow); padding:.6rem .8rem .55rem;}
+.cm-summary[hidden]{display:none;}
+.cm-sumsvg{width:100%; height:auto; display:block;}
+.cm-sm-bar{fill:#e2d3ad; stroke:#8a7748; stroke-width:1.2;}
+.cm-sm-line{stroke:#2d6a4f; stroke-width:2; stroke-dasharray:5 3; fill:none;}
+.cm-sm-dot{fill:#2d6a4f;}
+.cm-sm-val{font-family:'Inter',sans-serif; font-size:11px; font-weight:700; fill:#5a5344; text-anchor:middle;}
+.cm-sm-x{font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:#6f6754; text-anchor:middle;}
+.cm-sm-h{font-family:'Inter',sans-serif; font-size:10.5px; fill:#9a917c; text-anchor:middle;}
+/* CSS text-anchor overrides the attribute, so the right-aligned footnote needs
+   its own rule rather than text-anchor="end" on a .cm-sm-h */
+.cm-sm-note{font-family:'Inter',sans-serif; font-size:10.5px; fill:#9a917c; text-anchor:end;}
+.cm-sm-y{font-family:'Inter',sans-serif; font-size:10px; fill:#9a917c;}
+.cm-sm-grid{stroke:rgba(120,100,60,.2); stroke-width:1; fill:none;}
+.cm-sm-axis{stroke:#8a7748; stroke-width:1.4; fill:none;}
+.cm-sm-leg{font-family:'Inter',sans-serif; font-size:10.5px; fill:#7a7260;}
+.cm-sum-chips{display:flex; gap:.45rem; margin-top:.42rem;}
+.cm-sum-chip{flex:1 1 0; min-width:0; background:#fdf8ec; border:1px solid rgba(120,100,60,.22);
+  border-top:3px solid #b8860b; border-radius:8px; padding:.3rem .45rem .36rem;}
+.cm-sum-chip .k{display:block; font-size:clamp(.55rem,.85vw,.65rem); color:#7a7260;
+  text-transform:uppercase; letter-spacing:.05em; font-weight:700; line-height:1.3;}
+.cm-sum-chip .v{font-family:'Merriweather',serif; font-size:clamp(.84rem,1.45vw,1.1rem); color:#3b3222;
+  line-height:1.25;}
+.cm-sum-chip .c{display:block; font-size:clamp(.53rem,.82vw,.63rem); color:#9a917c; line-height:1.25;}
 .cm-hist-title{font-weight:700; color:var(--forest); font-size:clamp(.66rem,1.02vw,.78rem);
   text-transform:uppercase; letter-spacing:.03em; margin-bottom:.4rem;}
 .cm-hist-bars{display:flex; align-items:flex-end; gap:.55rem; height:clamp(52px,9vh,84px);}
@@ -2041,6 +2075,12 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
             <div class="cm-hist-title" data-cm-histtitle>Resource health, round by round</div>
             <div class="cm-hist-bars" data-cm-histbars></div>
           </div>
+          <div class="cm-summary" data-cm-summary hidden>
+            <div class="cm-hist-title">How the game unfolded</div>
+            <svg class="cm-sumsvg" data-cm-sumsvg viewBox="0 0 640 160" preserveAspectRatio="xMidYMid meet"
+                 role="img" aria-label="Average amount taken each round against the sustainable share"></svg>
+            <div class="cm-sum-chips" data-cm-sumchips></div>
+          </div>
         </div>
       </div>
     </div>
@@ -2853,6 +2893,7 @@ show(start);
       hist=el('[data-cm-hist]'), histTitle=el('[data-cm-histtitle]'), histBars=el('[data-cm-histbars]'),
       picks=el('[data-cm-picks]'), picksTitle=el('[data-cm-pickstitle]'),
       picksSub=el('[data-cm-pickssub]'), picksSvg=el('[data-cm-picksvg]'),
+      summary=el('[data-cm-summary]'), sumSvg=el('[data-cm-sumsvg]'), sumChips=el('[data-cm-sumchips]'),
       banner=el('[data-cm-banner]');
     sec.addEventListener('keydown', e=>{ if(navKeys.indexOf(e.key)>-1) e.stopPropagation(); });
     if(HOST) sec.classList.add('host');
@@ -2905,7 +2946,8 @@ show(start);
     }
     function renderHist(){
       const rounds=[]; for(let r=1;r<=(state.round||0);r++){ if(histEntry(r)) rounds.push([r,histEntry(r)]); }
-      hist.hidden=!rounds.length; histTitle.textContent=S().resName+', round by round';
+      hist.hidden=!rounds.length || (state.phase||'idle')==='final';
+      histTitle.textContent=S().resName+', round by round';
       if(!rounds.length){ histBars.innerHTML=''; return; }
       histBars.innerHTML='';
       function bar(lbl,frac,cls){ const w=document.createElement('div'); w.className='cm-hbar'+(cls?' '+cls:'');
@@ -2925,7 +2967,7 @@ show(start);
       return last; }
     function renderPicks(){
       const r=lastRevealed();
-      if(!r){ picks.hidden=true; picksSvg.innerHTML=''; return; }
+      if(!r || (state.phase||'idle')==='final'){ picks.hidden=true; picksSvg.innerHTML=''; return; }
       picks.hidden=false;
       const ch=roundChoices(r), e=histEntry(r), MX=S().max;
       const counts=new Array(MX+1).fill(0);
@@ -2972,6 +3014,133 @@ show(start);
       picksSvg.innerHTML=sv;
       picksSub.textContent = n + (n===1?' player':' players')
         + (n ? ' · average ' + (sum/n).toFixed(1) + ' ' + S().unit + ' each' : '');
+    }
+
+    // ── end-of-game debrief ───────────────────────────────────────────────────
+    // Per-round behaviour, which is what the class can actually argue about
+    // afterwards: what people took, whether the safe level moved under them,
+    // and how many stayed inside it.
+    function roundStats(){
+      const out=[];
+      for(let r=1;r<=(state.round||0);r++){
+        const e=histEntry(r); if(!e) continue;
+        const ch=roundChoices(r), ks=Object.keys(ch);
+        let sum=0, within=0;
+        ks.forEach(function(k){ sum+=ch[k]; if(e.coopPer!==undefined && ch[k]<=e.coopPer) within++; });
+        out.push({r:r, n:ks.length, avg:ks.length?sum/ks.length:0,
+                  coop:(e.coopPer===undefined?null:e.coopPer),
+                  within:ks.length?within/ks.length:null, health:e.health});
+      }
+      return out;
+    }
+    function playedKeys(){
+      const seen={};
+      for(let r=1;r<=(state.round||0);r++){
+        const c=roundChoices(r); Object.keys(c).forEach(function(k){ seen[k]=1; });
+      }
+      let ks=Object.keys(players()).filter(function(k){ return seen[k]; });
+      return ks.length ? ks : Object.keys(players());
+    }
+    function takeTotal(who){ let t=0;
+      for(let r=1;r<=(state.round||0);r++){ const v=roundChoices(r)[who]; if(v!==undefined) t+=v; }
+      return t; }
+    function renderSummary(){
+      const R=roundStats();
+      if((state.phase||'idle')!=='final' || !R.length){ summary.hidden=true; return; }
+      summary.hidden=false;
+
+      const W=640, PADL=44, PADR=18, BASE=112, TOP=32, nR=R.length;
+      const plotW=W-PADL-PADR, slot=plotW/nR, bw=Math.min(slot*0.42, 38);
+      let top=0; R.forEach(function(d){ top=Math.max(top, d.avg, d.coop||0); });
+      const ymax=Math.max(1, top)*1.2, sy=function(v){ return BASE-(v/ymax)*(BASE-TOP); };
+      const cx=function(i){ return PADL+i*slot+slot/2; };
+
+      let sv='<defs><filter id="cmSm-'+id+'" x="-3%" y="-3%" width="106%" height="106%">'
+        +'<feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="2" seed="11" result="n"/>'
+        +'<feDisplacementMap in="SourceGraphic" in2="n" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>'
+        +'</filter></defs>';
+      // legend, above the plot
+      sv+='<rect class="cm-sm-bar" x="'+PADL+'" y="6" width="14" height="9" rx="2"/>'
+        + '<text class="cm-sm-leg" x="'+(PADL+20)+'" y="14">average taken</text>'
+        + '<path class="cm-sm-line" d="M'+(PADL+128)+' 11 H'+(PADL+150)+'"/>'
+        + '<text class="cm-sm-leg" x="'+(PADL+156)+'" y="14">what the resource could sustain</text>';
+      // y gridlines
+      [0, ymax/2, ymax].forEach(function(v){
+        sv+='<path class="cm-sm-grid" d="M'+PADL+' '+sy(v).toFixed(1)+' H'+(W-PADR)+'"/>'
+          + '<text class="cm-sm-y" x="'+(PADL-7)+'" y="'+(sy(v)+3.5).toFixed(1)+'" text-anchor="end">'
+          + v.toFixed(v<10?1:0)+'</text>';
+      });
+      sv+='<g filter="url(#cmSm-'+id+')">';
+      R.forEach(function(d,i){
+        const y=sy(d.avg), h=Math.max(BASE-y, 2);
+        sv+='<rect class="cm-sm-bar" x="'+(cx(i)-bw/2).toFixed(1)+'" y="'+y.toFixed(1)
+          +'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2"/>';
+      });
+      sv+='<path class="cm-sm-axis" d="M'+PADL+' '+BASE+' H'+(W-PADR)+'"/></g>';
+      // the safe level, which shrinks as the resource is damaged
+      const pts=R.filter(function(d){ return d.coop!==null; });
+      if(pts.length){
+        let dPath='';
+        R.forEach(function(d,i){ if(d.coop===null) return;
+          dPath += (dPath?' L':'M')+cx(i).toFixed(1)+' '+sy(d.coop).toFixed(1); });
+        sv+='<path class="cm-sm-line" d="'+dPath+'"/>';
+        R.forEach(function(d,i){ if(d.coop===null) return;
+          sv+='<circle class="cm-sm-dot" cx="'+cx(i).toFixed(1)+'" cy="'+sy(d.coop).toFixed(1)+'" r="2.6"/>'; });
+      }
+      R.forEach(function(d,i){
+        sv+='<text class="cm-sm-val" x="'+cx(i).toFixed(1)+'" y="'+(sy(d.avg)-5).toFixed(1)+'">'
+          + d.avg.toFixed(1)+'</text>'
+          + '<text class="cm-sm-x" x="'+cx(i).toFixed(1)+'" y="'+(BASE+16)+'">Round '+d.r+'</text>'
+          + '<text class="cm-sm-h" x="'+cx(i).toFixed(1)+'" y="'+(BASE+31)+'">'
+          + Math.round(d.health*100)+'% left</text>';
+      });
+      sv+='<text class="cm-sm-note" x="'+(W-PADR)+'" y="'+(BASE+43)+'">'
+        + '% = '+S().resName.toLowerCase()+' still left</text>';
+      sumSvg.innerHTML=sv;
+
+      // ── the chips ───────────────────────────────────────────────────────────
+      const uv=S().unitValue, ks=playedKeys(), nP=ks.length;
+      function chip(k,v,c){ return '<div class="cm-sum-chip"><span class="k">'+k+'</span>'
+        + '<span class="v">'+v+'</span><span class="c">'+c+'</span></div>'; }
+      let chips='';
+
+      // 1 — did restraint hold, or erode?
+      const w0=R[0].within, wN=R[nR-1].within;
+      if(w0!==null && wN!==null){
+        chips += (nR===1)
+          ? chip('Stayed within the limit', Math.round(w0*100)+'%', 'of players, in the one round played')
+          : chip('Stayed within the limit', Math.round(w0*100)+'% → '+Math.round(wN*100)+'%',
+              'of players, round 1 → round '+R[nR-1].r);
+      }
+      // 2 — the cost of the trap. If everyone had held to the share the resource
+      // could carry at full health, health never falls, so that share holds all
+      // game and the counterfactual is just share x value x rounds x players.
+      const idealPer=Math.floor(S().max*0.4);
+      const idealTotal=idealPer*uv*nR*nP;
+      let actualTotal=0; ks.forEach(function(k){ actualTotal+=totalEarned(k); });
+      const gap=idealTotal-actualTotal;
+      chips+=chip(gap>0?'Left on the table':'Earned above the safe path',
+        CM_FMT(Math.abs(gap)),
+        CM_FMT(actualTotal)+' earned vs '+CM_FMT(idealTotal)+' if everyone had held to '
+        + idealPer+' '+S().unit+' a round');
+      // 3 — did taking more actually pay? Thirds need enough players to mean much.
+      if(nP>=6){
+        const arr=ks.map(function(k){ return {take:takeTotal(k), earn:totalEarned(k)}; });
+        arr.sort(function(a,b){ return b.take-a.take; });
+        const q=Math.max(1, Math.floor(arr.length/3));
+        const mean=function(list){ let t=0; list.forEach(function(o){ t+=o.earn; }); return t/list.length; };
+        const hi=mean(arr.slice(0,q)), lo=mean(arr.slice(-q));
+        chips+=chip('Did taking more pay?', CM_FMT(hi)+' vs '+CM_FMT(lo),
+          'average earnings of the top third of takers vs the bottom third');
+      }
+      // 4 — students only: where you sat against the room
+      if(!HOST && players()[pk]!==undefined){
+        const myTake=takeTotal(pk), rPlayed=nR||1;
+        let allTake=0; ks.forEach(function(k){ allTake+=takeTotal(k); });
+        chips+=chip('You took', (myTake/rPlayed).toFixed(1)+' a round',
+          'the class averaged '+(nP?(allTake/nP/rPlayed).toFixed(1):'—')+' '+S().unit);
+      }
+      sumChips.innerHTML=chips;
     }
     function renderBoard(){
       const ph=state.phase||'idle';
@@ -3118,7 +3287,8 @@ show(start);
     function render(){
       const ph=state.phase||'idle', r=state.round||0;
       rebuildNames();
-      theme(); renderMeter(); renderHist(); renderPicks(); renderBoard(); renderReveal(); renderMe();
+      sec.classList.toggle('is-final', ph==='final');
+      theme(); renderMeter(); renderHist(); renderPicks(); renderSummary(); renderBoard(); renderReveal(); renderMe();
       // scenario story card
       scenCard.hidden = !(ph==='lobby' || (ph!=='idle' && !joined() && !HOST && ph!=='final'));
       if(!scenCard.hidden){ scenName.textContent=S().icon+' '+S().name;

@@ -751,6 +751,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 .slide.commons .cm-scencard,
 .slide.commons .cm-board,
 .slide.commons .cm-hist,
+.slide.commons .cm-picks,
 .slide.commons .cm-me,
 .slide.commons .cm-reveal{background:#fffdf8; border-color:rgba(120,100,60,.22); color:#4a4436;}
 .slide.commons .cm-status{color:#3b3222;}
@@ -928,7 +929,29 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 @keyframes cm-pop{from{transform:scale(.55); opacity:0;} to{transform:scale(1); opacity:1;}}
 .cm-banner.bad span{color:#fff; background:rgba(140,30,30,.88); box-shadow:0 14px 40px rgba(0,0,0,.35);}
 .cm-banner.good span{color:#fff; background:rgba(35,95,70,.9); box-shadow:0 14px 40px rgba(0,0,0,.3);}
-.cm-hist{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
+/* the two summary charts share one row under the pond, so the pond keeps its
+   size: what the class CHOSE (wider — it carries a bar per possible amount)
+   beside what that DID to the resource, round by round */
+.cm-lower{display:flex; gap:.7rem; align-items:stretch;}
+.cm-picks{flex:1.5 1 0; min-width:0; background:#fff; border:1px solid var(--line);
+  border-radius:14px; box-shadow:var(--shadow); padding:.6rem .8rem .5rem;}
+.cm-picks[hidden]{display:none;}
+.cm-picksvg{width:100%; height:auto; display:block;}
+/* at or under the sustainable share vs over it — the whole point of the chart
+   is seeing where the mass sits relative to that line */
+.cm-pk-bar{fill:#cfe0d2; stroke:#3f7a5a; stroke-width:1.2;}
+.cm-pk-bar.over{fill:#eccfa8; stroke:#a4673a;}
+.cm-pk-bar.empty{fill:#f1ece1; stroke:#cbc0a6; stroke-width:.9;}
+.cm-pk-bar.me{stroke-width:2.8;}
+.cm-pk-cnt{font-family:'Inter',sans-serif; font-size:12px; font-weight:700; fill:#6f6754; text-anchor:middle;}
+.cm-pk-x{font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; fill:#7a7260; text-anchor:middle;}
+.cm-pk-axis{stroke:#8a7748; stroke-width:1.4; fill:none;}
+.cm-pk-line{stroke:#2d6a4f; stroke-width:1.7; stroke-dasharray:4 3; fill:none;}
+.cm-pk-lbl{font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700; fill:#2d6a4f;}
+.cm-pk-you{font-family:'Inter',sans-serif; font-size:11.5px; font-weight:800; fill:#8a5f1c; text-anchor:middle;}
+.cm-picks-sub{font-size:clamp(.62rem,.96vw,.74rem); color:#8a8069; margin:-.25rem 0 .3rem; line-height:1.2;}
+.cm-hist{flex:1 1 0; min-width:0;
+  background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
   padding:.6rem .8rem .5rem;}
 .cm-hist[hidden]{display:none;}
 .cm-hist-title{font-weight:700; color:var(--forest); font-size:clamp(.66rem,1.02vw,.78rem);
@@ -946,6 +969,7 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 @media (max-width:820px){
   .cm-body{grid-template-columns:1fr; overflow:auto;}
   .cm-pond{min-height:30vh;}
+  .cm-lower{flex-direction:column;}
 }
 
 
@@ -2006,9 +2030,17 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
           <div class="cm-cap" data-cm-cap></div>
           <div class="cm-banner" data-cm-banner hidden></div>
         </div>
-        <div class="cm-hist" data-cm-hist hidden>
-          <div class="cm-hist-title" data-cm-histtitle>Resource health, round by round</div>
-          <div class="cm-hist-bars" data-cm-histbars></div>
+        <div class="cm-lower">
+          <div class="cm-picks" data-cm-picks hidden>
+            <div class="cm-hist-title" data-cm-pickstitle>What the class chose</div>
+            <div class="cm-picks-sub" data-cm-pickssub></div>
+            <svg class="cm-picksvg" data-cm-picksvg viewBox="0 0 400 148" preserveAspectRatio="xMidYMid meet"
+                 role="img" aria-label="How many students chose each amount last round"></svg>
+          </div>
+          <div class="cm-hist" data-cm-hist hidden>
+            <div class="cm-hist-title" data-cm-histtitle>Resource health, round by round</div>
+            <div class="cm-hist-bars" data-cm-histbars></div>
+          </div>
         </div>
       </div>
     </div>
@@ -2819,6 +2851,8 @@ show(start);
       water=el('[data-cm-water]'), fishBox=el('[data-cm-fish]'),
       poolNum=el('[data-cm-poolnum]'), poolLbl=el('[data-cm-poollbl]'), capEl=el('[data-cm-cap]'),
       hist=el('[data-cm-hist]'), histTitle=el('[data-cm-histtitle]'), histBars=el('[data-cm-histbars]'),
+      picks=el('[data-cm-picks]'), picksTitle=el('[data-cm-pickstitle]'),
+      picksSub=el('[data-cm-pickssub]'), picksSvg=el('[data-cm-picksvg]'),
       banner=el('[data-cm-banner]');
     sec.addEventListener('keydown', e=>{ if(navKeys.indexOf(e.key)>-1) e.stopPropagation(); });
     if(HOST) sec.classList.add('host');
@@ -2881,6 +2915,63 @@ show(start);
         histBars.appendChild(w); }
       bar('start',1);
       rounds.forEach(e=>bar('R'+e[0], e[1].health, e[1].health<=0.05?'dead':''));
+    }
+    // How many people chose each amount in the last revealed round. The choices
+    // are integers on a 0..max slider, so every possible answer gets its own
+    // column — including the ones nobody picked, which is itself the finding.
+    // Only a REVEALED round is ever drawn: the round in play stays secret.
+    function lastRevealed(){ let last=0;
+      for(let r=1;r<=(state.round||0);r++){ if(histEntry(r)) last=r; }
+      return last; }
+    function renderPicks(){
+      const r=lastRevealed();
+      if(!r){ picks.hidden=true; picksSvg.innerHTML=''; return; }
+      picks.hidden=false;
+      const ch=roundChoices(r), e=histEntry(r), MX=S().max;
+      const counts=new Array(MX+1).fill(0);
+      let n=0, sum=0;
+      Object.keys(ch).forEach(function(k){
+        const v=Math.max(0, Math.min(MX, Math.round(ch[k])));
+        counts[v]++; n++; sum+=ch[k];
+      });
+      const safeMax = (e && e.coopPer!==undefined) ? e.coopPer : null;   // per-person sustainable share
+      const mine = (!HOST) ? myChoice(r) : null;
+      const myV = (mine===null) ? -1 : Math.max(0, Math.min(MX, Math.round(mine)));
+
+      picksTitle.textContent = 'What the class chose · Round '+r;
+
+      const W=400, PADL=16, PADR=16, BASE=112, TOP=34;
+      const nb=MX+1, plotW=W-PADL-PADR, slot=plotW/nb,
+            bw=Math.min(slot*0.74, 42), peak=Math.max.apply(null, counts.concat([1]));
+      let sv='<defs><filter id="cmPk-'+id+'" x="-4%" y="-4%" width="108%" height="108%">'
+        +'<feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="5" result="n"/>'
+        +'<feDisplacementMap in="SourceGraphic" in2="n" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>'
+        +'</filter></defs><g filter="url(#cmPk-'+id+')">';
+      counts.forEach(function(c,i){
+        const h=c ? Math.max((c/peak)*(BASE-TOP), 3) : 2.5,
+              x=PADL+i*slot+(slot-bw)/2, y=BASE-h;
+        const cls = !c ? 'empty' : ((safeMax!==null && i>safeMax) ? 'over' : '');
+        sv+='<rect class="cm-pk-bar'+(cls?' '+cls:'')+(i===myV?' me':'')+'" x="'+x.toFixed(1)
+          +'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2"/>';
+        if(c) sv+='<text class="cm-pk-cnt" x="'+(x+bw/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'">'+c+'</text>';
+      });
+      sv+='<path class="cm-pk-axis" d="M'+PADL+' '+BASE+' H'+(W-PADR)+'"/></g>';
+      // one tick per possible answer
+      counts.forEach(function(c,i){
+        sv+='<text class="cm-pk-x" x="'+(PADL+i*slot+slot/2).toFixed(1)+'" y="'+(BASE+15)+'">'+i+'</text>';
+      });
+      // the line between "kept it alive" and "took more than it could give"
+      if(safeMax!==null && safeMax<MX){
+        const lx=PADL+(safeMax+1)*slot;
+        sv+='<path class="cm-pk-line" d="M'+lx.toFixed(1)+' 16 V'+BASE+'"/>';
+        const right = lx < W*0.62;
+        sv+='<text class="cm-pk-lbl" x="'+(right?lx+4:lx-4).toFixed(1)+'" y="13" text-anchor="'
+          +(right?'start':'end')+'">sustainable share: '+safeMax+' or less</text>';
+      }
+      if(myV>=0) sv+='<text class="cm-pk-you" x="'+(PADL+myV*slot+slot/2).toFixed(1)+'" y="'+(BASE+29)+'">you</text>';
+      picksSvg.innerHTML=sv;
+      picksSub.textContent = n + (n===1?' player':' players')
+        + (n ? ' · average ' + (sum/n).toFixed(1) + ' ' + S().unit + ' each' : '');
     }
     function renderBoard(){
       const ph=state.phase||'idle';
@@ -3027,7 +3118,7 @@ show(start);
     function render(){
       const ph=state.phase||'idle', r=state.round||0;
       rebuildNames();
-      theme(); renderMeter(); renderHist(); renderBoard(); renderReveal(); renderMe();
+      theme(); renderMeter(); renderHist(); renderPicks(); renderBoard(); renderReveal(); renderMe();
       // scenario story card
       scenCard.hidden = !(ph==='lobby' || (ph!=='idle' && !joined() && !HOST && ph!=='final'));
       if(!scenCard.hidden){ scenName.textContent=S().icon+' '+S().name;

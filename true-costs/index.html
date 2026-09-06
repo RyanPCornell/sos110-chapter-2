@@ -217,7 +217,7 @@ body.embed header{display:none}
 .t-range b{color:var(--gold-lt);font-weight:400}
 
 /* ── hand-drawn icons ───────────────────────────────────────────
-   Each icon is a <use> of a 24×24 sketched symbol. Colours are baked
+   Each icon is a <use> of a 24×24 sketched symbol. Colors are baked
    into the sprite through four inherited paint slots (--i-f1/-f2/-ln/-ac),
    so a context can repaint the whole set by setting those variables. */
 .ico{width:1em;height:1em;display:inline-block;vertical-align:-.14em;flex:none}
@@ -231,7 +231,7 @@ body.embed header{display:none}
 .td-cat .ico{width:1.05em;height:1.05em}
 .seg-btn .ico{margin-right:.28em}
 /* a selected segmented button flips to white-on-forest, where the baked
-   colours would go muddy — repaint the icon as a light line drawing */
+   colors would go muddy — repaint the icon as a light line drawing */
 .seg-btn.on{--i-f1:rgba(255,255,255,.24);--i-f2:rgba(255,255,255,.40);
             --i-ln:#fdfaf5;--i-ac:#c8e0cf}
 </style>
@@ -239,13 +239,13 @@ body.embed header{display:none}
 <body>
 <!-- ═══════════════════════════════════════════════
      HAND-DRAWN ICON SPRITE
-     41 sketched illustrations on a 24×24 grid. Flat colour fills drawn
+     41 sketched illustrations on a 24×24 grid. Flat color fills drawn
      from the app palette sit under a dark ink outline, and a fractal-noise
      displacement filter bows every edge so the shapes read as drawn.
 
-     Colours go through four inherited paint slots — --i-f1 (main fill),
+     Colors go through four inherited paint slots — --i-f1 (main fill),
      --i-f2 (secondary fill), --i-ln (outline) and --i-ac (accent) — each
-     with the icon's own colour as the fallback. Any context can therefore
+     with the icon's own color as the fallback. Any context can therefore
      restyle the whole set by setting those four variables; the active
      segmented buttons use that to flip to white-on-dark.
      ═══════════════════════════════════════════════ -->
@@ -910,7 +910,7 @@ body.embed header{display:none}
             <tbody>
               <tr><td class="td-cat">Future harm is discounted</td><td class="td-desc">Moving only the discount rate from 2.0% to 1.5% raises the SCC from $190 to $340 — nearly doubling every climate line in this tool — with no change whatsoever in the underlying physics. No scientific finding selects that rate; it is a judgement about how much a person born in 2100 counts relative to one alive now.</td></tr>
               <tr><td class="td-cat">Harm can be priced at all</td><td class="td-desc">Assigning dollars to a lost species, a displaced community, or a premature death treats them as commensurable with money. Rights-based (deontological) ethics holds that some harms are wrongs to be prohibited, not costs to be traded off — so on that view the entire exercise is category error.</td></tr>
-              <tr><td class="td-cat">Aggregate totals are the right unit</td><td class="td-desc">A single national average conceals who actually bears the harm. Air pollution and extraction damages fall disproportionately on low-income communities and communities of colour; a per-person figure is silent about that distribution.</td></tr>
+              <tr><td class="td-cat">Aggregate totals are the right unit</td><td class="td-desc">A single national average conceals who actually bears the harm. Air pollution and extraction damages fall disproportionately on low-income communities and communities of color; a per-person figure is silent about that distribution.</td></tr>
             </tbody>
           </table></div>
           <p class="mp">Read the headline number as <strong>&ldquo;one defensible estimate under stated assumptions,&rdquo;</strong> not as the cost. A different-but-equally-defensible set of choices would produce a materially different figure — which is exactly what the range beside the total shows.</p>

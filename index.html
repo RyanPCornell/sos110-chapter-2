@@ -690,6 +690,15 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 @keyframes pollpop{from{transform:scale(.55); opacity:0;} to{transform:scale(1); opacity:1;}}
 .poll-opt.correct{border-color:var(--opt,var(--accent));
   box-shadow:0 0 0 3px var(--opt,var(--accent)) inset, 0 6px 18px rgba(20,40,30,.18);}
+/* sources line, uncovered together with the answer */
+.poll-refs{max-width:1060px; width:100%; margin:.55rem auto 0; padding-top:.4rem;
+  border-top:1px solid var(--line); font-size:clamp(.6rem,.95vw,.72rem); line-height:1.45;
+  color:var(--muted); font-style:italic;}
+.poll-refs[hidden]{display:none;}
+/* concealed: the tally is hidden until the instructor reveals it */
+.slide.poll.concealed .poll-opt-fill{width:0 !important;}
+.slide.poll.concealed .poll-opt-count,
+.slide.poll.concealed .poll-opt-pct{visibility:hidden;}
 .poll-mid{flex:1; min-height:0; display:flex; align-items:center; gap:clamp(1rem,3vw,2.6rem);
   max-width:1140px; width:100%; margin:0 auto;}
 .poll-mid .poll-opts{flex:1.35 1 0;}
@@ -1000,6 +1009,114 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 .cm-hbar-val{font-size:.62rem; color:#33453d; font-weight:600; line-height:1; font-variant-numeric:tabular-nums;}
 .cm-foot{margin-top:clamp(.5rem,1.3vh,.85rem); font-size:clamp(.7rem,1.1vw,.84rem); color:var(--muted);
   font-style:italic; line-height:1.35;}
+
+/* ── slide-23 kinship ───────────────────────────────────────────────────────
+   "The Same Trap, Two Commons" sets the visual language for this stretch of the
+   deck: parchment cards with thin warm rules, a sage-and-gold palette, serif
+   numerals, and flat hand-drawn marks. The game had inherited only the
+   background from that pass — everything below brings the rest into line. The
+   base rules above stay untouched so the builder still works outside this deck. */
+.slide.commons{--cm-ink:#3b3222; --cm-body:#4a4436; --cm-mute:#7a7260; --cm-soft:#8a8069;
+  --cm-gold:#8a6a2f; --cm-gold-lt:#b8860b; --cm-sage:#2f6b4f; --cm-rule:rgba(120,100,60,.22);}
+
+/* one radius everywhere, matching the cards on slide 23 */
+.slide.commons .cm-status,
+.slide.commons .cm-scencard,
+.slide.commons .cm-decide,
+.slide.commons .cm-me,
+.slide.commons .cm-board,
+.slide.commons .cm-reveal,
+.slide.commons .cm-hostbar,
+.slide.commons .cm-picks,
+.slide.commons .cm-hist,
+.slide.commons .cm-summary{border-radius:8px;}
+.slide.commons .cm-picks,
+.slide.commons .cm-hist,
+.slide.commons .cm-summary{box-shadow:none; border-color:var(--cm-rule);}
+
+/* pill controls, like the tab group at the top of slide 23 */
+.slide.commons .cm-hbtn{font-family:'Merriweather',serif; font-weight:700; border-radius:999px;
+  padding:.44rem 1.05rem; box-shadow:0 2px 8px rgba(80,60,20,.16);}
+.slide.commons .cm-hbtn:hover{filter:brightness(1.06);}
+.slide.commons .cm-join-btn{border-radius:999px;}
+.slide.commons .cm-submit:disabled{background:#cfc6b2;}
+.slide.commons .cm-scen,
+.slide.commons .cm-rounds{border-width:1.5px; border-radius:8px;}
+.slide.commons .cm-scen:focus,
+.slide.commons .cm-rounds:focus{border-color:var(--cm-gold);}
+.slide.commons .cm-hostbar{background:rgba(184,134,11,.07); border:1px dashed rgba(138,106,47,.45);
+  gap:.4rem; padding:.5rem .65rem;}
+/* the final phase carries the most in the left column — the host bar, the
+   longest reveal text and the distribution at once — so it runs tightest */
+.slide.commons .cm-left{gap:.35rem;}
+.slide.commons.is-final .cm-reveal{gap:.28rem;}
+.slide.commons.is-final .cm-reveal-lines{line-height:1.4;}
+
+/* prose and cards run in the parchment inks rather than the old teal set */
+.slide.commons .cm-scencard{border-left:3px solid var(--cm-gold);}
+.slide.commons .cm-scencard-desc{color:var(--cm-body);}
+.slide.commons .cm-decide{background:#fffdf8; border-color:var(--cm-rule);}
+.slide.commons .cm-decide-prompt{font-family:'Merriweather',serif; color:var(--cm-ink);}
+.slide.commons .cm-range-num{color:var(--cm-gold);}
+.slide.commons .cm-range-unit{color:var(--cm-soft);}
+.slide.commons .cm-ex{background:#fdf8ec; color:var(--cm-body);}
+.slide.commons .cm-ex b,
+.slide.commons .cm-ex strong{color:var(--cm-ink);}
+.slide.commons .cm-me{background:#fffdf8; border-color:var(--cm-rule);
+  border-left:3px solid var(--cm-gold); color:var(--cm-body);}
+.slide.commons .cm-me strong{color:var(--cm-ink);}
+.slide.commons .cm-reveal-lines{color:var(--cm-body);}
+.slide.commons .cm-reveal-lines strong{color:var(--cm-ink);}
+.slide.commons .cm-reveal-lines .coop{color:var(--cm-mute);}
+.slide.commons .cm-brow{color:var(--cm-body);}
+.slide.commons .cm-brow .rk,
+.slide.commons .cm-brow .tk{color:var(--cm-soft);}
+.slide.commons .cm-brow .er{color:var(--cm-ink);}
+.slide.commons .cm-brow:first-child .er,
+.slide.commons .cm-brow.me .nm{color:var(--cm-gold);}
+
+/* the round verdict was a saturated block of colour — slide 23 never shouts, so
+   it becomes a tinted band with a colour-coded edge and dark text */
+.slide.commons .cm-zone{color:var(--cm-ink); background:#fdf8ec; font-weight:700;
+  border:1px solid var(--cm-rule); border-left:4px solid var(--cm-mute);}
+.slide.commons .cm-zone.green{border-left-color:#2f6b4f; background:#eff5ef;}
+.slide.commons .cm-zone.yellow{border-left-color:#b8860b; background:#fdf4e2;}
+.slide.commons .cm-zone.orange{border-left-color:#a4673a; background:#fbeee3;}
+.slide.commons .cm-zone.red{border-left-color:#a4373a; background:#f9ecec;}
+
+/* the pond, built from the same materials as the charts beside it */
+.slide.commons .cm-pond{border-radius:12px; border:1px solid var(--cm-rule); box-shadow:none;
+  background:linear-gradient(180deg,#fffdf8,#f3ecdc);}
+/* a drawn surface line rather than a glossy highlight */
+.slide.commons .cm-water::before{background:rgba(255,253,248,.6); height:9px; top:-5px;}
+.slide.commons.dead .cm-water{background:linear-gradient(180deg,#c9c4b4,#8d8878);}
+.slide.commons .cm-pool-badge{background:rgba(255,253,248,.94); border:1px solid var(--cm-rule);
+  border-radius:10px; box-shadow:0 3px 12px rgba(80,60,20,.12);}
+.slide.commons .cm-pool-num{color:var(--cm-ink);}
+.slide.commons .cm-pool-lbl{color:var(--cm-mute);}
+.slide.commons .cm-cap{color:var(--cm-mute); font-weight:600; border-radius:8px;
+  background:rgba(255,253,248,.86); border:1px solid var(--cm-rule);}
+.cm-fish span{display:block; line-height:0;}
+.cm-fish svg{display:block; width:clamp(15px,3vh,25px); height:auto;}
+.cm-fish .sp{fill:#f6efe0; stroke:#3b3222; stroke-width:1.3; stroke-linejoin:round;}
+.cm-fish .sp-d{fill:#3b3222;}
+
+/* the end-of-game banner, as a card rather than a shouted pill */
+.slide.commons .cm-banner span{font-size:clamp(1.15rem,3.1vw,2.25rem); text-transform:none;
+  border-radius:10px; padding:.6rem 1.1rem; letter-spacing:.005em;
+  border:1px solid var(--cm-rule); box-shadow:0 10px 30px rgba(80,60,20,.2);}
+.slide.commons .cm-banner.bad span{color:#8a2f32; background:rgba(255,253,248,.96);
+  border-left:5px solid #a4373a;}
+.slide.commons .cm-banner.good span{color:#2f6b4f; background:rgba(255,253,248,.96);
+  border-left:5px solid #2f6b4f;}
+
+/* the round-by-round strip in the same sage and gold as the charts */
+.slide.commons .cm-hbar-col{background:rgba(120,100,60,.12); border-radius:5px;}
+.slide.commons .cm-hbar-fill{background:#c9a24a; border-radius:5px 5px 0 0;}
+.slide.commons .cm-hbar.dead .cm-hbar-fill{background:#a4373a;}
+.slide.commons .cm-hbar-lbl{color:var(--cm-soft);}
+.slide.commons .cm-hbar-val{color:var(--cm-body);}
+
 @media (max-width:820px){
   .cm-body{grid-template-columns:1fr; overflow:auto;}
   .cm-pond{min-height:30vh;}
@@ -2000,11 +2117,11 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
           <div class="cm-hostrow" data-cm-setup>
             <label class="cm-hlabel">Scenario</label>
             <select class="cm-scen" data-cm-scen>
-              <option value="fishing">🎣 The Fishing Village</option>
-              <option value="pasture">🐄 The Shared Pasture</option>
-              <option value="emissions">🌍 The Climate Summit</option>
-              <option value="bandwidth">📡 The Office Network</option>
-              <option value="forest">🌳 The Amazon Rainforest</option>
+              <option value="fishing">The Fishing Village</option>
+              <option value="pasture">The Shared Pasture</option>
+              <option value="emissions">The Climate Summit</option>
+              <option value="bandwidth">The Office Network</option>
+              <option value="forest">The Amazon Rainforest</option>
             </select>
             <label class="cm-hlabel">Rounds</label>
             <input class="cm-rounds" type="number" data-cm-rounds value="3" min="1" max="10">
@@ -2165,6 +2282,12 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 </div>
 
 <script>
+// A game slide's inline script runs BEFORE this one (slides are emitted above the
+// shared script tag), so whichever gets there first creates the promise and the
+// other reuses it. POLL_JS resolves it once the live backend is ready.
+if(!window.__deckLiveReady){
+  window.__deckLiveReady = new Promise(function(res){ window.__deckLiveResolve = res; });
+}
 const slides = Array.from(document.querySelectorAll('.slide'));
 let cur = 0;
 const progress = document.getElementById('progress');
@@ -2228,6 +2351,7 @@ slides.forEach(s=>s.classList.remove('active'));
 show(start);
 </script>
 <script src="firebase-config.js?v=987629a7f7"></script>
+<script>if(new URLSearchParams(location.search).has("demo"))window.FIREBASE_CONFIG={apiKey:"YOUR_API_KEY"};</script>
 <script type="module">
 (async function(){
   const HOST = new URLSearchParams(location.search).has('host');
@@ -2244,16 +2368,19 @@ show(start);
   const splitdollars = Array.from(document.querySelectorAll('.slide.splitdollar'));
   const endows = Array.from(document.querySelectorAll('.slide.endow'));
   const captrades = Array.from(document.querySelectorAll('.slide.captrade'));
+  const inspects = Array.from(document.querySelectorAll('.slide.inspect'));
   const qafeeds = Array.from(document.querySelectorAll('.slide.qa'));
   const gridmixes = Array.from(document.querySelectorAll('.slide.gridmix'));
   const paybacks = Array.from(document.querySelectorAll('.slide.payback'));
   const shifts = Array.from(document.querySelectorAll('.slide.shift'));
   const guessembeds = Array.from(document.querySelectorAll('.guess-embed'));
   const attends = Array.from(document.querySelectorAll('[data-at-id]'));
+  const games = Array.from(document.querySelectorAll('[data-game-id]'));  // class_games.py
   if(!polls.length && !clouds.length && !probpolls.length && !dpolls.length && !commons.length
      && !guesses.length && !heatmaps.length && !rankings.length && !spectrums.length && !dollars.length
      && !captrades.length && !qafeeds.length && !gridmixes.length && !paybacks.length && !shifts.length
-     && !endows.length && !splitdollars.length && !guessembeds.length && !attends.length) return;
+     && !endows.length && !splitdollars.length && !guessembeds.length && !inspects.length
+     && !attends.length && !games.length) return;
 
   // ---- pick a backend -----------------------------------------------------
   // Simple counts API (poll, wordcloud, dpoll votes): subscribe / bump / reset
@@ -2362,6 +2489,15 @@ show(start);
     }catch(err){ backend=localBackend(); status='offline'; console.warn('[interactive] Firebase load failed, using local backend', err); }
   } else { backend=localBackend(); status='local'; }
 
+  // ── publish the live backend ────────────────────────────────────────────
+  // Bespoke multiplayer slides (see class_games.py) await this instead of
+  // re-implementing sharding, Firebase loading and the ?host convention:
+  //   window.__deckLiveReady.then(({backend, HOST}) => { … })
+  try{
+    window.__deckLive = {backend:backend, status:status, HOST:HOST};
+    if(window.__deckLiveResolve) window.__deckLiveResolve(window.__deckLive);
+  }catch(e){}
+
   const navKeys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','PageUp','PageDown','Home','End'];
 
   // ---- wire each poll -----------------------------------------------------
@@ -2443,6 +2579,10 @@ show(start);
         let shown=false;
         function setReveal(on){
           shown=on; answerBox.hidden=!on; sec.classList.toggle('revealed',on);
+          // a concealed poll also uncovers its bars/percentages on reveal
+          if(sec.dataset.pollConceal) sec.classList.toggle('concealed', !on);
+          var refsEl=sec.querySelector('[data-poll-refs]');
+          if(refsEl) refsEl.hidden=!on;
           opts.forEach((b,i)=>b.classList.toggle('correct', on && i===ansIdx));
           revealBtn.textContent = on ? 'Hide answer' : 'Reveal answer';
           revealBtn.setAttribute('aria-expanded', on?'true':'false');
@@ -2847,26 +2987,49 @@ show(start);
   //     health, gameId, collapsed, players:{pk:name}, choices:{rN:{pk:amt}},
   //     hist:{rN:{total,cap,sust,mult,zone,health,coopPer,coopEarn}} }
   const CM_SCEN={
-    fishing:{name:'The Fishing Village', icon:'🎣', res:'🐟', color:'#0077b6',
-      grad:'linear-gradient(180deg,#48cae4,#023e8a)',
+    fishing:{name:'The Fishing Village', res:'fish', color:'#4a7a8e',
+      grad:'linear-gradient(180deg,#c6dae5,#5e88a1)',
       desc:'You are a fisher in a coastal village. Each season you decide how many fish to harvest from the community lake. It supports a limited harvest — take too many and the population collapses for everyone.',
       prompt:'How many fish will you harvest this season?', resName:'Fish population', unit:'fish', unitValue:100, max:10},
-    pasture:{name:'The Shared Pasture', icon:'🐄', res:'🌿', color:'#2d6a4f',
-      grad:'linear-gradient(180deg,#74c69d,#1b4332)',
+    pasture:{name:'The Shared Pasture', res:'grass', color:'#4a7a5e',
+      grad:'linear-gradient(180deg,#cfe1d4,#63917a)',
       desc:'You are a farmer grazing cattle on shared common land. The pasture supports a limited herd — overgraze it and the grass never recovers, leaving every farmer with barren land.',
       prompt:'How many cattle will you graze on the commons?', resName:'Pasture health', unit:'cattle', unitValue:150, max:8},
-    emissions:{name:'The Climate Summit', icon:'🌍', res:'🌡️', color:'#7209b7',
-      grad:'linear-gradient(180deg,#c77dff,#240046)',
+    emissions:{name:'The Climate Summit', res:'heat', color:'#7a5f8a',
+      grad:'linear-gradient(180deg,#ded5e4,#7d6b8f)',
       desc:'You represent a nation at a climate summit. Emitting more carbon grows your economy — but if global emissions run too high, climate damage devastates every nation equally.',
       prompt:'How many carbon units will your nation emit this year?', resName:'Atmospheric stability', unit:'CO₂ units', unitValue:120, max:10},
-    bandwidth:{name:'The Office Network', icon:'📡', res:'💻', color:'#0f3460',
-      grad:'linear-gradient(180deg,#1e6091,#0d1b2a)',
+    bandwidth:{name:'The Office Network', res:'screen', color:'#4a6a86',
+      grad:'linear-gradient(180deg,#d0dae4,#5f7a8e)',
       desc:'Your office shares one internet connection. Streaming and downloads help you — but if everyone maxes out, the network slows to a crawl for the whole office.',
       prompt:'How many Mbps of bandwidth will you consume?', resName:'Network speed', unit:'Mbps', unitValue:80, max:12},
-    forest:{name:'The Amazon Rainforest', icon:'🌳', res:'🌲', color:'#1b4332',
-      grad:'linear-gradient(180deg,#40916c,#081c15)',
+    forest:{name:'The Amazon Rainforest', res:'pine', color:'#3f7a4f',
+      grad:'linear-gradient(180deg,#cee0cc,#5f8d5e)',
       desc:'You run a logging company in the Amazon. Clearing land generates revenue — but destroy too much forest and biodiversity collapse and climate feedbacks devastate the whole region.',
       prompt:'How many hectares (×1,000) will you clear this year?', resName:'Forest coverage', unit:'hectares ×1k', unitValue:200, max:8}
+  };
+  // Flat cream-on-ink marks rather than emoji, so the pond is drawn in the same
+  // hand it draws its charts in. Cream fill + dark outline reads on both the pale
+  // top of the wash and the darker water below.
+  const CM_SPRITE={
+    fish:'<svg viewBox="0 0 26 14" aria-hidden="true">'
+      +'<path class="sp" d="M4.4 7 L0.8 3.4 L1.9 7 L0.8 10.6 Z"/>'
+      +'<path class="sp" d="M4 7 Q9 1.6 16.5 2.6 Q23 3.6 25 7 Q23 10.4 16.5 11.4 Q9 12.4 4 7 Z"/>'
+      +'<circle class="sp-d" cx="20.2" cy="6.1" r=".95"/></svg>',
+    grass:'<svg viewBox="0 0 20 17" aria-hidden="true">'
+      +'<path class="sp" d="M10 16.4 Q7.4 9.4 4.6 3.6 Q8 8.4 11 16.4 Z"/>'
+      +'<path class="sp" d="M10 16.4 Q9.4 9 9.8 2.2 Q11.6 9 11.4 16.4 Z"/>'
+      +'<path class="sp" d="M10 16.4 Q12.4 9.6 15.4 4.4 Q12.6 9.6 11.2 16.4 Z"/></svg>',
+    heat:'<svg viewBox="0 0 12 19" aria-hidden="true">'
+      +'<path class="sp" d="M6 1.6 A2.3 2.3 0 0 1 8.3 3.9 V10.6 A3.8 3.8 0 1 1 3.7 10.6 V3.9 A2.3 2.3 0 0 1 6 1.6 Z"/>'
+      +'<circle class="sp-d" cx="6" cy="14.1" r="1.7"/></svg>',
+    screen:'<svg viewBox="0 0 22 16" aria-hidden="true">'
+      +'<path class="sp" d="M7.6 15.2 H14.4 L13.4 12.6 H8.6 Z"/>'
+      +'<rect class="sp" x="1" y="1" width="20" height="11.8" rx="1.6"/></svg>',
+    pine:'<svg viewBox="0 0 16 20" aria-hidden="true">'
+      +'<rect class="sp" x="6.9" y="12.8" width="2.2" height="6" rx=".6"/>'
+      +'<path class="sp" d="M8 1.4 L12.6 8.2 H3.4 Z"/>'
+      +'<path class="sp" d="M8 6.4 L13.7 14 H2.3 Z"/></svg>'
   };
   const CM_FMT = n => '$'+Math.round(n).toLocaleString('en-US');
 
@@ -2939,7 +3102,7 @@ show(start);
       const iconKey = S().res+':'+nIcons;
       if(fishBox.dataset.k!==iconKey){
         fishBox.dataset.k=iconKey; fishBox.innerHTML='';
-        for(let i=0;i<nIcons;i++){ const s=document.createElement('span'); s.textContent=S().res;
+        for(let i=0;i<nIcons;i++){ const s=document.createElement('span'); s.innerHTML=CM_SPRITE[S().res]||'';
           s.style.animationDelay=(-Math.random()*2.6).toFixed(2)+'s'; fishBox.appendChild(s); }
       }
       sec.classList.toggle('dead', !!state.collapsed);
@@ -3231,10 +3394,10 @@ show(start);
       const showRev = (ph==='reveal'||ph==='final') && e;
       revealBox.hidden = !(showRev || ph==='final');
       if(!revealBox.hidden && showRev){
-        const zoneTxt={green:'🟢 Sustainable — everyone sold at full price, and the '+S().resName.toLowerCase()+' recovered.',
-          yellow:'🟡 Strained — overharvest cut everyone’s payout to '+Math.round(e.mult*100)+'% of full price.',
-          orange:'🟠 Badly strained — the payout multiplier crashed to '+Math.round(e.mult*100)+'%.',
-          red:'🔴 Beyond capacity — the '+S().resName.toLowerCase()+' crashed. This round paid $0.'};
+        const zoneTxt={green:'Sustainable — everyone sold at full price, and the '+S().resName.toLowerCase()+' recovered.',
+          yellow:'Strained — overharvest cut everyone’s payout to '+Math.round(e.mult*100)+'% of full price.',
+          orange:'Badly strained — the payout multiplier crashed to '+Math.round(e.mult*100)+'%.',
+          red:'Beyond capacity — the '+S().resName.toLowerCase()+' crashed. This round paid $0.'};
         zoneEl.className='cm-zone '+e.zone; zoneEl.textContent=zoneTxt[e.zone]||'';
         let lines='Round '+r+': the class took <strong>'+e.total+' '+S().unit+'</strong> — sustainable threshold was <strong>'
           +Math.floor(e.sust)+'</strong>, capacity <strong>'+e.cap+'</strong>.';
@@ -3253,7 +3416,7 @@ show(start);
       if(HOST || !joined() || !(state.hist&&Object.keys(state.hist).length)){ meEl.hidden=true; return; }
       meEl.hidden=false;
       const r=state.round||0, e=histEntry(r);
-      meEl.innerHTML='💰 Your earnings: '+(e?'<strong>'+CM_FMT(earned(pk,r))+'</strong> this round · ':'')
+      meEl.innerHTML='Your earnings: '+(e?'<strong>'+CM_FMT(earned(pk,r))+'</strong> this round · ':'')
         +'<strong>'+CM_FMT(totalEarned(pk))+'</strong> total';
     }
     function payoutMult(total, n, h){ // same payoff model the host uses at reveal
@@ -3275,13 +3438,13 @@ show(start);
       const oHigh=Math.max(mid+1, Math.round(S().max*0.8)); // others averaging unsustainably high
       const mA=payoutMult(hi+(n-1)*mid, n, h);            // you defect, others sustainable
       const mB=payoutMult(lo+(n-1)*oHigh, n, h);          // you hold back, others defect
-      const row=(color,emoji,txt)=>'<div class="cm-ex" style="border-left-color:'+color+'">'+emoji+' '+txt+'</div>';
+      const row=(color,txt)=>'<div class="cm-ex" style="border-left-color:'+color+'">'+txt+'</div>';
       examplesEl.innerHTML =
-        row('#BC8A2E','😈','If you take <b>'+hi+'</b> and the other '+(n-1)+' average '+mid+' each → <strong>you earn '
+        row('#b8860b','If you take <b>'+hi+'</b> and the other '+(n-1)+' average '+mid+' each → <strong>you earn '
           +CM_FMT(hi*uv*mA)+'</strong>, they get '+CM_FMT(mid*uv*mA)+' each.')
-        +row('#A4373A','😇','If you take <b>'+lo+'</b> and the others average '+oHigh+' each → <strong>you earn '
+        +row('#a4373a','If you take <b>'+lo+'</b> and the others average '+oHigh+' each → <strong>you earn '
           +CM_FMT(lo*uv*mB)+'</strong>'+(mB===0?' — the '+S().resName.toLowerCase()+' crashes.':'.'))
-        +row('#2D6A4F','🤝','If <b>everyone</b> takes '+mid+' → <strong>everyone earns '+CM_FMT(mid*uv)
+        +row('#2f6b4f','If <b>everyone</b> takes '+mid+' → <strong>everyone earns '+CM_FMT(mid*uv)
           +'</strong> at full price, every round — and the '+S().resName.toLowerCase()+' recovers.');
     }
     function render(){
@@ -3291,13 +3454,13 @@ show(start);
       theme(); renderMeter(); renderHist(); renderPicks(); renderSummary(); renderBoard(); renderReveal(); renderMe();
       // scenario story card
       scenCard.hidden = !(ph==='lobby' || (ph!=='idle' && !joined() && !HOST && ph!=='final'));
-      if(!scenCard.hidden){ scenName.textContent=S().icon+' '+S().name;
+      if(!scenCard.hidden){ scenName.textContent=S().name;
         scenDesc.textContent=S().desc; }
       // banner
       if(state.collapsed){ banner.hidden=false; banner.className='cm-banner bad';
-        banner.innerHTML='<span>💀 The commons collapsed!</span>'; }
+        banner.innerHTML='<span>The commons collapsed</span>'; }
       else if(ph==='final'){ banner.hidden=false; banner.className='cm-banner good';
-        banner.innerHTML='<span>🌊 The commons survived '+r+' round'+(r===1?'':'s')+'!</span>'; }
+        banner.innerHTML='<span>The commons survived '+r+' round'+(r===1?'':'s')+'</span>'; }
       else banner.hidden=true;
       // join + decide visibility (students only)
       joinForm.hidden = HOST || !(ph==='lobby'||ph==='open') || joined();
@@ -4861,6 +5024,493 @@ show(start);
       });
     }
     backend.subscribeDoc('polls', id, function(d){ state=(d&&d.v===4)?d:{phase:'idle'}; render(); });
+  });
+
+  // ---- wire each Inspector game (adversarial pursuit, Ch 8.7) --------------
+  // Half the room runs plants (comply / cheat quietly / cheat openly), half
+  // inspects them (random / target big emitters / follow up on complaints).
+  // Both move at once, and the inspectors' MIX sets the probability each kind
+  // of cheat is caught — so there is no dominant move on either side.
+  //
+  // The teaching object is Becker (1968): deterrence = probability x penalty.
+  // The payoffs are tuned so pulling ONE lever leaves cheating just as common
+  // but drives it from open to quiet, and only pulling BOTH produces
+  // compliance. Both single-lever paths give identical numbers, which is the
+  // proof that only the product matters.
+  //
+  // Shared doc in 'polls':
+  //   { iv:1, phase:'idle'|'lobby'|'open'|'reveal'|'final', gameId, rounds, round,
+  //     cov, fine, players:{pk:ts}, roles:{pk:'p'|'i'}, choices:{rN:{pk:key}},
+  //     caught:{rN:{pk:1}}, hist:{rN:{...}} }
+  const INS_PAY  = {comply:60, quiet:85, open:100};   // revenue net of cleanup
+  const INS_GAIN = {quiet:25, open:40};               // saved vs complying
+  const INS_D = {                                     // detection before coverage
+    rand:{quiet:0.18, open:0.30},
+    big: {quiet:0.06, open:0.62},
+    comp:{quiet:0.30, open:0.28}
+  };
+  const INS_COV={off:0.5, on:1.0}, INS_FINE={off:100, on:200};
+  const INS_PMOVE=[
+    {k:'comply', n:'Comply',            d:'Run the scrubbers. Costs you $40 in cleanup.',      p:'$60'},
+    {k:'quiet',  n:'Cheat quietly',     d:'Cut cleanup back where it is hard to notice.',      p:'$85'},
+    {k:'open',   n:'Cheat openly',      d:'Skip cleanup altogether. Cheapest, and obvious.',   p:'$100'}
+  ];
+  const INS_IMOVE=[
+    {k:'rand', n:'Random spot checks',      d:'Even coverage — catches a little of everything.'},
+    {k:'big',  n:'Target the big emitters', d:'Strong against blatant violations, weak on subtle ones.'},
+    {k:'comp', n:'Follow up on complaints', d:'Strong against subtle violations near neighborhoods.'}
+  ];
+  const INS_FMT = n => '$'+Math.round(n).toLocaleString('en-US');
+  const INS_PCT = x => Math.round(x*100)+'%';
+  function insHash(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h>>>0; }
+  function insRnd(s){ let h=insHash(s); h^=h>>>16; h=Math.imul(h,2246822507)>>>0; h^=h>>>13; h=Math.imul(h,3266489909)>>>0; h^=h>>>16; return (h>>>0)/4294967296; }
+
+  inspects.forEach(function(sec){
+    const id = sec.dataset.insId;
+    const el = s=>sec.querySelector(s);
+    const roundsIn=el('[data-ins-rounds]'), startBtn=el('[data-ins-start]'),
+      nextBtn=el('[data-ins-next]'), endBtn=el('[data-ins-end]'), finishBtn=el('[data-ins-finish]'),
+      leversBox=el('[data-ins-levers]'), statusEl=el('[data-ins-status]'),
+      joinBox=el('[data-ins-join]'), joinBtn=el('[data-ins-joinbtn]'),
+      roleCard=el('[data-ins-rolecard]'), roleTag=el('[data-ins-roletag]'),
+      roleName=el('[data-ins-rolename]'), roleDesc=el('[data-ins-roledesc]'),
+      decideBox=el('[data-ins-decide]'), promptEl=el('[data-ins-prompt]'), optsEl=el('[data-ins-opts]'),
+      submitBtn=el('[data-ins-submit]'), revealBox=el('[data-ins-reveal]'),
+      verdictEl=el('[data-ins-verdict]'), revLines=el('[data-ins-revlines]'),
+      meEl=el('[data-ins-me]'), boardBox=el('[data-ins-board]'),
+      boardP=el('[data-ins-boardplants]'), boardI=el('[data-ins-boardinsp]'),
+      gaugeSvg=el('[data-ins-gauge]'), eqEl=el('[data-ins-eq]'),
+      mixBox=el('[data-ins-mix]'), mixSvg=el('[data-ins-mixsvg]'),
+      sumBox=el('[data-ins-summary]'), chipsEl=el('[data-ins-chips]');
+    sec.addEventListener('keydown', e=>{ if(navKeys.indexOf(e.key)>-1) e.stopPropagation(); });
+    if(HOST) sec.classList.add('host');
+
+    let pk=localStorage.getItem('ins-pk:'+id);
+    if(!pk){ pk='p'+Math.random().toString(36).slice(2,10); localStorage.setItem('ins-pk:'+id, pk); }
+
+    let state={phase:'idle'}, pick=null, pickRound=-1;
+    const players=()=>state.players||{};
+    const roles=()=>state.roles||{};
+    const R=()=>state.round||0;
+    const NR=()=>state.rounds||5;
+    const cov=()=>state.cov||INS_COV.off;
+    const fine=()=>state.fine||INS_FINE.off;
+    const joined=()=>!HOST && players()[pk]!==undefined;
+    const myRole=()=>roles()[pk]||null;
+    const choicesFor=r=>(state.choices&&state.choices['r'+r])||{};
+    const caughtFor=r=>(state.caught&&state.caught['r'+r])||{};
+    const histFor=r=>(state.hist&&state.hist['r'+r])||null;
+
+    // display names by join order, exactly as the commons game numbers players
+    let nameMap={};
+    function rebuildNames(){
+      const ks=Object.keys(players()).sort((a,b)=>(players()[a]-players()[b])||(a<b?-1:1));
+      nameMap={}; let np=0, ni=0;
+      ks.forEach(function(k){
+        const r=roles()[k];
+        if(r==='i'){ ni++; nameMap[k]='Inspector '+ni; }
+        else { np++; nameMap[k]='Plant '+np; }
+      });
+    }
+    const nameOf=k=>nameMap[k]||'Player';
+    function roleCounts(){
+      let p=0,i=0; Object.keys(players()).forEach(function(k){ if(roles()[k]==='i') i++; else if(roles()[k]==='p') p++; });
+      return {p:p,i:i};
+    }
+
+    // detection probabilities implied by the inspectors' actual mix this round
+    function probs(imix, coverage){
+      const tot=(imix.rand||0)+(imix.big||0)+(imix.comp||0);
+      let q=0,o=0;
+      if(!tot){ ['rand','big','comp'].forEach(function(s){ q+=INS_D[s].quiet/3; o+=INS_D[s].open/3; }); }
+      else ['rand','big','comp'].forEach(function(s){
+        const sh=(imix[s]||0)/tot; q+=sh*INS_D[s].quiet; o+=sh*INS_D[s].open; });
+      return {q:Math.min(1,q*coverage), o:Math.min(1,o*coverage)};
+    }
+    // what a rational plant would do, given those probabilities
+    function bestMove(p, f){
+      const v={comply:INS_PAY.comply, quiet:INS_PAY.quiet-p.q*f, open:INS_PAY.open-p.o*f};
+      let bk='comply'; ['quiet','open'].forEach(function(k){ if(v[k]>v[bk]) bk=k; });
+      return {key:bk, v:v};
+    }
+
+    function totals(){
+      const out={};
+      Object.keys(players()).forEach(function(k){ out[k]={earn:0, caught:0, n:0}; });
+      for(let r=1;r<=R();r++){
+        const h=histFor(r); if(!h) continue;
+        const ch=choicesFor(r), cg=caughtFor(r);
+        Object.keys(players()).forEach(function(k){
+          if(!out[k]) return;
+          const c=ch[k]; if(c===undefined) return;
+          out[k].n++;
+          if(roles()[k]==='i'){
+            const per=(h.perInsp&&h.perInsp[c]!==undefined)?h.perInsp[c]:0;
+            out[k].earn+=50+80*per; out[k].caught+=per;
+          } else {
+            out[k].earn+=INS_PAY[c]-(cg[k]?h.fine:0);
+          }
+        });
+      }
+      return out;
+    }
+
+    // ── the gauge: what each cheat nets you AFTER the expected penalty,
+    // measured against simply complying. Zero is the break-even line, so a bar
+    // to the right means that cheat still pays. Showing BOTH cheats matters:
+    // at the half-measure the open bar falls to zero while the quiet bar is
+    // still positive, which is the whole lesson made visible.
+    function renderGauge(){
+      const h=histFor(R());
+      const imix=h?h.imix:null, c=h?h.cov:cov(), f=h?h.fine:fine();
+      const p=probs(imix||{}, c);
+      const net={quiet:(INS_PAY.quiet-p.q*f)-INS_PAY.comply, open:(INS_PAY.open-p.o*f)-INS_PAY.comply};
+      const best=bestMove(p,f);
+      const W=460, CX=292, TOP=30, BH=28, GAP=20, HALF=150, GUT=8;
+      const max=Math.max(25, Math.abs(net.quiet), Math.abs(net.open))*1.12;
+      const w=v=>Math.max(2,(Math.abs(v)/max)*HALF);
+      const rows=[{k:'quiet', n:'Cheat quietly', v:net.quiet},{k:'open', n:'Cheat openly', v:net.open}];
+      let sv='';
+      rows.forEach(function(o,i){
+        const y=TOP+i*(BH+GAP), pays=o.v>0.5, bw=w(o.v);
+        const x=pays?CX:CX-bw;
+        sv+='<text class="ins-glbl" x="'+GUT+'" y="'+(y+19)+'">'+o.n+'</text>';
+        sv+='<rect class="ins-gbar '+(pays?'gain':'pen over')+'" x="'+x.toFixed(1)+'" y="'+y+'" width="'
+          + bw.toFixed(1)+'" height="'+BH+'" rx="4"/>';
+        // a long bar reaches back under the row label, so its value goes INSIDE
+        const inside = bw>62;
+        const lx = inside ? (pays ? x+bw-8 : x+8) : (pays ? x+bw+7 : x-7);
+        const anch = inside ? (pays?'end':'start') : (pays?'start':'end');
+        sv+='<text class="ins-gnum'+(inside?' in':'')+'" x="'+lx.toFixed(1)+'" y="'+(y+20)
+          + '" text-anchor="'+anch+'">'+(o.v>0?'+':'')+INS_FMT(o.v)+'</text>';
+      });
+      const BOT=TOP+2*BH+GAP;
+      sv+='<path class="ins-gaxis" d="M'+CX+' '+(TOP-9)+' V'+(BOT+8)+'"/>';
+      sv+='<text class="ins-gsub" x="'+CX+'" y="'+(TOP-14)+'" text-anchor="middle">same as complying</text>';
+      sv+='<text class="ins-gsub" x="'+(CX-8)+'" y="'+(BOT+21)+'" text-anchor="end">&#8592; complying pays more</text>';
+      sv+='<text class="ins-gsub" x="'+(CX+8)+'" y="'+(BOT+21)+'">cheating still pays &#8594;</text>';
+      const vTxt={comply:'Complying pays best.', quiet:'Cheating still pays — quietly.', open:'Cheating openly pays best.'}[best.key];
+      sv+='<text class="ins-gverdict" x="'+GUT+'" y="'+(BOT+42)+'" fill="'
+        + (best.key==='comply'?'#2f6b4f':(best.key==='quiet'?'#8a6a2f':'#a1503c'))+'">'+vTxt+'</text>';
+      gaugeSvg.innerHTML=sv;
+      eqEl.innerHTML='Deterrence = chance caught &times; the fine. Quiet cheat: <b>'+INS_PCT(p.q)+'</b> &times; '
+        + INS_FMT(f)+' = <b>'+INS_FMT(p.q*f)+'</b> against '+INS_FMT(INS_GAIN.quiet)+' saved. Open cheat: <b>'
+        + INS_PCT(p.o)+'</b> &times; '+INS_FMT(f)+' = <b>'+INS_FMT(p.o*f)+'</b> against '+INS_FMT(INS_GAIN.open)
+        + ' saved.'+(h?'':' Figures update as soon as a round is played.');
+    }
+
+    // ── round-by-round mix of what plants actually did ──
+    function renderMix(){
+      const rounds=[]; for(let r=1;r<=R();r++){ const h=histFor(r); if(h) rounds.push({r:r,h:h}); }
+      mixBox.hidden = rounds.length===0;
+      if(!rounds.length) return;
+      const W=460, H=150, PADL=30, PADR=8, TOP=10, BASE=112;
+      const n=rounds.length, slot=(W-PADL-PADR)/n, bw=Math.min(52, slot*0.62);
+      let sv='';
+      // the columns are shares of the plants, so give them a real percentage axis
+      [0,0.25,0.5,0.75,1].forEach(function(f){
+        const y=(BASE-f*(BASE-TOP)).toFixed(1);
+        sv+='<path class="ins-grid" d="M'+PADL+' '+y+' H'+(W-PADR)+'"/>'
+          + '<text class="ins-axl" x="'+(PADL-5)+'" y="'+(+y+3.5).toFixed(1)+'" text-anchor="end">'+Math.round(f*100)+'%</text>';
+      });
+      rounds.forEach(function(o,i){
+        const h=o.h, m=h.mix||{}, tot=(m.comply||0)+(m.quiet||0)+(m.open||0);
+        const x=PADL+i*slot+(slot-bw)/2;
+        if(!tot){
+          sv+='<rect class="ins-seg comply" x="'+x.toFixed(1)+'" y="'+(BASE-2)+'" width="'+bw.toFixed(1)+'" height="2"/>';
+        } else {
+          let y=BASE;
+          [['open',m.open||0],['quiet',m.quiet||0],['comply',m.comply||0]].forEach(function(pair){
+            const cls=pair[0], v=pair[1]; if(!v) return;
+            const hgt=(v/tot)*(BASE-TOP); y-=hgt;
+            sv+='<rect class="ins-seg '+cls+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hgt.toFixed(1)+'"/>';
+            if(hgt>13) sv+='<text class="ins-mixnum" x="'+(x+bw/2).toFixed(1)+'" y="'+(y+hgt/2+3.5).toFixed(1)+'" text-anchor="middle">'+v+'</text>';
+          });
+        }
+        sv+='<text class="ins-mixlbl" x="'+(x+bw/2).toFixed(1)+'" y="'+(BASE+13)+'" text-anchor="middle">R'+o.r+'</text>';
+        sv+='<text class="ins-mixlbl" x="'+(x+bw/2).toFixed(1)+'" y="'+(BASE+26)+'" text-anchor="middle" fill="#3f5f7a">'
+          + INS_FMT(h.det||0)+'</text>';
+      });
+      sv+='<text class="ins-mixlbl" x="'+PADL+'" y="'+(BASE+39)+'" fill="#3f5f7a">deterrence = chance caught &#215; fine</text>';
+      mixSvg.innerHTML=sv;
+    }
+
+    // ── the round verdict, written to explain WHY it came out that way ──
+    function renderReveal(){
+      const ph=state.phase, r=R(), h=histFor(r);
+      const show=(ph==='reveal'||ph==='final')&&h;
+      revealBox.hidden=!show;
+      if(!show) return;
+      const m=h.mix||{}, im=h.imix||{}, nP=(m.comply||0)+(m.quiet||0)+(m.open||0);
+      const p={q:h.pq, o:h.po};
+      const best=bestMove(p, h.fine);
+      const bestName={comply:'complying', quiet:'cheating quietly', open:'cheating openly'}[best.key];
+      verdictEl.className='ins-verdict '+best.key;
+      const cheats=(m.quiet||0)+(m.open||0), caughtN=(h.caughtQ||0)+(h.caughtO||0);
+      verdictEl.textContent = best.key==='comply'
+        ? 'Round '+r+': complying was the profitable move — and '+(m.comply||0)+' of '+nP+' plants took it.'
+        : 'Round '+r+': '+bestName+' was the profitable move. '+cheats+' of '+nP+' plants cheated; '
+          + caughtN+(caughtN===1?' was':' were')+' caught.';
+      let s='Plants: <strong>'+(m.comply||0)+'</strong> complied, <strong>'+(m.quiet||0)
+        +'</strong> cheated quietly, <strong>'+(m.open||0)+'</strong> cheated openly. '
+        +'Inspectors: <strong>'+(im.rand||0)+'</strong> ran spot checks, <strong>'+(im.big||0)
+        +'</strong> targeted big emitters, <strong>'+(im.comp||0)+'</strong> worked complaints. '
+        +'That mix caught a quiet cheat <strong>'+INS_PCT(h.pq)+'</strong> of the time and an open one <strong>'
+        +INS_PCT(h.po)+'</strong> of the time.';
+      // The explainer has to reason about the move that ACTUALLY won, not just
+      // the open cheat: at the half-measure the open cheat is deterred while
+      // the quiet one is not, and saying "complying won" there would be false.
+      const penO=h.po*h.fine, penQ=h.pq*h.fine;
+      s+='<span class="why"><b>Why it came out that way.</b> ';
+      if(best.key==='open'){
+        s+='Cheating openly saved '+INS_FMT(INS_GAIN.open)+' against an expected penalty of '+INS_PCT(h.po)
+          +' &times; '+INS_FMT(h.fine)+' = <strong>'+INS_FMT(penO)+'</strong>. The penalty was smaller than the saving, '
+          +'so the most blatant cheat was also the most profitable one.';
+      } else if(best.key==='quiet'){
+        s+='The open cheat is now deterred — it saves '+INS_FMT(INS_GAIN.open)+' against an expected penalty of <strong>'
+          +INS_FMT(penO)+'</strong>. But a quiet cheat saves '+INS_FMT(INS_GAIN.quiet)+' against only <strong>'
+          +INS_FMT(penQ)+'</strong>, so cheating did not stop; it <strong>changed form</strong>. '
+          +'Raising the penalty and funding inspections each double deterrence — it takes both to get past '
+          +INS_FMT(INS_GAIN.open)+'.';
+      } else {
+        s+='Both cheats are now deterred: openly saves '+INS_FMT(INS_GAIN.open)+' against <strong>'+INS_FMT(penO)
+          +'</strong> expected, quietly saves '+INS_FMT(INS_GAIN.quiet)+' against <strong>'+INS_FMT(penQ)
+          +'</strong>. Complying is worth more than either — which took the penalty <em>and</em> the odds of being caught.';
+      }
+      s+=' Expected payouts this round: comply '+INS_FMT(best.v.comply)+', cheat quietly '
+        + INS_FMT(best.v.quiet)+', cheat openly '+INS_FMT(best.v.open)+'.</span>';
+      if(ph==='final'){
+        s+='<span class="why"><b>Game over.</b> The scoreboard is below and the summary is on the right.</span>';
+      }
+      revLines.innerHTML=s;
+    }
+
+    function renderMe(){
+      const r=R(), h=histFor(r);
+      if(HOST||!joined()||!h||!(state.phase==='reveal'||state.phase==='final')){ meEl.hidden=true; return; }
+      const c=choicesFor(r)[pk];
+      if(c===undefined){ meEl.hidden=false; meEl.innerHTML='You sat this round out.'; return; }
+      meEl.hidden=false;
+      if(myRole()==='i'){
+        const per=(h.perInsp&&h.perInsp[c]!==undefined)?h.perInsp[c]:0;
+        const nm=(INS_IMOVE.filter(o=>o.k===c)[0]||{}).n||'your strategy';
+        meEl.innerHTML='You ran <b>'+nm+'</b>. It caught <b>'+per.toFixed(2)
+          +'</b> violations per inspector this round — you earned <b>'+INS_FMT(50+80*per)+'</b>.';
+      } else {
+        const got=caughtFor(r)[pk], base=INS_PAY[c];
+        const nm={comply:'complied',quiet:'cheated quietly',open:'cheated openly'}[c];
+        meEl.innerHTML='You <b>'+nm+'</b> for '+INS_FMT(base)+'. '
+          + (got? 'You were <b>caught</b> and fined '+INS_FMT(h.fine)+' — you kept <b>'+INS_FMT(base-h.fine)+'</b>.'
+                : (c==='comply'? 'No fine was possible.' : 'You were <b>not</b> caught — you kept <b>'+INS_FMT(base)+'</b>.'));
+      }
+    }
+
+    function renderBoard(){
+      const ph=state.phase;
+      const show=(ph==='reveal'||ph==='final')&&Object.keys(players()).length>0;
+      boardBox.hidden=!show; if(!show) return;
+      const t=totals();
+      const ks=Object.keys(t);
+      const plants=ks.filter(k=>roles()[k]!=='i').sort((a,b)=>t[b].earn-t[a].earn).slice(0,5);
+      const insp=ks.filter(k=>roles()[k]==='i').sort((a,b)=>t[b].caught-t[a].caught).slice(0,5);
+      const rowsP=plants.map(k=>'<div class="ins-board-row'+(k===pk?' you':'')+'"><span class="nm">'
+        +nameOf(k)+(k===pk?' (you)':'')+'</span><span class="vv">'+INS_FMT(t[k].earn)+'</span></div>').join('');
+      const rowsI=insp.map(k=>'<div class="ins-board-row'+(k===pk?' you':'')+'"><span class="nm">'
+        +nameOf(k)+(k===pk?' (you)':'')+'</span><span class="vv">'+t[k].caught.toFixed(1)+'</span></div>').join('');
+      boardP.innerHTML=rowsP||'<div class="ins-board-empty">No plants yet.</div>';
+      boardI.innerHTML=rowsI||'<div class="ins-board-empty">No inspectors yet.</div>';
+    }
+
+    // ── closing summary: the chips do the teaching, like the commons game ──
+    function renderSummary(){
+      const show=state.phase==='final';
+      sumBox.hidden=!show; if(!show) return;
+      const hs=[]; for(let r=1;r<=R();r++){ const h=histFor(r); if(h) hs.push(h); }
+      if(!hs.length){ chipsEl.innerHTML=''; return; }
+      const chip=(l,v,e,cls)=>'<div class="ins-chip'+(cls?' '+cls:'')+'"><span>'+l+'</span><b>'+v+'</b><em>'+e+'</em></div>';
+      const first=hs[0], last=hs[hs.length-1];
+      const share=h=>{ const m=h.mix||{}, t=(m.comply||0)+(m.quiet||0)+(m.open||0);
+        return t? {cheat:((m.quiet||0)+(m.open||0))/t, open:(m.open||0)/t, quiet:(m.quiet||0)/t} : {cheat:0,open:0,quiet:0}; };
+      const s0=share(first), s1=share(last);
+      let chips='';
+      // 1 — the number the whole game is about
+      chips+=chip('Deterrence, first round to last',
+        INS_FMT(first.det)+' &rarr; '+INS_FMT(last.det),
+        'chance of being caught &times; the fine, against the '+INS_FMT(INS_GAIN.open)+' an open cheat saves');
+      // 2 — did cheating actually stop?
+      chips+=chip('Plants cheating', INS_PCT(s0.cheat)+' &rarr; '+INS_PCT(s1.cheat),
+        'share of plants that cheated in round 1 versus the final round');
+      // 3 — the form of cheating, which is where the half-measure shows up
+      chips+=chip('Of those cheats, done openly', INS_PCT(s0.cheat?s0.open/s0.cheat:0)+' &rarr; '+INS_PCT(s1.cheat?s1.open/s1.cheat:0),
+        'when penalties rise but detection stays low, cheating gets quieter rather than rarer');
+      // 4 — enforcement actually delivered
+      let cheatsAll=0, caughtAll=0, finesAll=0;
+      hs.forEach(function(h){ const m=h.mix||{}; cheatsAll+=(m.quiet||0)+(m.open||0);
+        caughtAll+=(h.caughtQ||0)+(h.caughtO||0); finesAll+=((h.caughtQ||0)+(h.caughtO||0))*h.fine; });
+      chips+=chip('Cheats actually caught', caughtAll+' of '+cheatsAll,
+        INS_FMT(finesAll)+' collected in fines across the whole game');
+      // 5 — the lesson, stated against what this class actually produced
+      const bothOn=last.cov>=INS_COV.on && last.fine>=INS_FINE.on;
+      const oneOn=(last.cov>=INS_COV.on)!==(last.fine>=INS_FINE.on);
+      let key;
+      if(bothOn) key='Only the product deters. Raising the fine and funding inspections each doubled deterrence; neither alone was enough to beat the '+INS_FMT(INS_GAIN.open)+' a cheat saves, and together they were.';
+      else if(oneOn) key='One lever was pulled, and deterrence doubled to '+INS_FMT(last.det)+' — still short of the '+INS_FMT(INS_GAIN.open)+' an open cheat saves. Cheating did not stop; it got quieter. Pull the other lever and the product finally clears the bar.';
+      else key='With neither lever pulled, deterrence stayed at '+INS_FMT(last.det)+' against a '+INS_FMT(INS_GAIN.open)+' payoff for cheating. Adding inspectors or raising fines would each have doubled it — and only doing both clears the bar.';
+      chips+=chip('The point', 'Penalty &times; probability', key, 'key');
+      chipsEl.innerHTML=chips;
+    }
+
+    function renderDecide(){
+      const ph=state.phase, r=R(), role=myRole();
+      const canPlay = !HOST && joined() && ph==='open' && role;
+      decideBox.hidden = !canPlay;
+      roleCard.hidden = HOST || !joined() || !role;
+      if(!roleCard.hidden){
+        roleCard.classList.toggle('insp', role==='i');
+        roleTag.textContent = role==='i' ? 'Your side' : 'Your side';
+        roleName.textContent = role==='i' ? nameOf(pk)+' — enforcement agency' : nameOf(pk)+' — you run a plant';
+        roleDesc.textContent = role==='i'
+          ? 'You cannot inspect everyone. Choose where to put your effort each round, and you score on violations found.'
+          : 'You earn more by cutting cleanup, and you pay a fine if you are caught. You keep whatever you clear.';
+      }
+      if(!canPlay) return;
+      const already=choicesFor(r)[pk];
+      const list = role==='i' ? INS_IMOVE : INS_PMOVE;
+      promptEl.textContent = role==='i'
+        ? 'Round '+r+' — where will you put your inspection effort?'
+        : 'Round '+r+' — how will you run the plant this year? The fine, if you are caught, is '+INS_FMT(fine())+'.';
+      if(pickRound!==r){ pick=null; pickRound=r; }
+      optsEl.innerHTML = list.map(function(o){
+        const on = already!==undefined ? (already===o.k) : (pick===o.k);
+        return '<button class="ins-opt'+(on?(already!==undefined?' chosen':' on'):'')
+          +(already!==undefined?' done':'')+'" type="button" data-k="'+o.k+'">'
+          +'<span class="txt"><b>'+o.n+'</b><em>'+o.d+'</em></span>'
+          +(o.p?'<span class="pay">'+o.p+'</span>':'')+'</button>';
+      }).join('');
+      Array.from(optsEl.querySelectorAll('.ins-opt')).forEach(function(b){
+        b.addEventListener('click', function(){
+          if(choicesFor(R())[pk]!==undefined) return;
+          pick=b.dataset.k; renderDecide();
+        });
+      });
+      submitBtn.hidden = already!==undefined;
+      submitBtn.disabled = !pick;
+      submitBtn.textContent = already!==undefined ? 'Locked in' : 'Lock in my choice';
+    }
+
+    function render(){
+      rebuildNames();
+      const ph=state.phase||'idle', r=R(), rc=roleCounts();
+      joinBox.hidden = HOST || joined() || !(ph==='lobby'||ph==='open');
+      renderDecide(); renderReveal(); renderMe(); renderBoard(); renderGauge(); renderMix(); renderSummary();
+      if(HOST){
+        startBtn.hidden = !(ph==='idle'||ph==='final');
+        if(ph==='final') startBtn.textContent='Start a new game';
+        nextBtn.hidden = !(ph==='lobby' || (ph==='reveal' && r<NR()));
+        if(!nextBtn.hidden) nextBtn.textContent = ph==='lobby' ? 'Begin round 1 ▸' : 'Begin round '+(r+1)+' ▸';
+        endBtn.hidden = ph!=='open';
+        if(!endBtn.hidden) endBtn.textContent='End round '+r+' — reveal ▸';
+        finishBtn.hidden = !(ph==='reveal'||ph==='open');
+        leversBox.hidden = !(ph==='lobby'||ph==='reveal');
+        Array.from(leversBox.querySelectorAll('.ins-lever')).forEach(function(b){
+          b.classList.toggle('on', b.dataset.insLever==='cov' ? cov()>=INS_COV.on : fine()>=INS_FINE.on);
+        });
+        const n=Object.keys(players()).length;
+        if(ph==='idle') statusEl.textContent='Open the lobby once everyone has the deck open.';
+        else if(ph==='lobby') statusEl.textContent=n+' joined — '+rc.p+' plants, '+rc.i+' inspectors. Roles are dealt as students join.';
+        else if(ph==='open'){ const d=Object.keys(choicesFor(r)).length;
+          statusEl.textContent='Round '+r+' — '+d+' of '+n+' locked in. End the round when ready.'; }
+        else if(ph==='reveal') statusEl.textContent = r<NR()
+          ? 'Round '+r+' is on every screen. Pull a lever — or deliberately do not — then begin round '+(r+1)+'.'
+          : 'Final round revealed. End the game to show the summary.';
+        else statusEl.textContent='Game over — the summary is on every screen.';
+      } else {
+        if(ph==='idle') statusEl.textContent='Waiting for the instructor to open the inspection game…';
+        else if(ph==='lobby') statusEl.textContent = joined()
+          ? 'You’re in as '+nameOf(pk)+'. Waiting for round 1…' : 'Tap to join — you will be dealt a side.';
+        else if(ph==='open') statusEl.textContent = !joined() ? 'Round '+r+' is underway — join below to play.'
+          : (choicesFor(r)[pk]!==undefined ? 'Locked in — waiting for the round to close…' : 'Round '+r+' — make your choice.');
+        else if(ph==='reveal') statusEl.textContent='Round '+r+' results are in.';
+        else statusEl.textContent='Game over.';
+      }
+    }
+
+    if(HOST){
+      function fresh(){
+        return {iv:1, phase:'lobby', gameId:Date.now(), rounds:Math.max(2,Math.min(8,parseInt(roundsIn.value,10)||5)),
+                round:0, cov:INS_COV.off, fine:INS_FINE.off, players:{}, roles:{}, choices:{}, caught:{}, hist:{}};
+      }
+      startBtn.addEventListener('click', function(){
+        if(state.phase==='final' && !confirm('Start a new game? This clears the board for everyone.')) return;
+        backend.setDoc('polls', id, fresh());
+      });
+      leversBox.addEventListener('click', function(e){
+        const b=e.target.closest('.ins-lever'); if(!b) return;
+        if(b.dataset.insLever==='cov') backend.mergeDoc('polls', id, {cov: cov()>=INS_COV.on?INS_COV.off:INS_COV.on});
+        else backend.mergeDoc('polls', id, {fine: fine()>=INS_FINE.on?INS_FINE.off:INS_FINE.on});
+      });
+      nextBtn.addEventListener('click', function(){
+        const ph=state.phase;
+        if(!(ph==='lobby'||ph==='reveal')) return;
+        const r=(ph==='lobby')?1:R()+1;
+        if(ph==='lobby' && !Object.keys(players()).length && !confirm('Nobody has joined yet. Start anyway?')) return;
+        backend.mergeDoc('polls', id, {phase:'open', round:r});
+      });
+      function score(final){
+        const r=R(), ch=choicesFor(r), gid=String(state.gameId||0);
+        const mix={comply:0,quiet:0,open:0}, imix={rand:0,big:0,comp:0};
+        Object.keys(ch).forEach(function(k){
+          const c=ch[k];
+          if(roles()[k]==='i'){ if(imix[c]!==undefined) imix[c]++; }
+          else if(mix[c]!==undefined) mix[c]++;
+        });
+        const c=cov(), f=fine(), p=probs(imix, c);
+        // deterministic draws, so every open copy of the deck agrees
+        const caught={}; let cq=0, co=0;
+        const strat=['rand','big','comp'], itot=imix.rand+imix.big+imix.comp;
+        const credit={rand:0,big:0,comp:0};
+        Object.keys(ch).forEach(function(k){
+          if(roles()[k]==='i') return;
+          const mv=ch[k]; if(mv!=='quiet'&&mv!=='open') return;
+          const pr=(mv==='quiet')?p.q:p.o;
+          if(insRnd(gid+':'+r+':'+k+':catch')<pr){
+            caught[k]=1; if(mv==='quiet') cq++; else co++;
+            // attribute the catch to a strategy drawn from the inspectors' mix
+            let u=insRnd(gid+':'+r+':'+k+':who'), acc=0, s=strat[0];
+            if(itot){ for(let i=0;i<3;i++){ acc+=imix[strat[i]]/itot; if(u<=acc){ s=strat[i]; break; } } }
+            else s=strat[Math.floor(u*3)%3];
+            credit[s]++;
+          }
+        });
+        const perInsp={};
+        strat.forEach(function(s){ perInsp[s]= imix[s] ? credit[s]/imix[s] : 0; });
+        const entry={cov:c, fine:f, mix:mix, imix:imix, pq:p.q, po:p.o, det:p.o*f,
+                     caughtQ:cq, caughtO:co, credit:credit, perInsp:perInsp};
+        const upd={phase: final?'final':'reveal', hist:{}, caught:{}};
+        upd.hist['r'+r]=entry; upd.caught['r'+r]=caught;
+        backend.mergeDoc('polls', id, upd);
+      }
+      endBtn.addEventListener('click', function(){ if(state.phase==='open') score(R()>=NR()); });
+      finishBtn.addEventListener('click', function(){
+        if(state.phase==='open') score(true);
+        else if(state.phase==='reveal') backend.mergeDoc('polls', id, {phase:'final'});
+      });
+    } else {
+      joinBtn.addEventListener('click', function(){
+        if(joined() || !(state.phase==='lobby'||state.phase==='open')) return;
+        // roles alternate by join order so the two sides stay balanced without
+        // the host having to sort anybody: even -> plant, odd -> inspector
+        const n=Object.keys(players()).length;
+        backend.mergeDocShard('polls', id, {players:{[pk]:Date.now()}, roles:{[pk]:(n%2===0?'p':'i')}});
+      });
+      submitBtn.addEventListener('click', function(){
+        const r=R();
+        if(state.phase!=='open' || !joined() || !pick || choicesFor(r)[pk]!==undefined) return;
+        const upd={choices:{}}; upd.choices['r'+r]={[pk]:pick};
+        backend.mergeDocShard('polls', id, upd);
+      });
+    }
+    backend.subscribeDoc('polls', id, function(d){ state=(d&&d.iv===1)?d:{phase:'idle'}; render(); });
   });
 
   // ---- wire each live Q&A / open-response feed ------------------------------

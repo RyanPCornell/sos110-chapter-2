@@ -1007,6 +1007,19 @@ img.bleed{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
 .cm-hbar.dead .cm-hbar-fill{background:#A4373A;}
 .cm-hbar-lbl{font-size:.62rem; color:var(--muted); font-weight:700; line-height:1;}
 .cm-hbar-val{font-size:.62rem; color:#33453d; font-weight:600; line-height:1; font-variant-numeric:tabular-nums;}
+/* the self-running walkthrough's caption strip */
+.cm-demobar{position:absolute; left:0; right:0; bottom:0; z-index:9; display:flex;
+  align-items:center; gap:.7rem; padding:.5rem clamp(1rem,2.4vw,2rem);
+  background:rgba(20,32,27,.94); color:#f1f6f2; backdrop-filter:blur(2px);}
+.cm-demotag{flex:none; font-family:'Inter',sans-serif; font-size:.62rem; font-weight:800;
+  letter-spacing:.16em; text-transform:uppercase; color:#8fd3ae;
+  border:1px solid rgba(143,211,174,.55); border-radius:999px; padding:.14rem .5rem;}
+.cm-demotxt{flex:1 1 auto; font-size:clamp(.74rem,1.2vw,.94rem); line-height:1.4;}
+.cm-demobtn{flex:none; font:inherit; font-weight:700; font-size:.78rem; cursor:pointer;
+  border:1px solid rgba(143,211,174,.6); background:transparent; color:#8fd3ae;
+  border-radius:7px; padding:.24rem .7rem;}
+.cm-demobtn:hover{background:rgba(143,211,174,.14);}
+.cm-demobar[hidden]{display:none !important;}
 .cm-foot{margin-top:clamp(.5rem,1.3vh,.85rem); font-size:clamp(.7rem,1.1vw,.84rem); color:var(--muted);
   font-style:italic; line-height:1.35;}
 
@@ -3032,6 +3045,7 @@ show(start);
       +'<path class="sp" d="M8 6.4 L13.7 14 H2.3 Z"/></svg>'
   };
   const CM_FMT = n => '$'+Math.round(n).toLocaleString('en-US');
+  const CMQ = new URLSearchParams(location.search);
 
   commons.forEach(function(sec){
     const id = sec.dataset.cmId;
@@ -3084,6 +3098,31 @@ show(start);
     function earned(who, r){ const e=histEntry(r); if(!e) return 0;
       const amt=roundChoices(r)[who]; return amt===undefined?0:amt*S().unitValue*e.mult; }
     function totalEarned(who){ let t=0; for(let r=1;r<=(state.round||0);r++) t+=earned(who,r); return t; }
+
+    /* The arithmetic that ends a round lives here rather than inside the host
+       button, so the self-running demo plays the real game instead of an
+       imitation of it. */
+    function roundVerdict(r){
+      const ch=roundChoices(r), n=nPlayers();
+      if(!n) return null;
+      let total=0; Object.keys(ch).forEach(k=>{ total+=ch[k]; });
+      const h=state.health===undefined?1:state.health;
+      const cap=n*S().max*h, sust=cap*0.4;
+      let mult, zone, h2;
+      if(total<=sust){ mult=1; zone='green'; h2=Math.min(1, h*1.08); }
+      else if(total<=cap){
+        const raw=(cap-total)/(cap-sust);
+        mult=Math.round(Math.max(0,Math.pow(raw,1.5))*1000)/1000;
+        zone= mult>0.4 ? 'yellow' : 'orange';
+        const overshoot=(total-sust)/Math.max(1e-9,cap-sust);
+        h2=Math.max(0.05, h*(1-overshoot*0.35));
+      } else { mult=0; zone='red'; h2=Math.max(0.05, h*0.35); }
+      h2=Math.round(h2*10000)/10000;
+      const coopPer=Math.floor(sust/n), coopEarn=Math.round(coopPer*S().unitValue*100)/100;
+      return {collapsed:h2<=0.05, health:h2,
+        entry:{total:total, cap:Math.round(cap*10)/10, sust:Math.round(sust*10)/10,
+               mult:mult, zone:zone, health:h2, coopPer:coopPer, coopEarn:coopEarn}};
+    }
 
     function theme(){
       sec.style.setProperty('--cm-color', S().color);
@@ -3402,12 +3441,19 @@ show(start);
         let lines='Round '+r+': the class took <strong>'+e.total+' '+S().unit+'</strong> — sustainable threshold was <strong>'
           +Math.floor(e.sust)+'</strong>, capacity <strong>'+e.cap+'</strong>.';
         lines+='<span class="coop">If everyone had taken '+e.coopPer+' or less, each player would have earned '
-          +CM_FMT(e.coopEarn)+' this round — every round.</span>';
+          +CM_FMT(e.coopEarn)+' this round.</span>';
         if(ph==='final'){
           let classTot=0; Object.keys(players()).forEach(k=>{ classTot+=totalEarned(k); });
-          const coopTot=(e.coopEarn||0)*nPlayers()*(state.round||0);
+          /* The benchmark has to be the counterfactual, not this round's ceiling.
+             A class that cooperates from round one never damages the stock, so
+             its sustainable share stays at the undamaged level every round —
+             measuring against the wrecked resource the defectors produced makes
+             cooperation look worse than it was, which is the opposite lesson. */
+          const coopPerFull=Math.floor(S().max*0.4);
+          const coopTot=coopPerFull*S().unitValue*nPlayers()*(state.round||0);
           lines+='<span class="coop"><strong>Game over.</strong> The class earned '+CM_FMT(classTot)
-            +' in total — full cooperation would have earned about '+CM_FMT(coopTot)+'.</span>';
+            +' in total. Taking '+coopPerFull+' '+S().unit+' each from round one would have earned about '
+            +CM_FMT(coopTot)+' — and left the '+S().resName.toLowerCase()+' untouched.</span>';
         }
         revLines.innerHTML=lines;
       } else if(!revealBox.hidden){ zoneEl.className='cm-zone'; zoneEl.textContent='Game over.'; revLines.innerHTML=''; }
@@ -3526,27 +3572,10 @@ show(start);
       });
       endRoundBtn.addEventListener('click', function(){
         if(state.phase!=='open') return;
-        const r=state.round||0, ch=roundChoices(r), n=nPlayers();
-        if(!n) return;
-        let total=0; Object.keys(ch).forEach(k=>{ total+=ch[k]; });
-        const h=state.health===undefined?1:state.health;
-        const cap=n*S().max*h, sust=cap*0.4;
-        let mult, zone, h2;
-        if(total<=sust){ mult=1; zone='green'; h2=Math.min(1, h*1.08); }
-        else if(total<=cap){
-          const raw=(cap-total)/(cap-sust);
-          mult=Math.round(Math.max(0,Math.pow(raw,1.5))*1000)/1000;
-          zone= mult>0.4 ? 'yellow' : 'orange';
-          const overshoot=(total-sust)/Math.max(1e-9,cap-sust);
-          h2=Math.max(0.05, h*(1-overshoot*0.35));
-        } else { mult=0; zone='red'; h2=Math.max(0.05, h*0.35); }
-        h2=Math.round(h2*10000)/10000;
-        const collapsed = h2<=0.05;
-        const coopPer=Math.floor(sust/n), coopEarn=Math.round(coopPer*S().unitValue*100)/100;
-        const entry={total:total, cap:Math.round(cap*10)/10, sust:Math.round(sust*10)/10,
-          mult:mult, zone:zone, health:h2, coopPer:coopPer, coopEarn:coopEarn};
-        const upd={phase: collapsed?'final':'reveal', health:h2, collapsed:collapsed, hist:{}};
-        upd.hist['r'+r]=entry;
+        const r=state.round||0, v=roundVerdict(r);
+        if(!v) return;
+        const upd={phase: v.collapsed?'final':'reveal', health:v.health, collapsed:v.collapsed, hist:{}};
+        upd.hist['r'+r]=v.entry;
         backend.mergeDoc('polls', id, upd);
       });
       nextBtn.addEventListener('click', function(){
@@ -3577,6 +3606,94 @@ show(start);
       state=(d && d.v===2) ? d : {phase:'idle'};  // ignore stale v1 docs
       render();
     });
+
+    /* ══ DEMO MODE ═════════════════════════════════════════════════════════
+       ?demo drives the whole game from one browser: a class of 24 joins, plays
+       four rounds and walks the arc the game is built to produce — everyone
+       holds back and the stock grows, a few notice that taking more paid more,
+       the take runs past capacity and the round pays nothing, and the class
+       finally pulls back onto a resource whose ceiling is now a third of what
+       it was. Nothing is faked: the bots' choices go through the same
+       roundVerdict() the instructor's button uses.
+       ?freeze=N jumps straight to beat N and stops, for cover images.     ══ */
+    function cmDemo(){
+      const N=24, ROUNDS=4;
+      /* deterministic, so the same walkthrough plays every time */
+      const pick=(i,avg)=>Math.max(0,Math.min(S().max, Math.round(avg + ((i*13)%7) - 3)));
+      const bar=document.createElement('div');
+      bar.className='cm-demobar';
+      bar.innerHTML='<span class="cm-demotag">Demo</span><span class="cm-demotxt" data-cmdemo></span>'
+        +'<button class="cm-demobtn" type="button" data-cmreplay hidden>Replay</button>';
+      sec.querySelector('.cm-root').appendChild(bar);
+      const txt=bar.querySelector('[data-cmdemo]');
+      let step=0, tid=null;
+      bar.querySelector('[data-cmreplay]').addEventListener('click', function(){
+        this.hidden=true; step=0; play();
+      });
+      const doc=o=>backend.mergeDoc('polls', id, o);
+      function choices(r, avg){
+        const c={};
+        for(let i=0;i<N;i++) c['b'+i]=pick(i,avg);
+        c[pk]=pick(3,avg);              /* the viewer plays too */
+        const u={choices:{}}; u.choices['r'+r]=c; doc(u);
+      }
+      function endRound(r){
+        const v=roundVerdict(r); if(!v) return;
+        const u={phase: v.collapsed?'final':'reveal', health:v.health, collapsed:v.collapsed, hist:{}};
+        u.hist['r'+r]=v.entry; doc(u);
+      }
+      const AVG=[null,3.4,6.0,9.6,0.0];
+      const script=[
+        [200, ()=>backend.setDoc('polls', id, {v:2, phase:'lobby', scen:'fishing', rounds:ROUNDS,
+              round:0, health:1, gameId:Date.now(), collapsed:false, players:{}, choices:{}, hist:{}}),
+         'The instructor picks a scenario and opens the lobby. Every student has the deck open on their own device.'],
+        [2400, ()=>{ const pl={}; for(let i=0;i<N;i++) pl['b'+i]=Date.now()+i;
+              pl[pk]=Date.now()+N; doc({players:pl}); },
+         (N+1)+' fishers join the village — you are one of them. Nobody types a name; everyone is Student N by join order.'],
+        [2600, ()=>doc({phase:'open', round:1}),
+         'Round one opens. Everyone secretly chooses a harvest, and three live payoff examples spell out the dilemma before you lock in.'],
+        [2600, ()=>choices(1,AVG[1]),
+         'Choices are locked in and stay hidden. Most people take a modest share this first season.'],
+        [2400, ()=>endRound(1),
+         'Under the sustainable share, so everyone sells at full price and the fish population grows back.'],
+        [3400, ()=>doc({phase:'open', round:2}),
+         'Round two. The board is public now, and taking more is visibly what paid best.'],
+        [2200, ()=>choices(2,AVG[2]),
+         'The take climbs. Nobody has done anything against the rules.'],
+        [2400, ()=>endRound(2),
+         'Over the threshold. Everyone’s payout multiplier falls — including the people who held back.'],
+        [3600, ()=>doc({phase:'open', round:3}),
+         'Round three. Holding back now costs you and barely helps the stock, so almost nobody does.'],
+        [2200, ()=>choices(3,AVG[3]),
+         'Nearly the whole class fishes near the maximum.'],
+        [2400, ()=>endRound(3),
+         'Past capacity. The round pays nothing at all, and the fish population crashes.'],
+        [3800, ()=>doc({phase:'open', round:4}),
+         'Round four, on a wrecked resource. Capacity is a third of what it was in round one.'],
+        [2200, ()=>choices(4,AVG[4]),
+         'This time the class pulls right back.'],
+        [2400, ()=>endRound(4),
+         'Sustainable again — but the ceiling they are living under is the one they broke.'],
+        [3200, ()=>doc({phase:'final'}),
+         'The closing summary: what the class took each round against the sustainable share, and what that cost.'],
+        [5200, ()=>{ const b=bar.querySelector('[data-cmreplay]'); if(b) b.hidden=false; },
+         'Nobody cheated. Every individual choice was the rational one — that is what makes it a tragedy.']
+      ];
+      function play(){
+        if(step>=script.length) return;
+        const s=script[step++];
+        tid=setTimeout(function(){ txt.textContent=s[2]; try{ s[1](); }catch(e){} play(); }, s[0]);
+      }
+      const FR=CMQ.has('freeze') ? parseInt(CMQ.get('freeze'),10) : -1;
+      if(FR>=0){
+        bar.hidden=true;
+        for(let i=0;i<=Math.min(FR,script.length-1);i++){ try{ script[i][1](); }catch(e){} }
+        return;
+      }
+      txt.textContent='Tragedy of the Commons — a self-running walkthrough. No second device needed.';
+      play();
+    }
+    if(CMQ.has('demo') && !HOST) setTimeout(cmDemo, 400);
   });
 
   // ---- wire each guess-the-number slide ------------------------------------

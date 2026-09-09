@@ -3679,10 +3679,14 @@ show(start);
         [5200, ()=>{ const b=bar.querySelector('[data-cmreplay]'); if(b) b.hidden=false; },
          'Nobody cheated. Every individual choice was the rational one — that is what makes it a tragedy.']
       ];
+      /* one dial for the whole walkthrough: the beats are all "watch this
+         happen", so they slow together and the captions get read */
+      const PACE=1.35;
       function play(){
         if(step>=script.length) return;
         const s=script[step++];
-        tid=setTimeout(function(){ txt.textContent=s[2]; try{ s[1](); }catch(e){} play(); }, s[0]);
+        tid=setTimeout(function(){ txt.textContent=s[2]; try{ s[1](); }catch(e){} play(); },
+                       Math.round(s[0]*PACE));
       }
       const FR=CMQ.has('freeze') ? parseInt(CMQ.get('freeze'),10) : -1;
       if(FR>=0){

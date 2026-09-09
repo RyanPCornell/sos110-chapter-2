@@ -3646,12 +3646,12 @@ show(start);
       const script=[
         [200, ()=>backend.setDoc('polls', id, {v:2, phase:'lobby', scen:'fishing', rounds:ROUNDS,
               round:0, health:1, gameId:Date.now(), collapsed:false, players:{}, choices:{}, hist:{}}),
-         'The instructor picks a scenario and opens the lobby. Every student has the deck open on their own device.'],
+         'The instructor picks a scenario and opens the lobby.'],
         [2400, ()=>{ const pl={}; for(let i=0;i<N;i++) pl['b'+i]=Date.now()+i;
               pl[pk]=Date.now()+N; doc({players:pl}); },
          (N+1)+' fishers join the village — you are one of them. Nobody types a name; everyone is Student N by join order.'],
         [2600, ()=>doc({phase:'open', round:1}),
-         'Round one opens. Everyone secretly chooses a harvest, and three live payoff examples spell out the dilemma before you lock in.'],
+         'Round one. Everyone secretly chooses a harvest; three payoff examples spell out the dilemma.'],
         [2600, ()=>choices(1,AVG[1]),
          'Choices are locked in and stay hidden. Most people take a modest share this first season.'],
         [2400, ()=>endRound(1),
@@ -3679,14 +3679,31 @@ show(start);
         [5200, ()=>{ const b=bar.querySelector('[data-cmreplay]'); if(b) b.hidden=false; },
          'Nobody cheated. Every individual choice was the rational one — that is what makes it a tragedy.']
       ];
-      /* one dial for the whole walkthrough: the beats are all "watch this
-         happen", so they slow together and the captions get read */
-      const PACE=1.35;
+      /* A caption has to stay up long enough to READ, and they run from seven to
+         twenty-one words while the beats are all about the same length — so
+         scaling the whole script never fixed it, it just made the short ones
+         idle. Each caption now holds for at least its own reading time at a
+         projector-friendly pace, and the scripted delay is the floor under
+         that. A caption that differs from the last one only in its numbers is
+         the same sentence ticking over, so it does not restart the clock. */
+      const PACE=1.15, WPM=190;
+      function readMs(t){
+        const w=String(t||'').trim().split(/\s+/).length;
+        return Math.round(750 + w*(60000/WPM));
+      }
+      function sameIdea(a,b){
+        return String(a).replace(/\d+/g,'#') === String(b).replace(/\d+/g,'#');
+      }
+      let lastCap='';
       function play(){
         if(step>=script.length) return;
         const s=script[step++];
-        tid=setTimeout(function(){ txt.textContent=s[2]; try{ s[1](); }catch(e){} play(); },
-                       Math.round(s[0]*PACE));
+        const floor = (lastCap && !sameIdea(lastCap, s[2])) ? readMs(lastCap) : 0;
+        tid=setTimeout(function(){
+          txt.textContent=s[2]; lastCap=s[2];
+          try{ s[1](); }catch(e){}
+          play();
+        }, Math.max(Math.round(s[0]*PACE), floor));
       }
       const FR=CMQ.has('freeze') ? parseInt(CMQ.get('freeze'),10) : -1;
       if(FR>=0){

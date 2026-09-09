@@ -3659,25 +3659,25 @@ show(start);
         [3400, ()=>doc({phase:'open', round:2}),
          'Round two. The board is public now, and taking more is visibly what paid best.'],
         [2200, ()=>choices(2,AVG[2]),
-         'The take climbs. Nobody has done anything against the rules.'],
+         'Here the take climbs. Nobody has broken a rule.'],
         [2400, ()=>endRound(2),
          'Over the threshold. Everyone’s payout multiplier falls — including the people who held back.'],
         [3600, ()=>doc({phase:'open', round:3}),
-         'Round three. Holding back now costs you and barely helps the stock, so almost nobody does.'],
+         'Round three. Holding back now costs you and barely helps the stock.'],
         [2200, ()=>choices(3,AVG[3]),
-         'Nearly the whole class fishes near the maximum.'],
+         'In this run, nearly everyone fishes near the maximum.'],
         [2400, ()=>endRound(3),
          'Past capacity. The round pays nothing at all, and the fish population crashes.'],
         [3800, ()=>doc({phase:'open', round:4}),
          'Round four, on a wrecked resource. Capacity is a third of what it was in round one.'],
         [2200, ()=>choices(4,AVG[4]),
-         'This time the class pulls right back.'],
+         'This class pulls right back. Another might not.'],
         [2400, ()=>endRound(4),
          'Sustainable again — but the ceiling they are living under is the one they broke.'],
         [3200, ()=>doc({phase:'final'}),
          'The closing summary: what the class took each round against the sustainable share, and what that cost.'],
         [5200, ()=>{ const b=bar.querySelector('[data-cmreplay]'); if(b) b.hidden=false; },
-         'Nobody cheated. Every individual choice was the rational one — that is what makes it a tragedy.']
+         'Nobody cheated. Each choice made sense on its own — which is the trap.']
       ];
       /* A caption has to stay up long enough to READ, and they run from seven to
          twenty-one words while the beats are all about the same length — so
@@ -3711,7 +3711,8 @@ show(start);
         for(let i=0;i<=Math.min(FR,script.length-1);i++){ try{ script[i][1](); }catch(e){} }
         return;
       }
-      txt.textContent='Tragedy of the Commons — a self-running walkthrough. No second device needed.';
+      txt.textContent='Tragedy of the Commons — one hypothetical class, played out. A real one varies.';
+      lastCap=txt.textContent;   /* so the opening line gets read, not flashed */
       play();
     }
     if(CMQ.has('demo') && !HOST) setTimeout(cmDemo, 400);
